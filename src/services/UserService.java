@@ -9,7 +9,6 @@ import utils.FileHandler;
 import utils.PasswordHasher;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Business logic class for managing Users.
