@@ -167,7 +167,7 @@ public class FileHandler {
      * Generates the next unique ID by reading the file and incrementing the max ID.
      *
      * @param filePath the path to the file
-     * @param prefix   the prefix for the ID (e.g. "USR", "APT", "PAY")
+     * @param prefix   the prefix for the ID (e.g. "CUS", "APT", "PAY")
      * @return a new unique ID string
      */
     public String generateNextId(String filePath, String prefix) {

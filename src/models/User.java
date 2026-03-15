@@ -70,7 +70,7 @@ public abstract class User {
     public boolean search(int id) {
         if (this.userId == null) return false;
         try {
-            // Extract numeric portion from userId (e.g. "USR0001" -> 1)
+            // Extract numeric portion from userId (e.g. "CUS0001" -> 1)
             String numericPart = this.userId.replaceAll("[^0-9]", "");
             return Integer.parseInt(numericPart) == id;
         } catch (NumberFormatException e) {
