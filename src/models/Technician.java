@@ -54,12 +54,12 @@ public class Technician extends User {
     // ───── Override toFileString to include specialization ─────
     @Override
     public String toFileString() {
-        return super.toFileString() + "|" + safe(this.specialization);
+        return super.toFileString() + utils.FileHandler.SEPARATOR + safe(this.specialization);
     }
 
     // ───── Factory method to parse from file ─────
     public static Technician fromFileString(String line) {
-        String[] parts = line.split("\\|", -1);
+        String[] parts = line.split(utils.FileHandler.DELIMITER, -1);
         if (parts.length >= 7) {
             String specialization = parts.length >= 8 ? parts[7] : "";
             return new Technician(parts[0], parts[1], parts[2], parts[3],

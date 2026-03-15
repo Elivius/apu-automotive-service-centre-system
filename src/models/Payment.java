@@ -105,7 +105,7 @@ public class Payment {
      * Converts the payment to a pipe-delimited string for .txt file storage.
      */
     public String toFileString() {
-        return String.join("|",
+        return String.join(utils.FileHandler.SEPARATOR,
                 safe(this.paymentId),
                 safe(this.appointmentId),
                 String.format("%.2f", this.amount),
@@ -118,7 +118,7 @@ public class Payment {
      * Parses a Payment object from a pipe-delimited file line.
      */
     public static Payment fromFileString(String line) {
-        String[] parts = line.split("\\|", -1);
+        String[] parts = line.split(utils.FileHandler.DELIMITER, -1);
         if (parts.length >= 6) {
             Payment payment = new Payment();
             payment.setPaymentId(parts[0]);

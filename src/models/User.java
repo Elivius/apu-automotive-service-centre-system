@@ -168,12 +168,12 @@ public abstract class User {
 
     /**
      * Converts the user to a pipe-delimited string for .txt file storage.
-     * Format: userId|username|password|name|email|phone|role
+     * Format: userId:::username:::password:::name:::email:::phone:::role
      *
      * @return pipe-delimited string representation
      */
     public String toFileString() {
-        return String.join("|",
+        return String.join(utils.FileHandler.SEPARATOR,
                 safe(this.userId), safe(this.username), safe(this.password),
                 safe(this.name), safe(this.email), safe(this.phone), safe(this.role));
     }

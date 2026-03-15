@@ -156,7 +156,7 @@ public class Appointment {
      * Converts the appointment to a pipe-delimited string for .txt file storage.
      */
     public String toFileString() {
-        return String.join("|",
+        return String.join(utils.FileHandler.SEPARATOR,
                 safe(this.appointmentId),
                 safe(this.customerId),
                 safe(this.technicianId),
@@ -173,7 +173,7 @@ public class Appointment {
      * Parses an Appointment object from a pipe-delimited file line.
      */
     public static Appointment fromFileString(String line) {
-        String[] parts = line.split("\\|", -1);
+        String[] parts = line.split(utils.FileHandler.DELIMITER, -1);
         if (parts.length >= 10) {
             Appointment apt = new Appointment();
             apt.setAppointmentId(parts[0]);
