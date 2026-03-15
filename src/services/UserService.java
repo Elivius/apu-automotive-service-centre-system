@@ -103,7 +103,7 @@ public class UserService {
      * Finds a User by searching through the text file.
      * Demonstrates using the overloaded search(String) method.
      */
-    public static User findUserByName(String name) {
+    public static User getUserByName(String name) {
         List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.USERS_FILE);
         
         // We use AuthService.parseUser to correctly build the subclass (Manager, Customer, etc.)
@@ -120,7 +120,7 @@ public class UserService {
      * Finds a User by searching through the text file.
      * Demonstrates using the overloaded search(int) method.
      */
-    public static User findUserById(int numericId) {
+    public static User getUserById(int numericId) {
         List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.USERS_FILE);
         
         for (String line : lines) {
