@@ -157,16 +157,16 @@ public class Appointment {
      */
     public String toFileString() {
         return String.join("|",
-                safe(appointmentId),
-                safe(customerId),
-                safe(technicianId),
-                safe(serviceType),
-                safe(status),
-                dateTime != null ? dateTime.format(FORMATTER) : "",
-                endDateTime != null ? endDateTime.format(FORMATTER) : "",
-                safe(comments),
-                safe(feedback),
-                safe(serviceReview));
+                safe(this.appointmentId),
+                safe(this.customerId),
+                safe(this.technicianId),
+                safe(this.serviceType),
+                safe(this.status),
+                this.dateTime != null ? this.dateTime.format(FORMATTER) : "",
+                this.endDateTime != null ? this.endDateTime.format(FORMATTER) : "",
+                safe(this.comments),
+                safe(this.feedback),
+                safe(this.serviceReview));
     }
 
     /**
@@ -201,7 +201,7 @@ public class Appointment {
 
     @Override
     public String toString() {
-        return "Appointment [ID=" + appointmentId + ", Service=" + serviceType
-                + ", Status=" + status + ", Date=" + (dateTime != null ? dateTime.format(FORMATTER) : "N/A") + "]";
+        return "Appointment [ID=" + this.appointmentId + ", Service=" + this.serviceType
+                + ", Status=" + this.status + ", Date=" + (this.dateTime != null ? this.dateTime.format(FORMATTER) : "N/A") + "]";
     }
 }
