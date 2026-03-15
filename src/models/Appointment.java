@@ -118,9 +118,9 @@ public class Appointment {
      * Normal service = 1 hour, Major service = 3 hours.
      */
     public void calculateEndDateTime() {
-        if (dateTime != null && serviceType != null) {
-            int hours = serviceType.equals("Major") ? 3 : 1;
-            this.endDateTime = dateTime.plusHours(hours);
+        if (this.dateTime != null && this.serviceType != null) {
+            int hours = this.serviceType.equals("Major") ? 3 : 1;
+            this.endDateTime = this.dateTime.plusHours(hours);
         }
     }
 
