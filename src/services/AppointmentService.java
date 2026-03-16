@@ -110,6 +110,8 @@ public class AppointmentService {
     /**
      * Updates an existing appointment's information.
      * Pushes notifications to the customer and technician about the change.
+     * 
+     * @param appointment the appointment to update
      */
     public static void updateAppointment(Appointment appointment) {
         if (appointment != null && appointment.getAppointmentId() != null) {
@@ -124,43 +126,23 @@ public class AppointmentService {
     }
 
     /**
-     * Retrieves all appointments for a specific customer.
-     * Used by the Customer to check their appointment statuses.
+     * Allows Counter Staff to decline an appointment.
+     * Pushes a notification to the customer about the cancellation.
+     * 
+     * @param appointment the appointment to decline
      */
-    public static List<Appointment> getAllAppointmentsForCustomer(String customerId) {
-        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.APPOINTMENTS_FILE);
-        return lines.stream()
-                .map(Appointment::fromFileString)
-                .filter(apt -> apt != null && apt.getCustomerId().equals(customerId))
-                .collect(Collectors.toList());
+    public static void declineAppointment(Appointment appointment) {
+        if (appointment != null && appointment.getAppointmentId() != null) {
+            appointment.setStatus("Declined");
+            FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
+            NotificationService.push(appointment.getCustomerId(), "Your appointment " + appointment.getAppointmentId() + " has been declined.");
+        }
     }
-
-    /**
-     * Retrieves all appointments assigned to a specific technician.
-     * Used by the Technician to view their upcoming jobs.
-     */
-    public static List<Appointment> getAllAppointmentsForTechnician(String technicianId) {
-        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.APPOINTMENTS_FILE);
-        return lines.stream()
-                .map(Appointment::fromFileString)
-                .filter(apt -> apt != null && apt.getTechnicianId().equals(technicianId))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Retrieves all appointments in the system.
-     * Used by Counter Staff and Manager to view all appointment statuses.
-     */
-    public static List<Appointment> getAllAppointments() {
-        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.APPOINTMENTS_FILE);
-        return lines.stream()
-                .map(Appointment::fromFileString)
-                .filter(apt -> apt != null)
-                .collect(Collectors.toList());
-    }
-
+    
     /**
      * Allows a Technician to mark their appointment as "Completed".
+     * 
+     * @param appointmentId the appointment ID to complete
      */
     public static void completeAppointment(String appointmentId) {
         List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.APPOINTMENTS_FILE);
@@ -175,6 +157,50 @@ public class AppointmentService {
                 return;
             }
         }
+    }
+
+    /**
+     * Retrieves all appointments for a specific customer.
+     * Used by the Customer to check their appointment statuses.
+     * 
+     * @param customerId the customer's ID
+     * @return a list of appointments for the customer
+     */
+    public static List<Appointment> getAllAppointmentsForCustomer(String customerId) {
+        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.APPOINTMENTS_FILE);
+        return lines.stream()
+                .map(Appointment::fromFileString)
+                .filter(apt -> apt != null && apt.getCustomerId().equals(customerId))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves all appointments assigned to a specific technician.
+     * Used by the Technician to view their upcoming jobs.
+     * 
+     * @param technicianId the technician's ID
+     * @return a list of appointments for the technician
+     */
+    public static List<Appointment> getAllAppointmentsForTechnician(String technicianId) {
+        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.APPOINTMENTS_FILE);
+        return lines.stream()
+                .map(Appointment::fromFileString)
+                .filter(apt -> apt != null && apt.getTechnicianId().equals(technicianId))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves all appointments in the system.
+     * Used by Counter Staff and Manager to view all appointment statuses.
+     * 
+     * @return a list of all appointments
+     */
+    public static List<Appointment> getAllAppointments() {
+        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.APPOINTMENTS_FILE);
+        return lines.stream()
+                .map(Appointment::fromFileString)
+                .filter(apt -> apt != null)
+                .collect(Collectors.toList());
     }
 
     /**
