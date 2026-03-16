@@ -25,7 +25,10 @@ public class FileHandler {
     public static final String SERVICE_PRICES_FILE = DATA_DIR + File.separator + "service_prices.txt";
     public static final String NOTIFICATIONS_FILE = DATA_DIR + File.separator + "notifications.txt";
 
-    public static final String DELIMITER = ":::";
+    /** Delimiter for splitting lines (Regex-escaped) */
+    public static final String DELIMITER = "\\:\\:\\:";
+    
+    /** Separator for joining strings (Standard string) */
     public static final String SEPARATOR = ":::";
 
     // ───── Private Constructor (Singleton) ─────
