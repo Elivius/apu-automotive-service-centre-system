@@ -37,10 +37,20 @@ public class FileHandler {
         }
 
         // Create files if they don't exist
+        
+        // Format: userId:::username:::hashedPassword:::name:::email:::phone:::role:::specialization
         createFileIfNotExists(USERS_FILE);
+        
+        // Format: appointmentId:::customerId:::technicianId:::serviceType:::status:::dateTime:::endDateTime:::comments:::feedback:::serviceReview
         createFileIfNotExists(APPOINTMENTS_FILE);
+        
+        // Format: paymentId:::appointmentId:::amount:::paymentMethod:::paymentStatus:::dateTime
         createFileIfNotExists(PAYMENTS_FILE);
+        
+        // Format: serviceType:::price
         createFileIfNotExists(SERVICE_PRICES_FILE);
+        
+        // Format: notificationId:::targetUserId:::dateTime:::message:::isRead
         createFileIfNotExists(NOTIFICATIONS_FILE);
     }
 
