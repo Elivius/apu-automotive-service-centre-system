@@ -59,7 +59,7 @@ public class FileHandler {
      *
      * @return the FileHandler singleton instance
      */
-    public static FileHandler getInstance() {
+    public static synchronized FileHandler getInstance() {
         if (instance == null) {
             instance = new FileHandler();
         }
