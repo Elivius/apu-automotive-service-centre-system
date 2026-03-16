@@ -61,9 +61,9 @@ public class UserService {
     public static void updateUser(User user) {
         if (user != null && user.getUserId() != null) {
             FileHandler.getInstance().updateLine(FileHandler.USERS_FILE, user.getUserId(), user.toFileString());
+            NotificationService.push(user.getUserId(), "Your profile has been updated.");
         }
 
-        NotificationService.push(user.getUserId(), "Your profile has been updated.");
     }
 
     /**
