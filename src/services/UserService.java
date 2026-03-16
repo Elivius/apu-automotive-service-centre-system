@@ -61,17 +61,19 @@ public class UserService {
     public static void updateUser(User user) {
         if (user != null && user.getUserId() != null) {
             FileHandler.getInstance().updateLine(FileHandler.USERS_FILE, user.getUserId(), user.toFileString());
-            NotificationService.push(user.getUserId(), "Your profile has been updated.");
+            NotificationService.push(user, "Your profile has been updated.");
         }
 
     }
 
     /**
      * Deletes a user from the database based on their user ID.
+     * 
+     * @param user the User object to delete
      */
-    public static void deleteUser(String userId) {
-        if (userId != null && !userId.trim().isEmpty()) {
-            FileHandler.getInstance().deleteLine(FileHandler.USERS_FILE, userId);
+    public static void deleteUser(User user) {
+        if (user != null && user.getUserId() != null) {
+            FileHandler.getInstance().deleteLine(FileHandler.USERS_FILE, user.getUserId());
         }
     }
 

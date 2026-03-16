@@ -24,19 +24,14 @@ public class FeedbackService {
      * @param appointmentId the appointment to comment on
      * @param comments      the customer's comments
      */
-    public static void submitCustomerComments(String appointmentId, String comments) {
-        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.APPOINTMENTS_FILE);
-        for (String line : lines) {
-            Appointment apt = Appointment.fromFileString(line);
-            if (apt != null && apt.getAppointmentId().equals(appointmentId)) {
-                apt.setComments(comments);
-                FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointmentId, apt.toFileString());
-                
-                // Push a notification for the assigned technician and counter staff
-                NotificationService.push(apt.getTechnicianId(), "Customer added comments to appointment " + appointmentId);
-                NotificationService.push("CounterStaff", "Customer added comments to appointment " + appointmentId);
-                return;
-            }
+    public static void submitCustomerComments(Appointment appointment, String comments) {
+        if (appointment != null && appointment.getAppointmentId() != null) {
+            appointment.setComments(comments);
+            FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
+            
+            // Push a notification for the assigned technician and counter staff
+            NotificationService.push(appointment.getTechnicianId(), "Customer added comments to appointment " + appointment.getAppointmentId());
+            NotificationService.push("CounterStaff", "Customer added comments to appointment " + appointment.getAppointmentId());
         }
     }
 
@@ -47,18 +42,13 @@ public class FeedbackService {
      * @param appointmentId the appointment to provide feedback for
      * @param feedback      the technician's feedback
      */
-    public static void submitTechnicianFeedback(String appointmentId, String feedback) {
-        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.APPOINTMENTS_FILE);
-        for (String line : lines) {
-            Appointment apt = Appointment.fromFileString(line);
-            if (apt != null && apt.getAppointmentId().equals(appointmentId)) {
-                apt.setFeedback(feedback);
-                FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointmentId, apt.toFileString());
-                
-                // Push a notification for the customer
-                NotificationService.push(apt.getCustomerId(), "Technician submitted feedback for appointment " + appointmentId);
-                return;
-            }
+    public static void submitTechnicianFeedback(Appointment appointment, String feedback) {
+        if (appointment != null && appointment.getAppointmentId() != null) {
+            appointment.setFeedback(feedback);
+            FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
+            
+            // Push a notification for the customer
+            NotificationService.push(appointment.getCustomerId(), "Technician submitted feedback for appointment " + appointment.getAppointmentId());
         }
     }
 
@@ -69,15 +59,10 @@ public class FeedbackService {
      * @param appointmentId the appointment to review
      * @param review        the customer's service review
      */
-    public static void submitServiceReview(String appointmentId, String review) {
-        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.APPOINTMENTS_FILE);
-        for (String line : lines) {
-            Appointment apt = Appointment.fromFileString(line);
-            if (apt != null && apt.getAppointmentId().equals(appointmentId)) {
-                apt.setServiceReview(review);
-                FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointmentId, apt.toFileString());
-                return;
-            }
+    public static void submitServiceReview(Appointment appointment, String review) {
+        if (appointment != null && appointment.getAppointmentId() != null) {
+            appointment.setServiceReview(review);
+            FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
         }
     }
 

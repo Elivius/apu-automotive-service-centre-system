@@ -34,6 +34,19 @@ public class NotificationService {
     }
 
     /**
+     * Overloaded push method that takes a User object.
+     * Extracts the userId automatically.
+     * 
+     * @param user    the user to notify
+     * @param message the notification message
+     */
+    public static void push(models.User user, String message) {
+        if (user != null && user.getUserId() != null) {
+            push(user.getUserId(), message);
+        }
+    }
+
+    /**
      * Retrieves all unread notifications for a specific user.
      * Also includes broadcast ("ALL") and role-based notifications.
      *
@@ -55,20 +68,13 @@ public class NotificationService {
     /**
      * Marks a specific notification as read.
      *
-     * @param notificationId the notification ID to mark as read
-     * @param userId         the user's ID
+     * @param notification the Notification object to mark as read
+     * @param userId the user's ID (e.g., "CUS0001")
      */
-    public static void markAsRead(String notificationId, String userId) {
-        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.NOTIFICATIONS_FILE);
-        for (String line : lines) {
-            Notification notification = Notification.fromFileString(line);
-            if (notification != null &&
-                notification.getNotificationId().equals(notificationId) &&
-                notification.getTargetUserId().equals(userId)) {
-                notification.setRead(true);
-                FileHandler.getInstance().updateLine(FileHandler.NOTIFICATIONS_FILE, notificationId, notification.toFileString());
-                return;
-            }
+    public static void markAsRead(Notification notification, String userId) {
+        if (notification != null && notification.getNotificationId() != null && notification.getTargetUserId().equals(userId)) {
+            notification.setRead(true);
+            FileHandler.getInstance().updateLine(FileHandler.NOTIFICATIONS_FILE, notification.getNotificationId(), notification.toFileString());
         }
     }
 

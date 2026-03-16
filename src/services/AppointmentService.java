@@ -55,16 +55,13 @@ public class AppointmentService {
      * Allows Counter Staff to assign a technician to a pending appointment.
      * Contains Collision-Aware Scheduling logic to prevent double-booking.
      *
-     * @param appointmentId the appointment to assign
-     * @param technicianId  the technician to assign
+     * @param targetAppointment the appointment to assign
+     * @param technicianId      the technician to assign
      * @throws TechnicianUnavailableException if the technician has a time conflict
      */
-    public static void assignAppointment(String appointmentId, String technicianId) throws TechnicianUnavailableException {
-        // Find target appointment
-        Appointment targetAppointment = findAppointmentById(appointmentId);
-
+    public static void assignAppointment(Appointment targetAppointment, String technicianId) throws TechnicianUnavailableException {
         if (targetAppointment == null) {
-            System.err.println("Appointment not found: " + appointmentId);
+            System.err.println("Appointment cannot be null.");
             return;
         }
 
@@ -100,11 +97,11 @@ public class AppointmentService {
         // No collision — assign the technician and update status
         targetAppointment.setTechnicianId(technicianId);
         targetAppointment.setStatus("Assigned to " + technicianId);
-        FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointmentId, targetAppointment.toFileString());
+        FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, targetAppointment.getAppointmentId(), targetAppointment.toFileString());
 
         // Push notifications to both the customer and the technician
-        NotificationService.push(targetAppointment.getCustomerId(), "Your appointment " + appointmentId + " has been assigned to technician " + technicianId + ".");
-        NotificationService.push(technicianId, "You have been assigned to appointment " + appointmentId + ".");
+        NotificationService.push(targetAppointment.getCustomerId(), "Your appointment " + targetAppointment.getAppointmentId() + " has been assigned to technician " + technicianId + ".");
+        NotificationService.push(technicianId, "You have been assigned to appointment " + targetAppointment.getAppointmentId() + ".");
     }
 
     /**
@@ -144,18 +141,13 @@ public class AppointmentService {
      * 
      * @param appointmentId the appointment ID to complete
      */
-    public static void completeAppointment(String appointmentId) {
-        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.APPOINTMENTS_FILE);
-        for (String line : lines) {
-            Appointment apt = Appointment.fromFileString(line);
-            if (apt != null && apt.getAppointmentId().equals(appointmentId)) {
-                apt.setStatus("Completed");
-                FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointmentId, apt.toFileString());
+    public static void completeAppointment(Appointment appointment) {
+        if (appointment != null && appointment.getAppointmentId() != null) {
+            appointment.setStatus("Completed");
+            FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
 
-                // Notify the customer
-                NotificationService.push(apt.getCustomerId(), "Your appointment " + appointmentId + " has been completed.");
-                return;
-            }
+            // Notify the customer
+            NotificationService.push(appointment.getCustomerId(), "Your appointment " + appointment.getAppointmentId() + " has been completed.");
         }
     }
 

@@ -50,15 +50,10 @@ public class PaymentService {
      *
      * @param paymentId the ID of the payment to confirm
      */
-    public static void confirmPhysicalPayment(String paymentId) {
-        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.PAYMENTS_FILE);
-        for (String line : lines) {
-            Payment payment = Payment.fromFileString(line);
-            if (payment != null && payment.getPaymentId().equals(paymentId)) {
-                payment.setPaymentStatus("Paid");
-                FileHandler.getInstance().updateLine(FileHandler.PAYMENTS_FILE, paymentId, payment.toFileString());
-                return;
-            }
+    public static void confirmPhysicalPayment(Payment payment) {
+        if (payment != null && payment.getPaymentId() != null) {
+            payment.setPaymentStatus("Paid");
+            FileHandler.getInstance().updateLine(FileHandler.PAYMENTS_FILE, payment.getPaymentId(), payment.toFileString());
         }
     }
 
