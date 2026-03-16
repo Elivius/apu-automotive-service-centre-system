@@ -110,6 +110,27 @@ public class PaymentService {
     }
 
     /**
+     * Sets the service price for a specific service type.
+     * Will create a new line if the service type does not exist.
+     * 
+     * @param serviceType "Normal" or "Major"
+     * @param price       the price to set
+     */
+    public static void setServicePrice(String serviceType, double price) {
+        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.SERVICE_PRICES_FILE);
+        for (String line : lines) {
+            String[] parts = line.split(FileHandler.DELIMITER, -1);
+            if (parts.length >= 2 && parts[0].equals(serviceType)) {
+                parts[1] = String.valueOf(price);
+                FileHandler.getInstance().updateLine(FileHandler.SERVICE_PRICES_FILE, serviceType, String.join(FileHandler.DELIMITER, parts));
+                return;
+            }
+        }
+
+        FileHandler.getInstance().appendLine(FileHandler.SERVICE_PRICES_FILE, serviceType + FileHandler.DELIMITER + price);
+    }
+
+    /**
      * Auto-generates a professionally formatted receipt as a .txt file.
      * Fulfills the SPEC.md "Auto-Generating Receipts to Text" requirement.
      *
