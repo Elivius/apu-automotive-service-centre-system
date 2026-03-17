@@ -4,7 +4,6 @@
 # Ignore Eclipse metadata and settings
 .settings/
 .project
-.classpath
 
 # Ignore compiled Java class files
 *.class
@@ -12,3 +11,6 @@
 # Ignore OS-specific files
 Thumbs.db
 .DS_Store
+
+# Data
+data/
