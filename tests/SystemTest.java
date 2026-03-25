@@ -20,30 +20,30 @@ public class SystemTest {
 
             // 1. TEST USER REGISTRATION
             System.out.println("[TEST 1] Registering a new Customer and Technician...");
-            UserService.registerUser("cus01", "password123", "John Doe", "john@email.com", "0123456789", "Customer", null);
-            UserService.registerUser("tec01", "techpass", "Expert Ahmad", "ahmad@email.com", "0987654321", "Technician", "Engine");
+            UserService.registerUser("CUS0001", "123123", "John Doe", "john@email.com", "0123456789", "Customer", null);
+            UserService.registerUser("TEC0001", "123123", "Expert Ahmad", "ahmad@email.com", "0987654321", "Technician", "Engine");
             System.out.println("✅ Registration complete.\n");
 
             // 2. TEST APPOINTMENT BOOKING
             System.out.println("[TEST 2] Customer booking an appointment...");
             LocalDateTime apptTime = LocalDateTime.now().plusDays(1).withHour(10).withMinute(0);
-            AppointmentService.bookAppointment("cus01", "Normal", apptTime, "Brakes feel squeaky");
-            AppointmentService.bookAppointment("cus01", "Major", apptTime, "Steering feel squeaky");
+            AppointmentService.bookAppointment("CUS0001", "Normal", apptTime, "Brakes feel squeaky");
+            AppointmentService.bookAppointment("CUS0001", "Major", apptTime, "Steering feel squeaky");
             
             // Get the ID of the new appointment
-            List<Appointment> apt = AppointmentService.getAllAppointmentsForCustomer("cus01");
+            List<Appointment> apt = AppointmentService.getAllAppointmentsForCustomer("CUS0001");
             String apptId = apt.get(0).getAppointmentId();
             System.out.println("✅ Appointment booked with ID: " + apptId + "\n");
 
             // 3. TEST TECHNICIAN ASSIGNMENT & COLLISION
             System.out.println("[TEST 3] Assigning technician to appointment...");
-            AppointmentService.assignAppointment(apt.get(0), "tec01");
-            System.out.println("✅ Technician 'tec01' assigned successfully.");
+            AppointmentService.assignAppointment(apt.get(0), "TEC0001");
+            System.out.println("✅ Technician 'TEC0001' assigned successfully.");
 
             System.out.println("--- Testing Collision Detection ---");
             try {
                 // Try to book another appointment at the SAME TIME for the SAME TECHNICIAN
-                AppointmentService.assignAppointment(apt.get(1), "tec01"); 
+                AppointmentService.assignAppointment(apt.get(1), "TEC0001"); 
             } catch (Exception e) {
                 System.out.println("✅ Collision detection works! Error: " + e.getMessage() + "\n");
             }
@@ -55,8 +55,8 @@ public class SystemTest {
 
             // 5. TEST NOTIFICATIONS
             System.out.println("[TEST 5] Checking notifications for Customer...");
-            List<Notification> notis = NotificationService.getNotificationsForUser("cus01", "Customer");
-            System.out.println("Notifications for cus01:");
+            List<Notification> notis = NotificationService.getNotificationsForUser("CUS0001", "Customer");
+            System.out.println("Notifications for CUS0001:");
             for (Notification n : notis) {
                 System.out.println(" - [" + n.getDateTime() + "] " + n.getMessage());
             }
