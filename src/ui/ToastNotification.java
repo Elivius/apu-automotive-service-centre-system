@@ -18,7 +18,7 @@ public class ToastNotification extends JWindow {
 
     private static final int    TOAST_WIDTH   = 340;
     private static final int    TOAST_HEIGHT  = 60;
-    private static final int    MARGIN        = 60;   // gap from screen edge & between toasts
+    private static final int    MARGIN        = 16;   // gap from screen edge & between toasts
     private static final int    DISPLAY_MS    = 3000;
     private static final int    FADE_STEP_MS  = 40;
     private static final float  FADE_STEP_AMT = 0.05f;
