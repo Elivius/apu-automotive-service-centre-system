@@ -3,6 +3,7 @@ package ui.customer;
 import models.Appointment;
 import models.Customer;
 import services.FeedbackService;
+import utils.StringUtils;
 import ui.UITheme;
 
 import javax.swing.*;
@@ -82,8 +83,7 @@ public class ServiceHistoryPanel extends JPanel {
         for (Appointment a : appointments) {
             String feedback = a.getFeedback();
             // Show only first 40 characters of feedback
-            String preview = feedback != null && feedback.length() > 40
-                    ? feedback.substring(0, 40) + "…" : feedback;
+            String preview = StringUtils.truncate(feedback, 40);
             tableModel.addRow(new Object[]{
                 a.getAppointmentId(),
                 a.getServiceType(),
