@@ -27,19 +27,8 @@ public class Technician extends User {
     // ───── Polymorphism: Override displayDashboard() ─────
     @Override
     public void displayDashboard() {
-        System.out.println("═══════════════════════════════════════");
-        System.out.println("        TECHNICIAN DASHBOARD");
-        System.out.println("═══════════════════════════════════════");
-        System.out.println("  Welcome, " + getName());
-        if (this.specialization != null && !this.specialization.isEmpty()) {
-            System.out.println("  Specialization: " + this.specialization);
-        }
-        System.out.println("  1. View Upcoming Appointments");
-        System.out.println("  2. Update Appointment Status");
-        System.out.println("  3. Provide Feedback");
-        System.out.println("  4. Edit Profile");
-        System.out.println("  5. Logout");
-        System.out.println("═══════════════════════════════════════");
+        javax.swing.SwingUtilities.invokeLater(() ->
+            new ui.technician.TechnicianDashboard(this).setVisible(true));
     }
 
     // ───── Getter & Setter (Encapsulation) ─────

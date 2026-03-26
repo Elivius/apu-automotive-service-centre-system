@@ -20,17 +20,8 @@ public class Customer extends User {
     // ───── Polymorphism: Override displayDashboard() ─────
     @Override
     public void displayDashboard() {
-        System.out.println("═══════════════════════════════════════");
-        System.out.println("         CUSTOMER DASHBOARD");
-        System.out.println("═══════════════════════════════════════");
-        System.out.println("  Welcome, " + getName());
-        System.out.println("  1. Book Appointment");
-        System.out.println("  2. Check Appointment Status");
-        System.out.println("  3. View Service Histories");
-        System.out.println("  4. View Payment Histories");
-        System.out.println("  5. Edit Profile");
-        System.out.println("  6. Logout");
-        System.out.println("═══════════════════════════════════════");
+        javax.swing.SwingUtilities.invokeLater(() ->
+            new ui.customer.CustomerDashboard(this).setVisible(true));
     }
 
     // ───── Factory method to parse from file ─────
