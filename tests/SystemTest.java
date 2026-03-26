@@ -20,7 +20,7 @@ public class SystemTest {
 
             // 1. TEST USER REGISTRATION
             System.out.println("[TEST 1] Registering a new Customer and Technician...");
-            UserService.registerUser("CUS0001", "123123", "John Doe", "john@email.com", "0123456789", "Customer", null);
+            UserService.registerUser("CUS0001", "123123", "John Doe", "john@email.com", "0123456789", "Customer");
             UserService.registerUser("TEC0001", "123123", "Expert Ahmad", "ahmad@email.com", "0987654321", "Technician", "Engine");
             System.out.println("✅ Registration complete.\n");
 
