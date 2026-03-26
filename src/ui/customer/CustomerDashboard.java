@@ -65,18 +65,18 @@ public class CustomerDashboard extends JFrame {
 
         // Avatar / name area
         JLabel avatar = new JLabel("👤", SwingConstants.CENTER);
-        avatar.setName("avatar");
+        avatar.setName("lblAvatar");
         avatar.setFont(new Font("SansSerif", Font.PLAIN, 36));
         avatar.setAlignmentX(CENTER_ALIGNMENT);
 
         JLabel name = new JLabel(customer.getName(), SwingConstants.CENTER);
-        name.setName("name");
+        name.setName("lblName");
         name.setFont(UITheme.FONT_HEADER);
         name.setForeground(UITheme.TEXT_PRIMARY);
         name.setAlignmentX(CENTER_ALIGNMENT);
 
         JLabel role = UITheme.mutedLabel("Customer  •  " + customer.getUserId());
-        role.setName("role");
+        role.setName("lblRole");
         role.setAlignmentX(CENTER_ALIGNMENT);
         role.setHorizontalAlignment(SwingConstants.CENTER);
 
