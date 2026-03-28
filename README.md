@@ -13,6 +13,12 @@ For initial setup and testing purposes, the system is seeded with a set of defau
 | STF0001 | **staff** | Elivius | CounterStaff | elivius@gmail.com / 01234678898 |
 | TEC0001 | **tech** | Jones | Technician (Body Kit) | jones@gmail.com / 01234567890 |
 
-> The default password for **all** of these base users is: `123123`
+
+---
+
+### ⚠️ IMPORTANT: DEFAULT PASSWORD ⚠️
+The default password for ALL of these base users is: `123123`
+
+---
 
 You can log in using the `Username` and `Password` combination to access their specific dashboards and privileges. If you register new users through the application, their credentials will be individually hashed and stored as expected.
