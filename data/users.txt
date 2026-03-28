@@ -1,0 +1,4 @@
+MGR0001:::manager:::96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e:::Vert:::vert@gmail.com:::01234567890:::Manager
+CUS0001:::cus:::96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e:::John Doe:::john@gmail.com:::01234567890:::Customer
+STF0001:::staff:::96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e:::Elivius:::elivius@gmail.com:::01234678898:::CounterStaff
+TEC0001:::tech:::96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e:::Jones:::jones@gmail.com:::01234567890:::Technician:::Body Kit
