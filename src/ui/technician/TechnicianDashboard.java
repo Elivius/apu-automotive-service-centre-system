@@ -36,9 +36,33 @@ public class TechnicianDashboard extends JFrame {
         add(buildSidebar(), BorderLayout.WEST);
 
         contentArea.setBackground(UITheme.BG_DARK);
-        contentArea.add(new TechMyAppointmentsPanel(technician), PANEL_APPTS);
+        
+        // Initial panels with names for the switchTab logic
+        addNamedPanel(new TechMyAppointmentsPanel(technician), PANEL_APPTS);
+        
         add(contentArea, BorderLayout.CENTER);
         cardLayout.show(contentArea, PANEL_APPTS);
+    }
+
+    private void addNamedPanel(JPanel panel, String name) {
+        panel.setName(name);
+        contentArea.add(panel, name);
+    }
+
+    private void switchTab(String name, java.util.function.Supplier<JPanel> supplier) {
+        Component[] components = contentArea.getComponents();
+        for (Component c : components) {
+            if (name.equals(c.getName())) {
+                contentArea.remove(c);
+                break;
+            }
+        }
+        JPanel freshPanel = supplier.get();
+        freshPanel.setName(name);
+        contentArea.add(freshPanel, name);
+        cardLayout.show(contentArea, name);
+        contentArea.revalidate();
+        contentArea.repaint();
     }
 
     private JPanel buildSidebar() {
@@ -74,7 +98,7 @@ public class TechnicianDashboard extends JFrame {
         sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
         sidebar.add(sep); sidebar.add(Box.createVerticalStrut(16));
 
-        sidebar.add(sidebarBtn("📋  My Appointments", () -> cardLayout.show(contentArea, PANEL_APPTS)));
+        sidebar.add(sidebarBtn("📋  My Appointments", () -> switchTab(PANEL_APPTS, () -> new TechMyAppointmentsPanel(technician))));
         sidebar.add(Box.createVerticalGlue());
         sidebar.add(sidebarBtn("✏️  Edit Profile",     () -> new EditProfileFrame(technician).setVisible(true)));
         sidebar.add(Box.createVerticalStrut(8));

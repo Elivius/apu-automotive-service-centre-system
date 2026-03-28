@@ -38,12 +38,36 @@ public class StaffDashboard extends JFrame {
         add(buildSidebar(), BorderLayout.WEST);
 
         contentArea.setBackground(UITheme.BG_DARK);
-        contentArea.add(new ManageAppointmentsPanel(staff), PANEL_APPOINTMENTS);
-        contentArea.add(new ManageCustomersPanel(staff),    PANEL_CUSTOMERS);
-        contentArea.add(new CollectPaymentPanel(staff),     PANEL_PAYMENTS);
+        
+        // Initial panels with names for the switchTab logic
+        addNamedPanel(new ManageAppointmentsPanel(staff), PANEL_APPOINTMENTS);
+        addNamedPanel(new ManageCustomersPanel(staff),    PANEL_CUSTOMERS);
+        addNamedPanel(new CollectPaymentPanel(staff),     PANEL_PAYMENTS);
+        
         add(contentArea, BorderLayout.CENTER);
 
         cardLayout.show(contentArea, PANEL_APPOINTMENTS);
+    }
+
+    private void addNamedPanel(JPanel panel, String name) {
+        panel.setName(name);
+        contentArea.add(panel, name);
+    }
+
+    private void switchTab(String name, java.util.function.Supplier<JPanel> supplier) {
+        Component[] components = contentArea.getComponents();
+        for (Component c : components) {
+            if (name.equals(c.getName())) {
+                contentArea.remove(c);
+                break;
+            }
+        }
+        JPanel freshPanel = supplier.get();
+        freshPanel.setName(name);
+        contentArea.add(freshPanel, name);
+        cardLayout.show(contentArea, name);
+        contentArea.revalidate();
+        contentArea.repaint();
     }
 
     private JPanel buildSidebar() {
@@ -69,9 +93,9 @@ public class StaffDashboard extends JFrame {
         sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
         sidebar.add(sep); sidebar.add(Box.createVerticalStrut(16));
 
-        sidebar.add(sidebarBtn("📅  Appointments",  () -> cardLayout.show(contentArea, PANEL_APPOINTMENTS)));
-        sidebar.add(sidebarBtn("👥  Customers",      () -> cardLayout.show(contentArea, PANEL_CUSTOMERS)));
-        sidebar.add(sidebarBtn("💳  Collect Payment",() -> cardLayout.show(contentArea, PANEL_PAYMENTS)));
+        sidebar.add(sidebarBtn("📅  Appointments",  () -> switchTab(PANEL_APPOINTMENTS, () -> new ManageAppointmentsPanel(staff))));
+        sidebar.add(sidebarBtn("👥  Customers",      () -> switchTab(PANEL_CUSTOMERS,    () -> new ManageCustomersPanel(staff))));
+        sidebar.add(sidebarBtn("💳  Collect Payment",() -> switchTab(PANEL_PAYMENTS,     () -> new CollectPaymentPanel(staff))));
         sidebar.add(Box.createVerticalGlue());
         sidebar.add(sidebarBtn("✏️  Edit Profile",   () -> new EditProfileFrame(staff).setVisible(true)));
         sidebar.add(Box.createVerticalStrut(8));

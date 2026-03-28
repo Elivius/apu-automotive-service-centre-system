@@ -39,12 +39,36 @@ public class ManagerDashboard extends JFrame {
         add(buildSidebar(), BorderLayout.WEST);
 
         contentArea.setBackground(UITheme.BG_DARK);
-        contentArea.add(new ManageStaffPanel(), PANEL_STAFF);
-        contentArea.add(new ServicePricesPanel(), PANEL_PRICES);
-        contentArea.add(new ReportsPanel(), PANEL_REPORTS);
-        contentArea.add(new AllFeedbackPanel(), PANEL_FEEDBACK);
+        
+        // Initial panels with names for the switchTab logic
+        addNamedPanel(new ManageStaffPanel(), PANEL_STAFF);
+        addNamedPanel(new ServicePricesPanel(), PANEL_PRICES);
+        addNamedPanel(new ReportsPanel(), PANEL_REPORTS);
+        addNamedPanel(new AllFeedbackPanel(), PANEL_FEEDBACK);
+        
         add(contentArea, BorderLayout.CENTER);
         cardLayout.show(contentArea, PANEL_REPORTS);
+    }
+
+    private void addNamedPanel(JPanel panel, String name) {
+        panel.setName(name);
+        contentArea.add(panel, name);
+    }
+
+    private void switchTab(String name, java.util.function.Supplier<JPanel> supplier) {
+        Component[] components = contentArea.getComponents();
+        for (Component c : components) {
+            if (name.equals(c.getName())) {
+                contentArea.remove(c);
+                break;
+            }
+        }
+        JPanel freshPanel = supplier.get();
+        freshPanel.setName(name);
+        contentArea.add(freshPanel, name);
+        cardLayout.show(contentArea, name);
+        contentArea.revalidate();
+        contentArea.repaint();
     }
 
     private JPanel buildSidebar() {
@@ -83,14 +107,10 @@ public class ManagerDashboard extends JFrame {
         sidebar.add(sep);
         sidebar.add(Box.createVerticalStrut(16));
 
-        sidebar.add(sidebarBtn("📈  Reports", () -> {
-            contentArea.remove(0);
-            contentArea.add(new ReportsPanel(), PANEL_REPORTS, 0);
-            cardLayout.show(contentArea, PANEL_REPORTS);
-        }));
-        sidebar.add(sidebarBtn("👥  Manage Staff", () -> cardLayout.show(contentArea, PANEL_STAFF)));
-        sidebar.add(sidebarBtn("💲  Service Prices", () -> cardLayout.show(contentArea, PANEL_PRICES)));
-        sidebar.add(sidebarBtn("💬  All Feedback", () -> cardLayout.show(contentArea, PANEL_FEEDBACK)));
+        sidebar.add(sidebarBtn("📈  Reports",        () -> switchTab(PANEL_REPORTS,  ReportsPanel::new)));
+        sidebar.add(sidebarBtn("👥  Manage Staff",     () -> switchTab(PANEL_STAFF,    ManageStaffPanel::new)));
+        sidebar.add(sidebarBtn("💲  Service Prices",   () -> switchTab(PANEL_PRICES,   ServicePricesPanel::new)));
+        sidebar.add(sidebarBtn("💬  All Feedback",     () -> switchTab(PANEL_FEEDBACK, AllFeedbackPanel::new)));
         sidebar.add(Box.createVerticalGlue());
         sidebar.add(sidebarBtn("✏️  Edit Profile", () -> new EditProfileFrame(manager).setVisible(true)));
         sidebar.add(Box.createVerticalStrut(8));

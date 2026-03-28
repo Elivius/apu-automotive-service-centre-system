@@ -46,14 +46,38 @@ public class CustomerDashboard extends JFrame {
 
         // ── Content panels ────────────────────────────────────────────
         contentArea.setBackground(UITheme.BG_DARK);
-        contentArea.add(new BookAppointmentPanel(customer), PANEL_BOOK);
-        contentArea.add(new MyAppointmentsPanel(customer),  PANEL_APPTS);
-        contentArea.add(new ServiceHistoryPanel(customer),  PANEL_HISTORY);
-        contentArea.add(new PaymentHistoryPanel(customer),  PANEL_PAYMENTS);
+        
+        // Initial panels with names for the switchTab logic
+        addNamedPanel(new BookAppointmentPanel(customer), PANEL_BOOK);
+        addNamedPanel(new MyAppointmentsPanel(customer),  PANEL_APPTS);
+        addNamedPanel(new ServiceHistoryPanel(customer),  PANEL_HISTORY);
+        addNamedPanel(new PaymentHistoryPanel(customer),  PANEL_PAYMENTS);
+        
         add(contentArea, BorderLayout.CENTER);
 
         // Show default panel
         cardLayout.show(contentArea, PANEL_APPTS);
+    }
+
+    private void addNamedPanel(JPanel panel, String name) {
+        panel.setName(name);
+        contentArea.add(panel, name);
+    }
+
+    private void switchTab(String name, java.util.function.Supplier<JPanel> supplier) {
+        Component[] components = contentArea.getComponents();
+        for (Component c : components) {
+            if (name.equals(c.getName())) {
+                contentArea.remove(c);
+                break;
+            }
+        }
+        JPanel freshPanel = supplier.get();
+        freshPanel.setName(name);
+        contentArea.add(freshPanel, name);
+        cardLayout.show(contentArea, name);
+        contentArea.revalidate();
+        contentArea.repaint();
     }
 
     private JPanel buildSidebar() {
@@ -93,15 +117,10 @@ public class CustomerDashboard extends JFrame {
         sidebar.add(Box.createVerticalStrut(16));
 
         // Navigation buttons
-        sidebar.add(sidebarBtn("📋  My Appointments",  () -> cardLayout.show(contentArea, PANEL_APPTS)));
-        sidebar.add(sidebarBtn("➕  Book Appointment",  () -> {
-            // Refresh panel then switch
-            contentArea.remove(contentArea.getComponent(0));
-            contentArea.add(new BookAppointmentPanel(customer), PANEL_BOOK, 0);
-            cardLayout.show(contentArea, PANEL_BOOK);
-        }));
-        sidebar.add(sidebarBtn("🔧  Service History",   () -> cardLayout.show(contentArea, PANEL_HISTORY)));
-        sidebar.add(sidebarBtn("💳  Payment History",   () -> cardLayout.show(contentArea, PANEL_PAYMENTS)));
+        sidebar.add(sidebarBtn("📋  My Appointments",  () -> switchTab(PANEL_APPTS,    () -> new MyAppointmentsPanel(customer))));
+        sidebar.add(sidebarBtn("➕  Book Appointment",  () -> switchTab(PANEL_BOOK,     () -> new BookAppointmentPanel(customer))));
+        sidebar.add(sidebarBtn("🔧  Service History",   () -> switchTab(PANEL_HISTORY,  () -> new ServiceHistoryPanel(customer))));
+        sidebar.add(sidebarBtn("💳  Payment History",   () -> switchTab(PANEL_PAYMENTS, () -> new PaymentHistoryPanel(customer))));
         sidebar.add(Box.createVerticalGlue());
         sidebar.add(sidebarBtn("✏️  Edit Profile",       () -> new EditProfileFrame(customer).setVisible(true)));
         sidebar.add(Box.createVerticalStrut(8));
