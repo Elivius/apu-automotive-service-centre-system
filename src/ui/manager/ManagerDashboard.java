@@ -16,7 +16,7 @@ public class ManagerDashboard extends JFrame {
 
     private final Manager manager;
     private final CardLayout cardLayout = new CardLayout();
-    private final JPanel     contentArea = new JPanel(cardLayout);
+    private final JPanel contentArea = new JPanel(cardLayout);
 
     private static final String PANEL_STAFF    = "staff";
     private static final String PANEL_PRICES   = "prices";
@@ -39,10 +39,10 @@ public class ManagerDashboard extends JFrame {
         add(buildSidebar(), BorderLayout.WEST);
 
         contentArea.setBackground(UITheme.BG_DARK);
-        contentArea.add(new ManageStaffPanel(),   PANEL_STAFF);
+        contentArea.add(new ManageStaffPanel(), PANEL_STAFF);
         contentArea.add(new ServicePricesPanel(), PANEL_PRICES);
-        contentArea.add(new ReportsPanel(),       PANEL_REPORTS);
-        contentArea.add(new AllFeedbackPanel(),   PANEL_FEEDBACK);
+        contentArea.add(new ReportsPanel(), PANEL_REPORTS);
+        contentArea.add(new AllFeedbackPanel(), PANEL_FEEDBACK);
         add(contentArea, BorderLayout.CENTER);
         cardLayout.show(contentArea, PANEL_REPORTS);
     }
@@ -76,20 +76,25 @@ public class ManagerDashboard extends JFrame {
         sidebar.add(Box.createVerticalStrut(4));
         sidebar.add(role);
         sidebar.add(Box.createVerticalStrut(28));
+
         JSeparator sep = new JSeparator();
         sep.setForeground(new Color(0x1E4080));
         sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
         sidebar.add(sep);
         sidebar.add(Box.createVerticalStrut(16));
 
-        sidebar.add(sidebarBtn("📈  Reports",          () -> { contentArea.remove(0); contentArea.add(new ReportsPanel(), PANEL_REPORTS, 0); cardLayout.show(contentArea, PANEL_REPORTS); }));
-        sidebar.add(sidebarBtn("👥  Manage Staff",      () -> cardLayout.show(contentArea, PANEL_STAFF)));
-        sidebar.add(sidebarBtn("💲  Service Prices",    () -> cardLayout.show(contentArea, PANEL_PRICES)));
-        sidebar.add(sidebarBtn("💬  All Feedback",      () -> cardLayout.show(contentArea, PANEL_FEEDBACK)));
+        sidebar.add(sidebarBtn("📈  Reports", () -> {
+            contentArea.remove(0);
+            contentArea.add(new ReportsPanel(), PANEL_REPORTS, 0);
+            cardLayout.show(contentArea, PANEL_REPORTS);
+        }));
+        sidebar.add(sidebarBtn("👥  Manage Staff", () -> cardLayout.show(contentArea, PANEL_STAFF)));
+        sidebar.add(sidebarBtn("💲  Service Prices", () -> cardLayout.show(contentArea, PANEL_PRICES)));
+        sidebar.add(sidebarBtn("💬  All Feedback", () -> cardLayout.show(contentArea, PANEL_FEEDBACK)));
         sidebar.add(Box.createVerticalGlue());
-        sidebar.add(sidebarBtn("✏️  Edit Profile",      () -> new EditProfileFrame(manager).setVisible(true)));
+        sidebar.add(sidebarBtn("✏️  Edit Profile", () -> new EditProfileFrame(manager).setVisible(true)));
         sidebar.add(Box.createVerticalStrut(8));
-        sidebar.add(sidebarBtn("🚪  Logout",            this::doLogout));
+        sidebar.add(sidebarBtn("🚪  Logout", this::doLogout));
         return sidebar;
     }
 
@@ -97,13 +102,21 @@ public class ManagerDashboard extends JFrame {
         JButton btn = new JButton(text) {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
-                if (getModel().isRollover()) { g2.setColor(new Color(0x1E4080)); g2.fillRect(0,0,getWidth(),getHeight()); }
-                g2.dispose(); super.paintComponent(g);
+                if (getModel().isRollover()) {
+                    g2.setColor(new Color(0x1E4080));
+                    g2.fillRect(0,0,getWidth(),getHeight());
+                }
+                g2.dispose();
+                super.paintComponent(g);
             }
         };
-        btn.setFont(UITheme.FONT_BODY); btn.setForeground(UITheme.TEXT_PRIMARY);
-        btn.setHorizontalAlignment(SwingConstants.LEFT); btn.setOpaque(false);
-        btn.setContentAreaFilled(false); btn.setBorderPainted(false); btn.setFocusPainted(false);
+        btn.setFont(UITheme.FONT_BODY);
+        btn.setForeground(UITheme.TEXT_PRIMARY);
+        btn.setHorizontalAlignment(SwingConstants.LEFT);
+        btn.setOpaque(false);
+        btn.setContentAreaFilled(false);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
         btn.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
@@ -112,7 +125,10 @@ public class ManagerDashboard extends JFrame {
     }
 
     private void doLogout() {
-        int ok = JOptionPane.showConfirmDialog(this,"Logout?","Logout",JOptionPane.YES_NO_OPTION);
-        if (ok == JOptionPane.YES_OPTION) { dispose(); new LoginFrame().setVisible(true); }
+        int ok = JOptionPane.showConfirmDialog(this, "Logout?", "Logout", JOptionPane.YES_NO_OPTION);
+        if (ok == JOptionPane.YES_OPTION) {
+            dispose();
+            new LoginFrame().setVisible(true);
+        }
     }
 }
