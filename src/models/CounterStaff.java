@@ -20,18 +20,8 @@ public class CounterStaff extends User {
     // ───── Polymorphism: Override displayDashboard() ─────
     @Override
     public void displayDashboard() {
-        System.out.println("═══════════════════════════════════════");
-        System.out.println("       COUNTER STAFF DASHBOARD");
-        System.out.println("═══════════════════════════════════════");
-        System.out.println("  Welcome, " + getName());
-        System.out.println("  1. Manage Customers (CRUD)");
-        System.out.println("  2. Manage Appointments");
-        System.out.println("  3. Check Appointment Status");
-        System.out.println("  4. Collect Payment");
-        System.out.println("  5. Generate Receipt");
-        System.out.println("  6. Edit Profile");
-        System.out.println("  7. Logout");
-        System.out.println("═══════════════════════════════════════");
+        javax.swing.SwingUtilities.invokeLater(() ->
+            new ui.staff.StaffDashboard(this).setVisible(true));
     }
 
     // ───── Factory method to parse from file ─────

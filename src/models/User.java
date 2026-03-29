@@ -7,7 +7,7 @@ import utils.PasswordHasher;
  *
  * Demonstrates:
  * - Encapsulation: All attributes are private with public getters/setters.
- * - Abstraction: Cannot be instantiated directly; subclasses must implement displayDashboard().
+ * - Abstraction: Cannot be instantiated directly. Subclasses must implement displayDashboard().
  * - Polymorphism (Method Overloading): Two search() methods with different parameter types.
  */
 public abstract class User {

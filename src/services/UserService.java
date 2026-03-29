@@ -17,6 +17,14 @@ import java.util.List;
 public class UserService {
 
     /**
+     * Overloaded method for non-technician roles (Customer, Manager, CounterStaff).
+     * Automatically sets specialization to an empty string.
+     */
+    public static void registerUser(String username, String plainPassword, String name, String email, String phone, String role) {
+        registerUser(username, plainPassword, name, email, phone, role, "");
+    }
+
+    /**
      * Registers a new user into the system (Customer, Manager, Technician, etc.).
      * Handles password hashing securely before saving.
      *
