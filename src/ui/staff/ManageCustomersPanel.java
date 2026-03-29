@@ -19,11 +19,11 @@ import java.util.stream.Collectors;
 public class ManageCustomersPanel extends JPanel {
 
     private final CounterStaff staff;
-    private DefaultTableModel  tableModel;
-    private JTable             table;
+    private DefaultTableModel tableModel;
+    private JTable table;
     private TableRowSorter<DefaultTableModel> sorter;
-    private JTextField         tfSearch;
-    private List<User>         customers;
+    private JTextField tfSearch;
+    private List<User> customers;
 
     public ManageCustomersPanel(CounterStaff staff) {
         this.staff = staff;

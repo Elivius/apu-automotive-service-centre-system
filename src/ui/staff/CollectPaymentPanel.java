@@ -79,7 +79,7 @@ public class CollectPaymentPanel extends JPanel {
         lblReceiptPath.setName("lblReceiptPath");
         lblReceiptPath.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
 
-        bottom.add(btnPaid,      BorderLayout.WEST);
+        bottom.add(btnPaid, BorderLayout.WEST);
         bottom.add(lblReceiptPath, BorderLayout.CENTER);
         add(bottom, BorderLayout.SOUTH);
 

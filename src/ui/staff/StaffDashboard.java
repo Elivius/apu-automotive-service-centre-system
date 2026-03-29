@@ -16,11 +16,11 @@ public class StaffDashboard extends JFrame {
 
     private final CounterStaff staff;
     private final CardLayout cardLayout = new CardLayout();
-    private final JPanel     contentArea = new JPanel(cardLayout);
+    private final JPanel contentArea = new JPanel(cardLayout);
 
-    private static final String PANEL_CUSTOMERS    = "customers";
+    private static final String PANEL_CUSTOMERS = "customers";
     private static final String PANEL_APPOINTMENTS = "appointments";
-    private static final String PANEL_PAYMENTS     = "payments";
+    private static final String PANEL_PAYMENTS = "payments";
 
     public StaffDashboard(CounterStaff staff) {
         this.staff = staff;
@@ -38,12 +38,12 @@ public class StaffDashboard extends JFrame {
         add(buildSidebar(), BorderLayout.WEST);
 
         contentArea.setBackground(UITheme.BG_DARK);
-        
+
         // Initial panels with names for the switchTab logic
         addNamedPanel(new ManageAppointmentsPanel(staff), PANEL_APPOINTMENTS);
-        addNamedPanel(new ManageCustomersPanel(staff),    PANEL_CUSTOMERS);
-        addNamedPanel(new CollectPaymentPanel(staff),     PANEL_PAYMENTS);
-        
+        addNamedPanel(new ManageCustomersPanel(staff), PANEL_CUSTOMERS);
+        addNamedPanel(new CollectPaymentPanel(staff), PANEL_PAYMENTS);
+
         add(contentArea, BorderLayout.CENTER);
 
         cardLayout.show(contentArea, PANEL_APPOINTMENTS);
@@ -100,13 +100,13 @@ public class StaffDashboard extends JFrame {
         sidebar.add(sep); 
         sidebar.add(Box.createVerticalStrut(16));
 
-        sidebar.add(sidebarBtn("📅  Appointments",  () -> switchTab(PANEL_APPOINTMENTS, () -> new ManageAppointmentsPanel(staff))));
-        sidebar.add(sidebarBtn("👥  Customers",      () -> switchTab(PANEL_CUSTOMERS,    () -> new ManageCustomersPanel(staff))));
-        sidebar.add(sidebarBtn("💳  Collect Payment",() -> switchTab(PANEL_PAYMENTS,     () -> new CollectPaymentPanel(staff))));
+        sidebar.add(sidebarBtn("📅  Appointments", () -> switchTab(PANEL_APPOINTMENTS, () -> new ManageAppointmentsPanel(staff))));
+        sidebar.add(sidebarBtn("👥  Customers", () -> switchTab(PANEL_CUSTOMERS, () -> new ManageCustomersPanel(staff))));
+        sidebar.add(sidebarBtn("💳  Collect Payment", () -> switchTab(PANEL_PAYMENTS, () -> new CollectPaymentPanel(staff))));
         sidebar.add(Box.createVerticalGlue());
-        sidebar.add(sidebarBtn("✏️  Edit Profile",   () -> new EditProfileFrame(staff).setVisible(true)));
+        sidebar.add(sidebarBtn("✏️  Edit Profile", () -> new EditProfileFrame(staff).setVisible(true)));
         sidebar.add(Box.createVerticalStrut(8));
-        sidebar.add(sidebarBtn("🚪  Logout",         this::doLogout));
+        sidebar.add(sidebarBtn("🚪  Logout", this::doLogout));
         return sidebar;
     }
 
