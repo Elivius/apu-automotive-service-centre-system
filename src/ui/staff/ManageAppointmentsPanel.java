@@ -211,11 +211,11 @@ public class ManageAppointmentsPanel extends JPanel {
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (res != JOptionPane.OK_OPTION) return;
 
-        String custId     = custNames[cbCustomer.getSelectedIndex()].split(" — ")[0].trim();
-        String serviceType= (String) cbService.getSelectedItem();
+        String custId = custNames[cbCustomer.getSelectedIndex()].split(" — ")[0].trim();
+        String serviceType = (String) cbService.getSelectedItem();
         java.util.Date dateValue = (java.util.Date) spDate.getValue();
-        LocalDateTime dateTime  = LocalDateTime.ofInstant(dateValue.toInstant(), java.time.ZoneId.systemDefault());
-        String comments   = taComments.getText().trim();
+        LocalDateTime dateTime = LocalDateTime.ofInstant(dateValue.toInstant(), java.time.ZoneId.systemDefault());
+        String comments = taComments.getText().trim();
 
         AppointmentService.bookAppointment(custId, serviceType, dateTime, comments);
         refresh();
