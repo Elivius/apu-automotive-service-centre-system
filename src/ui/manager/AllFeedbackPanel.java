@@ -19,8 +19,8 @@ public class AllFeedbackPanel extends JPanel {
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private DefaultTableModel tableModel;
-    private JTable            table;
-    private JTextArea         taDetail;
+    private JTable table;
+    private JTextArea taDetail;
     private List<Appointment> appointments;
 
     public AllFeedbackPanel() {
