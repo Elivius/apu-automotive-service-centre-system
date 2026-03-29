@@ -18,9 +18,9 @@ public class ManagerDashboard extends JFrame {
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel contentArea = new JPanel(cardLayout);
 
-    private static final String PANEL_STAFF    = "staff";
-    private static final String PANEL_PRICES   = "prices";
-    private static final String PANEL_REPORTS  = "reports";
+    private static final String PANEL_STAFF = "staff";
+    private static final String PANEL_PRICES = "prices";
+    private static final String PANEL_REPORTS = "reports";
     private static final String PANEL_FEEDBACK = "feedback";
 
     public ManagerDashboard(Manager manager) {
@@ -107,10 +107,10 @@ public class ManagerDashboard extends JFrame {
         sidebar.add(sep);
         sidebar.add(Box.createVerticalStrut(16));
 
-        sidebar.add(sidebarBtn("📈  Reports",        () -> switchTab(PANEL_REPORTS,  ReportsPanel::new)));
-        sidebar.add(sidebarBtn("👥  Manage Staff",     () -> switchTab(PANEL_STAFF,    ManageStaffPanel::new)));
-        sidebar.add(sidebarBtn("💲  Service Prices",   () -> switchTab(PANEL_PRICES,   ServicePricesPanel::new)));
-        sidebar.add(sidebarBtn("💬  All Feedback",     () -> switchTab(PANEL_FEEDBACK, AllFeedbackPanel::new)));
+        sidebar.add(sidebarBtn("📈  Reports", () -> switchTab(PANEL_REPORTS, ReportsPanel::new)));
+        sidebar.add(sidebarBtn("👥  Manage Staff", () -> switchTab(PANEL_STAFF, ManageStaffPanel::new)));
+        sidebar.add(sidebarBtn("💲  Service Prices", () -> switchTab(PANEL_PRICES, ServicePricesPanel::new)));
+        sidebar.add(sidebarBtn("💬  All Feedback", () -> switchTab(PANEL_FEEDBACK, AllFeedbackPanel::new)));
         sidebar.add(Box.createVerticalGlue());
         sidebar.add(sidebarBtn("✏️  Edit Profile", () -> new EditProfileFrame(manager).setVisible(true)));
         sidebar.add(Box.createVerticalStrut(8));

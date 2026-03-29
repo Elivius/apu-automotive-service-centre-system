@@ -41,13 +41,13 @@ public class ReportsPanel extends JPanel {
         // Compute stats
         Map<String, Long> byStatus = all.stream()
                 .collect(Collectors.groupingBy(apt -> normaliseStatus(apt.getStatus()), Collectors.counting()));
-        long pending   = byStatus.getOrDefault("Pending",   0L);
-        long assigned  = byStatus.getOrDefault("Assigned",  0L);
+        long pending = byStatus.getOrDefault("Pending", 0L);
+        long assigned = byStatus.getOrDefault("Assigned", 0L);
         long completed = byStatus.getOrDefault("Completed", 0L);
-        long declined  = byStatus.getOrDefault("Declined",  0L);
-        long normal    = all.stream().filter(apt -> "Normal".equals(apt.getServiceType())).count();
-        long major     = all.stream().filter(apt -> "Major".equals(apt.getServiceType())).count();
-        long total     = all.size();
+        long declined = byStatus.getOrDefault("Declined", 0L);
+        long normal = all.stream().filter(apt -> "Normal".equals(apt.getServiceType())).count();
+        long major = all.stream().filter(apt -> "Major".equals(apt.getServiceType())).count();
+        long total = all.size();
 
         // ── Bar chart panel ──────────────────────────────────────────
         JPanel chartCard = UITheme.cardPanel();

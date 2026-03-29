@@ -34,9 +34,9 @@ public class ManageStaffPanel extends JPanel {
         tabs.setForeground(UITheme.TEXT_PRIMARY);
         tabs.setFont(UITheme.FONT_BODY);
 
-        tabs.addTab("👔  Managers",      buildRoleTab("Manager"));
+        tabs.addTab("👔  Managers", buildRoleTab("Manager"));
         tabs.addTab("🧑‍💼  Counter Staff", buildRoleTab("CounterStaff"));
-        tabs.addTab("🔧  Technicians",   buildRoleTab("Technician"));
+        tabs.addTab("🔧  Technicians", buildRoleTab("Technician"));
 
         add(tabs, BorderLayout.CENTER);
     }
