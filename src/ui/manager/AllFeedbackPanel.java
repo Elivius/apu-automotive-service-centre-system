@@ -88,13 +88,13 @@ public class AllFeedbackPanel extends JPanel {
     void refresh() {
         tableModel.setRowCount(0);
         appointments = FeedbackService.getAllFeedback();
-        for (Appointment a : appointments) {
+        for (Appointment apt : appointments) {
             tableModel.addRow(new Object[]{
-                a.getAppointmentId(), a.getCustomerId(),
-                a.getDateTime() != null ? a.getDateTime().format(FMT) : "",
-                StringUtils.truncate(a.getComments(), 40),
-                StringUtils.truncate(a.getFeedback(), 40),
-                StringUtils.truncate(a.getServiceReview(), 40)
+                apt.getAppointmentId(), apt.getCustomerId(),
+                apt.getDateTime() != null ? apt.getDateTime().format(FMT) : "",
+                StringUtils.truncate(apt.getComments(), 40),
+                StringUtils.truncate(apt.getFeedback(), 40),
+                StringUtils.truncate(apt.getServiceReview(), 40)
             });
         }
         taDetail.setText("");
@@ -103,19 +103,19 @@ public class AllFeedbackPanel extends JPanel {
     private void onSelect() {
         int row = table.getSelectedRow();
         if (row < 0 || row >= appointments.size()) return;
-        Appointment a = appointments.get(row);
+        Appointment apt = appointments.get(row);
         StringBuilder sb = new StringBuilder();
-        sb.append("Appointment ID : ").append(a.getAppointmentId()).append("\n");
-        sb.append("Customer ID    : ").append(a.getCustomerId()).append("\n");
-        sb.append("Technician ID  : ").append(a.getTechnicianId()).append("\n");
-        sb.append("Service Type   : ").append(a.getServiceType()).append("\n");
-        sb.append("Status         : ").append(a.getStatus()).append("\n\n");
+        sb.append("Appointment ID : ").append(apt.getAppointmentId()).append("\n");
+        sb.append("Customer ID    : ").append(apt.getCustomerId()).append("\n");
+        sb.append("Technician ID  : ").append(apt.getTechnicianId()).append("\n");
+        sb.append("Service Type   : ").append(apt.getServiceType()).append("\n");
+        sb.append("Status         : ").append(apt.getStatus()).append("\n\n");
         sb.append("─── Customer Comment ───────────────────\n");
-        sb.append(a.getComments() != null && !a.getComments().isEmpty() ? a.getComments() : "(none)").append("\n\n");
+        sb.append(apt.getComments() != null && !apt.getComments().isEmpty() ? apt.getComments() : "(none)").append("\n\n");
         sb.append("─── Technician Feedback ────────────────\n");
-        sb.append(a.getFeedback() != null && !a.getFeedback().isEmpty() ? a.getFeedback() : "(none)").append("\n\n");
+        sb.append(apt.getFeedback() != null && !apt.getFeedback().isEmpty() ? apt.getFeedback() : "(none)").append("\n\n");
         sb.append("─── Customer Service Review ────────────\n");
-        sb.append(a.getServiceReview() != null && !a.getServiceReview().isEmpty() ? a.getServiceReview() : "(none)");
+        sb.append(apt.getServiceReview() != null && !apt.getServiceReview().isEmpty() ? apt.getServiceReview() : "(none)");
         taDetail.setText(sb.toString());
     }
 }

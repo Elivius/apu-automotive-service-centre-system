@@ -161,12 +161,12 @@ public class ManageCustomersPanel extends JPanel {
         int row = table.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Please select a customer to delete."); return; }
         int modelRow = table.convertRowIndexToModel(row);
-        User u = customers.get(modelRow);
+        User user = customers.get(modelRow);
         int ok = JOptionPane.showConfirmDialog(this,
-                "Delete customer \"" + u.getName() + "\"? This cannot be undone.",
+                "Delete customer \"" + user.getName() + "\"? This cannot be undone.",
                 "Confirm Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (ok == JOptionPane.YES_OPTION) {
-            UserService.deleteUser(u);
+            UserService.deleteUser(user);
             refresh();
         }
     }

@@ -149,13 +149,13 @@ public class ManageStaffPanel extends JPanel {
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
         form.setBackground(UITheme.BG_CARD);
 
-        JTextField tfU    = UITheme.styledTextField(20);
+        JTextField tfU = UITheme.styledTextField(20);
         tfU.setName("tfUsername");
-        JTextField tfN    = UITheme.styledTextField(20);
+        JTextField tfN = UITheme.styledTextField(20);
         tfN.setName("tfName");
-        JTextField tfE    = UITheme.styledTextField(20);
+        JTextField tfE = UITheme.styledTextField(20);
         tfE.setName("tfEmail");
-        JTextField tfP    = UITheme.styledTextField(20);
+        JTextField tfP = UITheme.styledTextField(20);
         tfP.setName("tfPhone");
         JTextField tfSpec = UITheme.styledTextField(20);
         tfSpec.setName("tfSpecialization");

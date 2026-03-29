@@ -13,7 +13,7 @@ import java.awt.*;
 public class ServicePricesPanel extends JPanel {
 
     private JSpinner spNormal, spMajor;
-    private JLabel   lblMsg;
+    private JLabel lblMsg;
 
     public ServicePricesPanel() {
         setBackground(UITheme.BG_DARK);

@@ -19,12 +19,12 @@ public class AppointmentDetailFrame extends JFrame {
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    private final Technician  technician;
+    private final Technician technician;
     private final Appointment appointment;
-    private final Runnable    onClose;
+    private final Runnable onClose;
 
     private JTextArea taFeedback;
-    private JLabel    lblStatus, lblMsg;
+    private JLabel lblStatus, lblMsg;
 
     public AppointmentDetailFrame(Technician technician, Appointment appointment, Runnable onClose) {
         this.technician  = technician;
@@ -148,13 +148,13 @@ public class AppointmentDetailFrame extends JFrame {
     }
 
     private void doSaveFeedback() {
-        String text = taFeedback.getText().trim();
-        if (text.isEmpty()) { 
+        String feedback = taFeedback.getText().trim();
+        if (feedback.isEmpty()) { 
             lblMsg.setText("Feedback is empty."); 
             lblMsg.setForeground(UITheme.ACCENT); 
             return; 
         }
-        FeedbackService.submitTechnicianFeedback(appointment, text);
+        FeedbackService.submitTechnicianFeedback(appointment, feedback);
         lblMsg.setText("Feedback saved!"); 
         lblMsg.setForeground(UITheme.SUCCESS);
     }
@@ -165,9 +165,9 @@ public class AppointmentDetailFrame extends JFrame {
                 "Confirm", JOptionPane.YES_NO_OPTION);
         if (ok != JOptionPane.YES_OPTION) return;
         // Save feedback first if any
-        String fb = taFeedback.getText().trim();
-        if (!fb.isEmpty()) {
-            FeedbackService.submitTechnicianFeedback(appointment, fb);
+        String feedback = taFeedback.getText().trim();
+        if (!feedback.isEmpty()) {
+            FeedbackService.submitTechnicianFeedback(appointment, feedback);
         }
         AppointmentService.completeAppointment(appointment);
         JOptionPane.showMessageDialog(this, "Appointment marked as Completed.");

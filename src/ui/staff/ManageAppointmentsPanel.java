@@ -110,13 +110,13 @@ public class ManageAppointmentsPanel extends JPanel {
         tableModel.setRowCount(0);
         appointments = AppointmentService.getAllAppointments();
         java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        for (Appointment a : appointments) {
+        for (Appointment apt : appointments) {
             tableModel.addRow(new Object[]{
-                a.getAppointmentId(), a.getCustomerId(),
-                a.getTechnicianId().isEmpty() ? "(unassigned)" : a.getTechnicianId(),
-                a.getServiceType(), a.getStatus(),
-                a.getDateTime()    != null ? a.getDateTime().format(fmt)    : "",
-                a.getEndDateTime() != null ? a.getEndDateTime().format(fmt) : ""
+                apt.getAppointmentId(), apt.getCustomerId(),
+                apt.getTechnicianId().isEmpty() ? "(unassigned)" : apt.getTechnicianId(),
+                apt.getServiceType(), apt.getStatus(),
+                apt.getDateTime()    != null ? apt.getDateTime().format(fmt)    : "",
+                apt.getEndDateTime() != null ? apt.getEndDateTime().format(fmt) : ""
             });
         }
 
