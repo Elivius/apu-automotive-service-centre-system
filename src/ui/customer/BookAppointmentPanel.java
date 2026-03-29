@@ -85,7 +85,7 @@ public class BookAppointmentPanel extends JPanel {
         JScrollPane commentsScroll = UITheme.styledTextArea(taComments);
 
         // Payment method
-        rbOnline   = new JRadioButton("Online (auto-confirm)");
+        rbOnline = new JRadioButton("Online (auto-confirm)");
         rbOnline.setName("rbOnline");
         rbPhysical = new JRadioButton("Physical (pay at counter)");
         rbPhysical.setName("rbPhysical");
