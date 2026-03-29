@@ -98,7 +98,7 @@ public class BookAppointmentPanel extends JPanel {
         bg.add(rbPhysical);
 
         // Error / success labels
-        lblError   = new JLabel(" "); 
+        lblError = new JLabel(" "); 
         lblError.setName("lblError");
         lblError.setForeground(UITheme.ACCENT);    
         lblError.setFont(UITheme.FONT_SMALL);
