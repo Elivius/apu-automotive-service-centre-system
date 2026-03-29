@@ -64,14 +64,14 @@ public class PaymentHistoryPanel extends JPanel {
     void refresh() {
         tableModel.setRowCount(0);
         List<Payment> payments = PaymentService.getPaymentHistory(customer.getUserId());
-        for (Payment p : payments) {
+        for (Payment payment : payments) {
             tableModel.addRow(new Object[]{
-                p.getPaymentId(),
-                p.getAppointmentId(),
-                String.format("%.2f", p.getAmount()),
-                p.getPaymentMethod(),
-                p.getPaymentStatus(),
-                p.getDateTime() != null ? p.getDateTime().format(FMT) : ""
+                payment.getPaymentId(),
+                payment.getAppointmentId(),
+                String.format("%.2f", payment.getAmount()),
+                payment.getPaymentMethod(),
+                payment.getPaymentStatus(),
+                payment.getDateTime() != null ? payment.getDateTime().format(FMT) : ""
             });
         }
     }

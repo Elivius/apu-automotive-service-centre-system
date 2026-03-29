@@ -40,13 +40,13 @@ public class ReportsPanel extends JPanel {
 
         // Compute stats
         Map<String, Long> byStatus = all.stream()
-                .collect(Collectors.groupingBy(a -> normaliseStatus(a.getStatus()), Collectors.counting()));
+                .collect(Collectors.groupingBy(apt -> normaliseStatus(apt.getStatus()), Collectors.counting()));
         long pending   = byStatus.getOrDefault("Pending",   0L);
         long assigned  = byStatus.getOrDefault("Assigned",  0L);
         long completed = byStatus.getOrDefault("Completed", 0L);
         long declined  = byStatus.getOrDefault("Declined",  0L);
-        long normal    = all.stream().filter(a -> "Normal".equals(a.getServiceType())).count();
-        long major     = all.stream().filter(a -> "Major".equals(a.getServiceType())).count();
+        long normal    = all.stream().filter(apt -> "Normal".equals(apt.getServiceType())).count();
+        long major     = all.stream().filter(apt -> "Major".equals(apt.getServiceType())).count();
         long total     = all.size();
 
         // ── Bar chart panel ──────────────────────────────────────────
@@ -157,7 +157,7 @@ public class ReportsPanel extends JPanel {
             g2.drawString(title, padL, padT - 12);
 
             long max = 1;
-            for (long v : values) if (v > max) max = v;
+            for (long val : values) if (val > max) max = val;
 
             int barW = chartW / (labels.length * 2);
 
@@ -211,7 +211,7 @@ public class ReportsPanel extends JPanel {
             int size = Math.min(w, h) - 60;
             int x = (w - size) / 2, y = (h - size) / 2 - 20;
 
-            long total = 0; for (long v : values) total += v;
+            long total = 0; for (long val : values) total += val;
             if (total == 0) {
                 g2.setColor(UITheme.TEXT_MUTED);
                 g2.setFont(UITheme.FONT_BODY);

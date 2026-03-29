@@ -129,9 +129,9 @@ public class LoginFrame extends JFrame {
         // Show unread notifications as toast popups
         List<Notification> notifications =
                 NotificationService.getNotificationsForUser(user.getUserId(), user.getRole());
-        for (Notification n : notifications) {
-            ToastNotification.show(n.getMessage());
-            NotificationService.markAsRead(n, user.getUserId());
+        for (Notification notification : notifications) {
+            ToastNotification.show(notification.getMessage());
+            NotificationService.markAsRead(notification, user.getUserId());
         }
 
         // Polymorphism: open the role-specific dashboard

@@ -56,9 +56,9 @@ public class StaffDashboard extends JFrame {
 
     private void switchTab(String name, java.util.function.Supplier<JPanel> supplier) {
         Component[] components = contentArea.getComponents();
-        for (Component c : components) {
-            if (name.equals(c.getName())) {
-                contentArea.remove(c);
+        for (Component component : components) {
+            if (name.equals(component.getName())) {
+                contentArea.remove(component);
                 break;
             }
         }

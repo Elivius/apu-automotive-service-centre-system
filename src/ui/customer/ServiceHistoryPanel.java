@@ -87,15 +87,15 @@ public class ServiceHistoryPanel extends JPanel {
     void refresh() {
         tableModel.setRowCount(0);
         appointments = FeedbackService.getFeedbackForCustomer(customer.getUserId());
-        for (Appointment a : appointments) {
-            String feedback = a.getFeedback();
+        for (Appointment apt : appointments) {
+            String feedback = apt.getFeedback();
             // Show only first 40 characters of feedback
             String preview = StringUtils.truncate(feedback, 40);
             tableModel.addRow(new Object[]{
-                a.getAppointmentId(),
-                a.getServiceType(),
-                a.getDateTime() != null ? a.getDateTime().format(FMT) : "",
-                a.getStatus(),
+                apt.getAppointmentId(),
+                apt.getServiceType(),
+                apt.getDateTime() != null ? apt.getDateTime().format(FMT) : "",
+                apt.getStatus(),
                 preview
             });
         }
@@ -105,7 +105,7 @@ public class ServiceHistoryPanel extends JPanel {
     private void onSelect() {
         int row = table.getSelectedRow();
         if (row < 0 || row >= appointments.size()) return;
-        Appointment a = appointments.get(row);
-        taDetail.setText(a.getFeedback() != null ? a.getFeedback() : "(no feedback)");
+        Appointment apt = appointments.get(row);
+        taDetail.setText(apt.getFeedback() != null ? apt.getFeedback() : "(no feedback)");
     }
 }

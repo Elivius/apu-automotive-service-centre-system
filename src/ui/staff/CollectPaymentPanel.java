@@ -92,15 +92,15 @@ public class CollectPaymentPanel extends JPanel {
         List<String> lines = utils.FileHandler.getInstance().readAllLines(utils.FileHandler.PAYMENTS_FILE);
         pendingPayments = lines.stream()
                 .map(Payment::fromFileString)
-                .filter(p -> p != null && "Physical".equals(p.getPaymentMethod()) && "Pending".equals(p.getPaymentStatus()))
+                .filter(payment -> payment != null && "Physical".equals(payment.getPaymentMethod()) && "Pending".equals(payment.getPaymentStatus()))
                 .collect(Collectors.toList());
 
-        for (Payment p : pendingPayments) {
+        for (Payment payment : pendingPayments) {
             tableModel.addRow(new Object[]{
-                p.getPaymentId(), p.getAppointmentId(),
-                String.format("%.2f", p.getAmount()),
-                p.getPaymentMethod(), p.getPaymentStatus(),
-                p.getDateTime() != null ? p.getDateTime().format(FMT) : ""
+                payment.getPaymentId(), payment.getAppointmentId(),
+                String.format("%.2f", payment.getAmount()),
+                payment.getPaymentMethod(), payment.getPaymentStatus(),
+                payment.getDateTime() != null ? payment.getDateTime().format(FMT) : ""
             });
         }
         lblReceiptPath.setText(" ");

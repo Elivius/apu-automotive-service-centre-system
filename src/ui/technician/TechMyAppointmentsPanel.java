@@ -75,11 +75,11 @@ public class TechMyAppointmentsPanel extends JPanel {
     void refresh() {
         tableModel.setRowCount(0);
         appointments = AppointmentService.getAllAppointmentsForTechnician(technician.getUserId());
-        for (Appointment a : appointments) {
+        for (Appointment apt : appointments) {
             tableModel.addRow(new Object[]{
-                a.getAppointmentId(), a.getCustomerId(), a.getServiceType(), a.getStatus(),
-                a.getDateTime()    != null ? a.getDateTime().format(FMT)    : "",
-                a.getEndDateTime() != null ? a.getEndDateTime().format(FMT) : ""
+                apt.getAppointmentId(), apt.getCustomerId(), apt.getServiceType(), apt.getStatus(),
+                apt.getDateTime()    != null ? apt.getDateTime().format(FMT)    : "",
+                apt.getEndDateTime() != null ? apt.getEndDateTime().format(FMT) : ""
             });
         }
     }

@@ -120,13 +120,13 @@ public class MyAppointmentsPanel extends JPanel {
     void refresh() {
         tableModel.setRowCount(0);
         appointments = AppointmentService.getAllAppointmentsForCustomer(customer.getUserId());
-        for (Appointment a : appointments) {
+        for (Appointment apt : appointments) {
             tableModel.addRow(new Object[]{
-                a.getAppointmentId(),
-                a.getServiceType(),
-                a.getDateTime() != null ? a.getDateTime().format(FMT) : "",
-                a.getStatus(),
-                a.getComments()
+                apt.getAppointmentId(),
+                apt.getServiceType(),
+                apt.getDateTime() != null ? apt.getDateTime().format(FMT) : "",
+                apt.getStatus(),
+                apt.getComments()
             });
         }
         lblActionTitle.setText("Select an appointment above");

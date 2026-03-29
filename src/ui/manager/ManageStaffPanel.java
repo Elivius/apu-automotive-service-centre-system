@@ -66,8 +66,8 @@ public class ManageStaffPanel extends JPanel {
         JTextField tfSearch = UITheme.styledTextField(16);
         tfSearch.setName("tfSearch");
         tfSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            void filter() { String t = tfSearch.getText().trim();
-                sorter.setRowFilter(t.isEmpty() ? null : RowFilter.regexFilter("(?i)" + t, 1)); }
+            void filter() { String text = tfSearch.getText().trim();
+                sorter.setRowFilter(text.isEmpty() ? null : RowFilter.regexFilter("(?i)" + text, 1)); }
             public void insertUpdate(javax.swing.event.DocumentEvent e) { filter(); }
             public void removeUpdate(javax.swing.event.DocumentEvent e) { filter(); }
             public void changedUpdate(javax.swing.event.DocumentEvent e) { filter(); }
@@ -91,14 +91,14 @@ public class ManageStaffPanel extends JPanel {
             model.setRowCount(0);
             List<String> lines = utils.FileHandler.getInstance().readAllLines(utils.FileHandler.USERS_FILE);
             userRef[0] = lines.stream().map(UserService::parseUser)
-                    .filter(u -> u != null && role.equals(u.getRole())).collect(Collectors.toList());
-            for (User u : userRef[0]) {
+                    .filter(user -> user != null && role.equals(user.getRole())).collect(Collectors.toList());
+            for (User user : userRef[0]) {
                 if (isTech) {
-                    models.Technician t = (models.Technician) u;
-                    model.addRow(new Object[]{u.getUserId(), u.getName(), u.getUsername(),
-                        u.getEmail(), u.getPhone(), t.getSpecialization()});
+                    models.Technician tech = (models.Technician) user;
+                    model.addRow(new Object[]{user.getUserId(), user.getName(), user.getUsername(),
+                        user.getEmail(), user.getPhone(), tech.getSpecialization()});
                 } else {
-                    model.addRow(new Object[]{u.getUserId(), u.getName(), u.getUsername(), u.getEmail(), u.getPhone()});
+                    model.addRow(new Object[]{user.getUserId(), user.getName(), user.getUsername(), user.getEmail(), user.getPhone()});
                 }
             }
         };
@@ -111,16 +111,16 @@ public class ManageStaffPanel extends JPanel {
         });
         btnEdit.addActionListener(e -> {
             int row = table.getSelectedRow(); if (row < 0) return;
-            User u = userRef[0].get(table.convertRowIndexToModel(row));
-            showStaffForm(u, role, isTech);
+            User user = userRef[0].get(table.convertRowIndexToModel(row));
+            showStaffForm(user, role, isTech);
             loadData.run();
         });
         btnDelete.addActionListener(e -> {
             int row = table.getSelectedRow(); if (row < 0) return;
-            User u = userRef[0].get(table.convertRowIndexToModel(row));
+            User user = userRef[0].get(table.convertRowIndexToModel(row));
             int ok = JOptionPane.showConfirmDialog(this,
-                "Delete \"" + u.getName() + "\"?", "Confirm", JOptionPane.YES_NO_OPTION);
-            if (ok == JOptionPane.YES_OPTION) { UserService.deleteUser(u); loadData.run(); }
+                "Delete \"" + user.getName() + "\"?", "Confirm", JOptionPane.YES_NO_OPTION);
+            if (ok == JOptionPane.YES_OPTION) { UserService.deleteUser(user); loadData.run(); }
         });
 
         // Top bar
@@ -149,63 +149,63 @@ public class ManageStaffPanel extends JPanel {
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
         form.setBackground(UITheme.BG_CARD);
 
-        JTextField tfU = UITheme.styledTextField(20);
-        tfU.setName("tfUsername");
-        JTextField tfN = UITheme.styledTextField(20);
-        tfN.setName("tfName");
-        JTextField tfE = UITheme.styledTextField(20);
-        tfE.setName("tfEmail");
-        JTextField tfP = UITheme.styledTextField(20);
-        tfP.setName("tfPhone");
-        JTextField tfSpec = UITheme.styledTextField(20);
-        tfSpec.setName("tfSpecialization");
-        JPasswordField pfPw = UITheme.styledPasswordField(20);
-        pfPw.setName("pfPassword");
+        JTextField tfUsername = UITheme.styledTextField(20);
+        tfUsername.setName("tfUsername");
+        JTextField tfName = UITheme.styledTextField(20);
+        tfName.setName("tfName");
+        JTextField tfEmail = UITheme.styledTextField(20);
+        tfEmail.setName("tfEmail");
+        JTextField tfPhone = UITheme.styledTextField(20);
+        tfPhone.setName("tfPhone");
+        JTextField tfSpecialization = UITheme.styledTextField(20);
+        tfSpecialization.setName("tfSpecialization");
+        JPasswordField pfPassword = UITheme.styledPasswordField(20);
+        pfPassword.setName("pfPassword");
 
         if (prefill != null) {
-            tfU.setText(prefill.getUsername());
-            tfU.setEditable(false);
-            tfN.setText(prefill.getName());
-            tfE.setText(prefill.getEmail());
-            tfP.setText(prefill.getPhone() != null ? prefill.getPhone() : "");
-            if (isTech) tfSpec.setText(((models.Technician)prefill).getSpecialization());
+            tfUsername.setText(prefill.getUsername());
+            tfUsername.setEditable(false);
+            tfName.setText(prefill.getName());
+            tfEmail.setText(prefill.getEmail());
+            tfPhone.setText(prefill.getPhone() != null ? prefill.getPhone() : "");
+            if (isTech) tfSpecialization.setText(((models.Technician)prefill).getSpecialization());
         }
 
-        form.add(UITheme.formRow("Username *", tfU));
+        form.add(UITheme.formRow("Username *", tfUsername));
         form.add(Box.createVerticalStrut(8));
-        form.add(UITheme.formRow("Full Name *", tfN));
+        form.add(UITheme.formRow("Full Name *", tfName));
         form.add(Box.createVerticalStrut(8));
-        form.add(UITheme.formRow("Email",       tfE));
+        form.add(UITheme.formRow("Email", tfEmail));
         form.add(Box.createVerticalStrut(8));
-        form.add(UITheme.formRow("Phone",       tfP));
+        form.add(UITheme.formRow("Phone", tfPhone));
         form.add(Box.createVerticalStrut(8));
-        if (isTech) { form.add(UITheme.formRow("Specialization", tfSpec));
+        if (isTech) { form.add(UITheme.formRow("Specialization", tfSpecialization));
         form.add(Box.createVerticalStrut(8)); }
-        if (prefill == null) { form.add(UITheme.formRow("Password *", pfPw)); }
+        if (prefill == null) { form.add(UITheme.formRow("Password *", pfPassword)); }
 
         String title = (prefill == null ? "Add " : "Edit ") + role;
         int res = JOptionPane.showConfirmDialog(this, form, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (res != JOptionPane.OK_OPTION) return;
 
         if (prefill == null) {
-            String pw = new String(pfPw.getPassword());
-            String username = tfU.getText().trim();
-            String name     = tfN.getText().trim();
+            String pw = new String(pfPassword.getPassword());
+            String username = tfUsername.getText().trim();
+            String name = tfName.getText().trim();
             if (username.isEmpty() || name.isEmpty() || pw.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Username, Name, Password are required.");
                 return;
             }
             if (isTech) {
-                UserService.registerUser(username, pw, name, tfE.getText().trim(), tfP.getText().trim(), role, tfSpec.getText().trim());
+                UserService.registerUser(username, pw, name, tfEmail.getText().trim(), tfPhone.getText().trim(), role, tfSpecialization.getText().trim());
             } else {
-                UserService.registerUser(username, pw, name, tfE.getText().trim(), tfP.getText().trim(), role);
+                UserService.registerUser(username, pw, name, tfEmail.getText().trim(), tfPhone.getText().trim(), role);
             }
         } else {
             try {
-                prefill.setName(tfN.getText().trim());
-                prefill.setEmail(tfE.getText().trim());
-                prefill.setPhone(tfP.getText().trim());
-                if (isTech) ((models.Technician)prefill).setSpecialization(tfSpec.getText().trim());
+                prefill.setName(tfName.getText().trim());
+                prefill.setEmail(tfEmail.getText().trim());
+                prefill.setPhone(tfPhone.getText().trim());
+                if (isTech) ((models.Technician)prefill).setSpecialization(tfSpecialization.getText().trim());
                 UserService.updateUser(prefill);
             } catch (IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
