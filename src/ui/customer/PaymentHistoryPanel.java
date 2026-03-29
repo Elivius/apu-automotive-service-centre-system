@@ -41,7 +41,11 @@ public class PaymentHistoryPanel extends JPanel {
         add(header, BorderLayout.NORTH);
 
         String[] cols = {"Payment ID", "Appointment ID", "Amount (RM)", "Method", "Status", "Date"};
-        tableModel = new DefaultTableModel(cols, 0) { public boolean isCellEditable(int r, int c) { return false; } };
+        tableModel = new DefaultTableModel(cols, 0) {
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
+        };
         JTable table = new JTable(tableModel);
         table.setName("tablePayments");
 

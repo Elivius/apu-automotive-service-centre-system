@@ -24,11 +24,11 @@ public class MyAppointmentsPanel extends JPanel {
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private final Customer customer;
-    private JTable   table;
+    private JTable table;
     private DefaultTableModel tableModel;
     private JTextArea taAction;
-    private JButton   btnSubmit;
-    private JLabel    lblActionTitle, lblActionHint, lblMsg;
+    private JButton btnSubmit;
+    private JLabel lblActionTitle, lblActionHint, lblMsg;
     private List<Appointment> appointments;
 
     public MyAppointmentsPanel(Customer customer) {
@@ -53,11 +53,20 @@ public class MyAppointmentsPanel extends JPanel {
 
         // ── Table ─────────────────────────────────────────────────────
         String[] cols = {"ID", "Service", "Date & Time", "Status", "Comments"};
-        tableModel = new DefaultTableModel(cols, 0) { public boolean isCellEditable(int r, int c) { return false; } };
+        tableModel = new DefaultTableModel(cols, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         table = new JTable(tableModel);
         table.setName("tableAppointments");
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.getSelectionModel().addListSelectionListener(e -> { if (!e.getValueIsAdjusting()) onSelect(); });
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                onSelect();
+            }
+        });
         JScrollPane sp = UITheme.styledTable(table);
         sp.setPreferredSize(new Dimension(0, 320));
 
@@ -130,7 +139,9 @@ public class MyAppointmentsPanel extends JPanel {
 
     private void onSelect() {
         int row = table.getSelectedRow();
-        if (row < 0 || row >= appointments.size()) return; // Prevent IndexOutOfBoundsException (User didn't select any row)
+        if (row < 0 || row >= appointments.size()) {
+            return; // Prevent IndexOutOfBoundsException (User didn't select any row)
+        }
         Appointment apt = appointments.get(row);
         String status = apt.getStatus();
         lblMsg.setText(" ");
@@ -152,17 +163,24 @@ public class MyAppointmentsPanel extends JPanel {
         } else {
             lblActionTitle.setText("Appointment: " + apt.getAppointmentId() + " — " + status);
             lblActionHint.setText("No actions available for this status.");
-            taAction.setText(""); taAction.setEnabled(false);
+            taAction.setText("");
+            taAction.setEnabled(false);
             btnSubmit.setEnabled(false);
         }
     }
 
     private void doSubmit() {
         int row = table.getSelectedRow();
-        if (row < 0 || row >= appointments.size()) return;
+        if (row < 0 || row >= appointments.size()) {
+            return;
+        }
         Appointment apt = appointments.get(row);
         String text = taAction.getText().trim();
-        if (text.isEmpty()) { lblMsg.setText("Please enter some text."); lblMsg.setForeground(UITheme.ACCENT); return; }
+        if (text.isEmpty()) {
+            lblMsg.setText("Please enter some text.");
+            lblMsg.setForeground(UITheme.ACCENT);
+            return;
+        }
 
         if ("Completed".equals(apt.getStatus())) {
             FeedbackService.submitServiceReview(apt, text);

@@ -87,7 +87,8 @@ public class TechMyAppointmentsPanel extends JPanel {
     private void openDetail() {
         int row = table.getSelectedRow();
         if (row < 0 || row >= appointments.size()) {
-            JOptionPane.showMessageDialog(this, "Please select an appointment."); return;
+            JOptionPane.showMessageDialog(this, "Please select an appointment.");
+            return;
         }
         Appointment apt = appointments.get(row);
         AppointmentDetailFrame detail = new AppointmentDetailFrame(technician, apt, this::refresh);

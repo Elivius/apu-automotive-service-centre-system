@@ -162,10 +162,16 @@ public class UITheme {
                 g2.dispose();
                 super.paintComponent(g);
             }
-            { setFont(FONT_BUTTON); setForeground(Color.WHITE); setOpaque(false);
-              setContentAreaFilled(false); setBorderPainted(false); setFocusPainted(false);
-              setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-              setPreferredSize(new Dimension(getPreferredSize().width + 24, 38)); }
+            {
+                setFont(FONT_BUTTON); 
+                setForeground(Color.WHITE); 
+                setOpaque(false);
+                setContentAreaFilled(false); 
+                setBorderPainted(false); 
+                setFocusPainted(false);
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                setPreferredSize(new Dimension(getPreferredSize().width + 24, 38));
+            }
         };
     }
 
@@ -230,12 +236,28 @@ public class UITheme {
         lbl.setFont(FONT_SMALL);
         lbl.setOpaque(true);
         lbl.setBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6));
-        if (status == null) { lbl.setBackground(TEXT_MUTED); lbl.setForeground(Color.WHITE); return lbl; }
+        if (status == null) { 
+            lbl.setBackground(TEXT_MUTED); 
+            lbl.setForeground(Color.WHITE); 
+            return lbl; 
+        }
         switch (status) {
-            case "Completed": lbl.setBackground(SUCCESS);  lbl.setForeground(Color.WHITE); break;
-            case "Pending":   lbl.setBackground(WARNING);  lbl.setForeground(Color.BLACK); break;
-            case "Declined":  lbl.setBackground(DANGER);   lbl.setForeground(Color.WHITE); break;
-            default:          lbl.setBackground(BG_SIDEBAR); lbl.setForeground(Color.WHITE); break;
+            case "Completed": 
+                lbl.setBackground(SUCCESS);  
+                lbl.setForeground(Color.WHITE); 
+                break;
+            case "Pending":   
+                lbl.setBackground(WARNING);  
+                lbl.setForeground(Color.BLACK); 
+                break;
+            case "Declined":  
+                lbl.setBackground(DANGER);   
+                lbl.setForeground(Color.WHITE); 
+                break;
+            default:          
+                lbl.setBackground(BG_SIDEBAR); 
+                lbl.setForeground(Color.WHITE); 
+                break;
         }
         return lbl;
     }

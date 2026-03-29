@@ -52,7 +52,9 @@ public class ManageStaffPanel extends JPanel {
                 : new String[]{"User ID", "Name", "Username", "Email", "Phone"};
 
         DefaultTableModel model = new DefaultTableModel(cols, 0) {
-            public boolean isCellEditable(int r, int c) { return false; }
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
         JTable table = new JTable(model);
         table.setName("tblStaff");
@@ -126,11 +128,15 @@ public class ManageStaffPanel extends JPanel {
         topBar.setOpaque(false);
         JPanel searchRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
         searchRow.setOpaque(false);
-        searchRow.add(new JLabel("🔍")); searchRow.add(tfSearch);
+        searchRow.add(new JLabel("🔍"));
+        searchRow.add(tfSearch);
         topBar.add(searchRow, BorderLayout.WEST);
         JPanel btnRow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
         btnRow.setOpaque(false);
-        btnRow.add(btnAdd); btnRow.add(btnEdit); btnRow.add(btnDelete); btnRow.add(btnRefresh);
+        btnRow.add(btnAdd);
+        btnRow.add(btnEdit);
+        btnRow.add(btnDelete);
+        btnRow.add(btnRefresh);
         topBar.add(btnRow, BorderLayout.EAST);
 
         panel.add(topBar, BorderLayout.NORTH);
@@ -157,18 +163,24 @@ public class ManageStaffPanel extends JPanel {
         pfPw.setName("pfPassword");
 
         if (prefill != null) {
-            tfU.setText(prefill.getUsername()); tfU.setEditable(false);
+            tfU.setText(prefill.getUsername());
+            tfU.setEditable(false);
             tfN.setText(prefill.getName());
             tfE.setText(prefill.getEmail());
             tfP.setText(prefill.getPhone() != null ? prefill.getPhone() : "");
             if (isTech) tfSpec.setText(((models.Technician)prefill).getSpecialization());
         }
 
-        form.add(UITheme.formRow("Username *", tfU));   form.add(Box.createVerticalStrut(8));
-        form.add(UITheme.formRow("Full Name *", tfN));   form.add(Box.createVerticalStrut(8));
-        form.add(UITheme.formRow("Email",       tfE));   form.add(Box.createVerticalStrut(8));
-        form.add(UITheme.formRow("Phone",       tfP));   form.add(Box.createVerticalStrut(8));
-        if (isTech) { form.add(UITheme.formRow("Specialization", tfSpec)); form.add(Box.createVerticalStrut(8)); }
+        form.add(UITheme.formRow("Username *", tfU));
+        form.add(Box.createVerticalStrut(8));
+        form.add(UITheme.formRow("Full Name *", tfN));
+        form.add(Box.createVerticalStrut(8));
+        form.add(UITheme.formRow("Email",       tfE));
+        form.add(Box.createVerticalStrut(8));
+        form.add(UITheme.formRow("Phone",       tfP));
+        form.add(Box.createVerticalStrut(8));
+        if (isTech) { form.add(UITheme.formRow("Specialization", tfSpec));
+        form.add(Box.createVerticalStrut(8)); }
         if (prefill == null) { form.add(UITheme.formRow("Password *", pfPw)); }
 
         String title = (prefill == null ? "Add " : "Edit ") + role;
@@ -180,7 +192,8 @@ public class ManageStaffPanel extends JPanel {
             String username = tfU.getText().trim();
             String name     = tfN.getText().trim();
             if (username.isEmpty() || name.isEmpty() || pw.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Username, Name, Password are required."); return;
+                JOptionPane.showMessageDialog(this, "Username, Name, Password are required.");
+                return;
             }
             if (isTech) {
                 UserService.registerUser(username, pw, name, tfE.getText().trim(), tfP.getText().trim(), role, tfSpec.getText().trim());

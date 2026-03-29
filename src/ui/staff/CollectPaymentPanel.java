@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 /**
  * Panel for Counter Staff to collect physical payments.
- * Shows all "Pending" physical payments; staff can confirm payment
+ * Shows all "Pending" physical payments. Staff can confirm payment
  * and auto-generate a receipt .txt file.
  */
 public class CollectPaymentPanel extends JPanel {
@@ -88,7 +88,7 @@ public class CollectPaymentPanel extends JPanel {
 
     void refresh() {
         tableModel.setRowCount(0);
-        // Load all payments; keep only Physical + Pending
+        // Load all payments. Keep only Physical + Pending
         List<String> lines = utils.FileHandler.getInstance().readAllLines(utils.FileHandler.PAYMENTS_FILE);
         pendingPayments = lines.stream()
                 .map(Payment::fromFileString)
@@ -109,13 +109,15 @@ public class CollectPaymentPanel extends JPanel {
     private void doPaidPhysically() {
         int row = table.getSelectedRow();
         if (row < 0 || row >= pendingPayments.size()) {
-            JOptionPane.showMessageDialog(this, "Please select a payment to confirm."); return;
+            JOptionPane.showMessageDialog(this, "Please select a payment to confirm.");
+            return;
         }
         Payment payment = pendingPayments.get(row);
 
         Appointment apt = AppointmentService.findAppointmentById(payment.getAppointmentId());
         if (apt == null) {
-            JOptionPane.showMessageDialog(this, "Could not find the related appointment."); return;
+            JOptionPane.showMessageDialog(this, "Could not find the related appointment.");
+            return;
         }
 
         int ok = JOptionPane.showConfirmDialog(this,

@@ -54,8 +54,10 @@ public class ManageCustomersPanel extends JPanel {
         JButton btnRefresh = UITheme.secondaryButton("↻");
         btnRefresh.addActionListener(e -> refresh());
 
-        right.add(new JLabel("🔍")); right.add(tfSearch);
-        right.add(btnAdd); right.add(btnRefresh);
+        right.add(new JLabel("🔍"));
+        right.add(tfSearch);
+        right.add(btnAdd);
+        right.add(btnRefresh);
         header.add(right, BorderLayout.EAST);
         add(header, BorderLayout.NORTH);
 
@@ -74,9 +76,10 @@ public class ManageCustomersPanel extends JPanel {
         actions.setOpaque(false);
         JButton btnEdit   = UITheme.secondaryButton("✏️  Edit");
         JButton btnDelete = UITheme.dangerButton("🗑  Delete");
-        btnEdit.addActionListener(e   -> showEditDialog());
+        btnEdit.addActionListener(e -> showEditDialog());
         btnDelete.addActionListener(e -> doDelete());
-        actions.add(btnEdit); actions.add(btnDelete);
+        actions.add(btnEdit);
+        actions.add(btnDelete);
         add(actions, BorderLayout.SOUTH);
 
         refresh();
@@ -117,7 +120,8 @@ public class ManageCustomersPanel extends JPanel {
                pw = new String(pfPw.getPassword());
 
         if (username.isEmpty() || name.isEmpty() || pw.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Username, Name and Password are required."); return;
+            JOptionPane.showMessageDialog(this, "Username, Name and Password are required.");
+            return;
         }
         try {
             UserService.registerUser(username, pw, name, email, phone, "Customer");
@@ -172,10 +176,23 @@ public class ManageCustomersPanel extends JPanel {
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
         p.setBackground(UITheme.BG_CARD);
 
-        JTextField tfU  = UITheme.styledTextField(20); if (prefill != null) { tfU.setText(prefill.getUsername()); tfU.setEditable(false); }
-        JTextField tfN  = UITheme.styledTextField(20); if (prefill != null)   tfN.setText(prefill.getName());
-        JTextField tfE  = UITheme.styledTextField(20); if (prefill != null)   tfE.setText(prefill.getEmail());
-        JTextField tfP  = UITheme.styledTextField(20); if (prefill != null)   tfP.setText(prefill.getPhone() != null ? prefill.getPhone() : "");
+        JTextField tfU = UITheme.styledTextField(20);
+        if (prefill != null) {
+            tfU.setText(prefill.getUsername());
+            tfU.setEditable(false);
+        }
+        JTextField tfN = UITheme.styledTextField(20);
+        if (prefill != null) {
+            tfN.setText(prefill.getName());
+        }
+        JTextField tfE = UITheme.styledTextField(20);
+        if (prefill != null) {
+            tfE.setText(prefill.getEmail());
+        }
+        JTextField tfP = UITheme.styledTextField(20);
+        if (prefill != null) {
+            tfP.setText(prefill.getPhone() != null ? prefill.getPhone() : "");
+        }
         JPasswordField pfPw = UITheme.styledPasswordField(20);
 
         p.add(UITheme.formRow("Username *", tfU));

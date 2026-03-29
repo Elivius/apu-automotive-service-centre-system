@@ -104,7 +104,8 @@ public class LoginFrame extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1; gbc.weighty = 1;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
         gbc.insets = new Insets(24, 24, 24, 24);
         add(card, gbc);
     }

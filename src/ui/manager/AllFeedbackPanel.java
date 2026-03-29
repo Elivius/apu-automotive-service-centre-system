@@ -42,11 +42,17 @@ public class AllFeedbackPanel extends JPanel {
         add(header, BorderLayout.NORTH);
 
         String[] cols = {"Appt ID", "Customer ID", "Date", "Customer Comment", "Tech Feedback", "Service Review"};
-        tableModel = new DefaultTableModel(cols, 0) { public boolean isCellEditable(int r, int c) { return false; } };
+        tableModel = new DefaultTableModel(cols, 0) {
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
+        };
         table = new JTable(tableModel);
         table.setName("tableAppointments");
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.getSelectionModel().addListSelectionListener(e -> { if (!e.getValueIsAdjusting()) onSelect(); });
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) onSelect();
+        });
 
         // Widen columns
         table.getColumnModel().getColumn(0).setPreferredWidth(80);
@@ -64,7 +70,9 @@ public class AllFeedbackPanel extends JPanel {
         detailCard.add(UITheme.headerLabel("Selected Record — Full Details"), BorderLayout.NORTH);
         taDetail = new JTextArea(6, 60);
         taDetail.setName("taDetail");
-        taDetail.setEditable(false); taDetail.setLineWrap(true); taDetail.setWrapStyleWord(true);
+        taDetail.setEditable(false);
+        taDetail.setLineWrap(true);
+        taDetail.setWrapStyleWord(true);
         detailCard.add(UITheme.styledTextArea(taDetail), BorderLayout.CENTER);
 
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, sp, detailCard);

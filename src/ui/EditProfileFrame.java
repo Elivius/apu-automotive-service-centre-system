@@ -101,7 +101,7 @@ public class EditProfileFrame extends JFrame {
         card.add(Box.createVerticalStrut(10));
         card.add(UITheme.formRow("Current Password", pfOldPw));     
         card.add(Box.createVerticalStrut(10));
-        card.add(UITheme.formRow("New Password",     pfNewPw));     
+        card.add(UITheme.formRow("New Password", pfNewPw));     
         card.add(Box.createVerticalStrut(10));
         card.add(UITheme.formRow("Confirm Password", pfConfirmPw));
         card.add(Box.createVerticalStrut(16));
@@ -111,7 +111,8 @@ public class EditProfileFrame extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1; gbc.weighty = 1;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
         gbc.insets = new Insets(24, 24, 24, 24);
         add(card, gbc);
     }
@@ -125,23 +126,28 @@ public class EditProfileFrame extends JFrame {
         String confPw = new String(pfConfirmPw.getPassword());
 
         if (name.isEmpty() || email.isEmpty()) {
-            lblError.setText("Name and email are required."); return;
+            lblError.setText("Name and email are required.");
+            return;
         }
         if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
-            lblError.setText("Invalid email format."); return;
+            lblError.setText("Invalid email format.");
+            return;
         }
 
         // Password change (only if any password field is filled)
         boolean changingPassword = !oldPw.isEmpty() || !newPw.isEmpty();
         if (changingPassword) {
             if (!PasswordHasher.verify(oldPw, currentUser.getPassword())) {
-                lblError.setText("Current password is incorrect."); return;
+                lblError.setText("Current password is incorrect.");
+                return;
             }
             if (newPw.length() < 6) {
-                lblError.setText("New password must be at least 6 characters."); return;
+                lblError.setText("New password must be at least 6 characters.");
+                return;
             }
             if (!newPw.equals(confPw)) {
-                lblError.setText("New passwords do not match."); return;
+                lblError.setText("New passwords do not match.");
+                return;
             }
             currentUser.setHashedPassword(newPw);
         }

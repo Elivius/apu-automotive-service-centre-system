@@ -119,7 +119,9 @@ public class ReportsPanel extends JPanel {
         lbl.setAlignmentX(CENTER_ALIGNMENT);
         lbl.setHorizontalAlignment(SwingConstants.CENTER);
 
-        card.add(num); card.add(Box.createVerticalStrut(4)); card.add(lbl);
+        card.add(num);
+        card.add(Box.createVerticalStrut(4));
+        card.add(lbl);
         return card;
     }
 
@@ -131,8 +133,10 @@ public class ReportsPanel extends JPanel {
         private final String   title;
 
         ChartPanel(String[] labels, long[] values, Color[] colours, String title) {
-            this.labels = labels; this.values = values;
-            this.colours = colours; this.title = title;
+            this.labels = labels;
+            this.values = values;
+            this.colours = colours;
+            this.title = title;
             setOpaque(false);
             setPreferredSize(new Dimension(0, 320));
         }
@@ -192,7 +196,9 @@ public class ReportsPanel extends JPanel {
         private final Color[]  colours;
 
         PiePanel(String[] labels, long[] values, Color[] colours) {
-            this.labels = labels; this.values = values; this.colours = colours;
+            this.labels = labels;
+            this.values = values;
+            this.colours = colours;
             setOpaque(false);
         }
 
@@ -207,9 +213,11 @@ public class ReportsPanel extends JPanel {
 
             long total = 0; for (long v : values) total += v;
             if (total == 0) {
-                g2.setColor(UITheme.TEXT_MUTED); g2.setFont(UITheme.FONT_BODY);
+                g2.setColor(UITheme.TEXT_MUTED);
+                g2.setFont(UITheme.FONT_BODY);
                 g2.drawString("No data", w/2 - 25, h/2);
-                g2.dispose(); return;
+                g2.dispose();
+                return;
             }
 
             double startAngle = 90;
@@ -224,8 +232,10 @@ public class ReportsPanel extends JPanel {
             int ly = y + size + 16;
             for (int i = 0; i < labels.length; i++) {
                 int lx = w / 2 - (labels.length * 80) / 2 + i * 90;
-                g2.setColor(colours[i]); g2.fillRoundRect(lx, ly, 14, 14, 4, 4);
-                g2.setColor(UITheme.TEXT_PRIMARY); g2.setFont(UITheme.FONT_SMALL);
+                g2.setColor(colours[i]);
+                g2.fillRoundRect(lx, ly, 14, 14, 4, 4);
+                g2.setColor(UITheme.TEXT_PRIMARY);
+                g2.setFont(UITheme.FONT_SMALL);
                 g2.drawString(labels[i] + " (" + values[i] + ")", lx + 18, ly + 12);
             }
             g2.dispose();

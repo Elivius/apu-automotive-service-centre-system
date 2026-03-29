@@ -24,10 +24,10 @@ public class BookAppointmentPanel extends JPanel {
     private final Customer customer;
 
     private JComboBox<String> cbServiceType;
-    private JSpinner          spDate, spTime;
-    private JTextArea         taComments;
-    private JRadioButton      rbOnline, rbPhysical;
-    private JLabel            lblPrice, lblError, lblSuccess;
+    private JSpinner spDate, spTime;
+    private JTextArea taComments;
+    private JRadioButton rbOnline, rbPhysical;
+    private JLabel lblPrice, lblError, lblSuccess;
 
     public BookAppointmentPanel(Customer customer) {
         this.customer = customer;
@@ -68,6 +68,7 @@ public class BookAppointmentPanel extends JPanel {
         SpinnerDateModel dateModel = new SpinnerDateModel();
         spDate = new JSpinner(dateModel);
         spDate.setName("spDate");
+
         JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spDate, "yyyy-MM-dd");
         spDate.setEditor(dateEditor);
         spDate.setFont(UITheme.FONT_BODY);
@@ -91,6 +92,7 @@ public class BookAppointmentPanel extends JPanel {
         rbOnline.setSelected(true);
         styleRadio(rbOnline); 
         styleRadio(rbPhysical);
+
         ButtonGroup bg = new ButtonGroup(); 
         bg.add(rbOnline); 
         bg.add(rbPhysical);
@@ -113,9 +115,9 @@ public class BookAppointmentPanel extends JPanel {
         int row = 0;
         addFormRow(card, gbc, row++, "Service Type", cbServiceType);
         addFormRow(card, gbc, row++, "Service Price", lblPrice);
-        addFormRow(card, gbc, row++, "Date",           spDate);
-        addFormRow(card, gbc, row++, "Time Slot",      spTime);
-        addFormRow(card, gbc, row++, "Comments",       commentsScroll);
+        addFormRow(card, gbc, row++, "Date", spDate);
+        addFormRow(card, gbc, row++, "Time Slot", spTime);
+        addFormRow(card, gbc, row++, "Comments", commentsScroll);
 
         JPanel pmPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         pmPanel.setOpaque(false);
@@ -163,9 +165,9 @@ public class BookAppointmentPanel extends JPanel {
         lblError.setText(" ");
         lblSuccess.setText(" ");
         String serviceType = (String) cbServiceType.getSelectedItem();
-        String timeSlot    = (String) spTime.getValue();
-        String comments    = taComments.getText().trim();
-        String payMethod   = rbOnline.isSelected() ? "Online" : "Physical";
+        String timeSlot = (String) spTime.getValue();
+        String comments = taComments.getText().trim();
+        String payMethod = rbOnline.isSelected() ? "Online" : "Physical";
 
         // Build LocalDateTime
         Date dateVal = (Date) spDate.getValue();
@@ -226,13 +228,18 @@ public class BookAppointmentPanel extends JPanel {
 
     private void addFormRow(JPanel panel, GridBagConstraints gbc, int row, String label, Component field) {
         gbc.gridwidth = 1;
-        gbc.gridx = 0; gbc.gridy = row;
-        gbc.weightx = 0; gbc.insets = new Insets(8, 0, 0, 16);
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
+        gbc.insets = new Insets(8, 0, 0, 16);
         JLabel lbl = new JLabel(label + ":");
-        lbl.setFont(UITheme.FONT_BODY); lbl.setForeground(UITheme.TEXT_MUTED);
+        lbl.setFont(UITheme.FONT_BODY);
+        lbl.setForeground(UITheme.TEXT_MUTED);
         lbl.setPreferredSize(new Dimension(130, 28));
         panel.add(lbl, gbc);
-        gbc.gridx = 1; gbc.weightx = 1; gbc.insets = new Insets(8, 0, 0, 0);
+        gbc.gridx = 1;
+        gbc.weightx = 1;
+        gbc.insets = new Insets(8, 0, 0, 0);
         panel.add(field, gbc);
     }
 }

@@ -61,8 +61,10 @@ public class ManageAppointmentsPanel extends JPanel {
         btnRefresh.setName("btnRefresh");
         btnCreate.addActionListener(e -> showCreateDialog());
         btnRefresh.addActionListener(e -> refresh());
-        right.add(new JLabel("🔍")); right.add(tfSearch);
-        right.add(btnCreate); right.add(btnRefresh);
+        right.add(new JLabel("🔍"));
+        right.add(tfSearch);
+        right.add(btnCreate);
+        right.add(btnRefresh);
         header.add(right, BorderLayout.EAST);
         add(header, BorderLayout.NORTH);
 
@@ -86,7 +88,8 @@ public class ManageAppointmentsPanel extends JPanel {
         btnDecline.setName("btnDecline");
         btnAssign.addActionListener(e  -> showAssignDialog());
         btnDecline.addActionListener(e -> doDecline());
-        actions.add(btnAssign); actions.add(btnDecline);
+        actions.add(btnAssign);
+        actions.add(btnDecline);
         add(actions, BorderLayout.SOUTH);
 
         refresh();
@@ -182,16 +185,19 @@ public class ManageAppointmentsPanel extends JPanel {
         String[] custNames = customers.stream()
                 .map(c -> c.getUserId() + " — " + c.getName()).toArray(String[]::new);
         JComboBox<String> cbCustomer = new JComboBox<>(custNames);
-        cbCustomer.setBackground(UITheme.FIELD_BG); cbCustomer.setForeground(UITheme.TEXT_PRIMARY);
+        cbCustomer.setBackground(UITheme.FIELD_BG);
+        cbCustomer.setForeground(UITheme.TEXT_PRIMARY);
         JComboBox<String> cbService  = new JComboBox<>(new String[]{"Normal", "Major"});
-        cbService.setBackground(UITheme.FIELD_BG);  cbService.setForeground(UITheme.TEXT_PRIMARY);
+        cbService.setBackground(UITheme.FIELD_BG);
+        cbService.setForeground(UITheme.TEXT_PRIMARY);
 
         SpinnerDateModel dm = new SpinnerDateModel();
         JSpinner spDate = new JSpinner(dm);
         spDate.setEditor(new JSpinner.DateEditor(spDate, "yyyy-MM-dd HH:mm"));
 
         JTextArea taComments = new JTextArea(3, 20);
-        taComments.setBackground(UITheme.FIELD_BG); taComments.setForeground(UITheme.TEXT_PRIMARY);
+        taComments.setBackground(UITheme.FIELD_BG);
+        taComments.setForeground(UITheme.TEXT_PRIMARY);
 
         form.add(UITheme.formRow("Customer",     cbCustomer));
         form.add(Box.createVerticalStrut(8));

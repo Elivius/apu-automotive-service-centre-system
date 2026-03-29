@@ -76,10 +76,12 @@ public class TechnicianDashboard extends JFrame {
         avatar.setFont(new Font("SansSerif", Font.PLAIN, 36));
         avatar.setAlignmentX(CENTER_ALIGNMENT);
         JLabel name = new JLabel(technician.getName(), SwingConstants.CENTER);
-        name.setFont(UITheme.FONT_HEADER); name.setForeground(UITheme.TEXT_PRIMARY);
+        name.setFont(UITheme.FONT_HEADER); 
+        name.setForeground(UITheme.TEXT_PRIMARY);
         name.setAlignmentX(CENTER_ALIGNMENT);
         JLabel sub = UITheme.mutedLabel("Technician  •  " + technician.getUserId());
-        sub.setAlignmentX(CENTER_ALIGNMENT); sub.setHorizontalAlignment(SwingConstants.CENTER);
+        sub.setAlignmentX(CENTER_ALIGNMENT); 
+        sub.setHorizontalAlignment(SwingConstants.CENTER);
 
         String spec = technician.getSpecialization();
         if (spec != null && !spec.isEmpty()) {
@@ -90,13 +92,18 @@ public class TechnicianDashboard extends JFrame {
             sidebar.add(specLabel);
         }
 
-        sidebar.add(avatar); sidebar.add(Box.createVerticalStrut(8));
-        sidebar.add(name);   sidebar.add(Box.createVerticalStrut(4));
-        sidebar.add(sub);    sidebar.add(Box.createVerticalStrut(28));
+        sidebar.add(avatar); 
+        sidebar.add(Box.createVerticalStrut(8));
+        sidebar.add(name);   
+        sidebar.add(Box.createVerticalStrut(4));
+        sidebar.add(sub);    
+        sidebar.add(Box.createVerticalStrut(28));
 
-        JSeparator sep = new JSeparator(); sep.setForeground(new Color(0x1E4080));
+        JSeparator sep = new JSeparator(); 
+        sep.setForeground(new Color(0x1E4080));
         sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
-        sidebar.add(sep); sidebar.add(Box.createVerticalStrut(16));
+        sidebar.add(sep); 
+        sidebar.add(Box.createVerticalStrut(16));
 
         sidebar.add(sidebarBtn("📋  My Appointments", () -> switchTab(PANEL_APPTS, () -> new TechMyAppointmentsPanel(technician))));
         sidebar.add(Box.createVerticalGlue());
@@ -110,13 +117,21 @@ public class TechnicianDashboard extends JFrame {
         JButton btn = new JButton(text) {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
-                if (getModel().isRollover()) { g2.setColor(new Color(0x1E4080)); g2.fillRect(0,0,getWidth(),getHeight()); }
-                g2.dispose(); super.paintComponent(g);
+                if (getModel().isRollover()) { 
+                    g2.setColor(new Color(0x1E4080)); 
+                    g2.fillRect(0,0,getWidth(),getHeight()); 
+                }
+                g2.dispose(); 
+                super.paintComponent(g);
             }
         };
-        btn.setFont(UITheme.FONT_BODY); btn.setForeground(UITheme.TEXT_PRIMARY);
-        btn.setHorizontalAlignment(SwingConstants.LEFT); btn.setOpaque(false);
-        btn.setContentAreaFilled(false); btn.setBorderPainted(false); btn.setFocusPainted(false);
+        btn.setFont(UITheme.FONT_BODY); 
+        btn.setForeground(UITheme.TEXT_PRIMARY);
+        btn.setHorizontalAlignment(SwingConstants.LEFT); 
+        btn.setOpaque(false);
+        btn.setContentAreaFilled(false); 
+        btn.setBorderPainted(false); 
+        btn.setFocusPainted(false);
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
         btn.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
@@ -125,7 +140,10 @@ public class TechnicianDashboard extends JFrame {
     }
 
     private void doLogout() {
-        int ok = JOptionPane.showConfirmDialog(this,"Logout?","Logout",JOptionPane.YES_NO_OPTION);
-        if (ok == JOptionPane.YES_OPTION) { dispose(); new LoginFrame().setVisible(true); }
+        int ok = JOptionPane.showConfirmDialog(this, "Logout?", "Logout", JOptionPane.YES_NO_OPTION);
+        if (ok == JOptionPane.YES_OPTION) { 
+            dispose(); 
+            new LoginFrame().setVisible(true); 
+        }
     }
 }

@@ -37,7 +37,11 @@ public class AppointmentDetailFrame extends JFrame {
         setResizable(false);
         getContentPane().setBackground(UITheme.BG_DARK);
         addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosed(java.awt.event.WindowEvent e) { if (onClose != null) onClose.run(); }
+            public void windowClosed(java.awt.event.WindowEvent e) { 
+                if (onClose != null) {
+                    onClose.run(); 
+                }
+            }
         });
         buildUI();
     }
@@ -52,7 +56,8 @@ public class AppointmentDetailFrame extends JFrame {
         // ── Info ─────────────────────────────────────────────────────
         JLabel title = UITheme.titleLabel("Appointment: " + appointment.getAppointmentId());
         title.setAlignmentX(LEFT_ALIGNMENT);
-        card.add(title); card.add(Box.createVerticalStrut(16));
+        card.add(title); 
+        card.add(Box.createVerticalStrut(16));
 
         card.add(infoRow("Customer ID",  appointment.getCustomerId()));
         card.add(infoRow("Service Type", appointment.getServiceType()));
@@ -62,13 +67,15 @@ public class AppointmentDetailFrame extends JFrame {
         lblStatus = UITheme.headerLabel("Status: " + appointment.getStatus());
         lblStatus.setForeground(UITheme.WARNING);
         lblStatus.setAlignmentX(LEFT_ALIGNMENT);
-        card.add(Box.createVerticalStrut(8)); card.add(lblStatus);
+        card.add(Box.createVerticalStrut(8)); 
+        card.add(lblStatus);
 
         // ── Customer Comments ────────────────────────────────────────
         card.add(Box.createVerticalStrut(20));
         JLabel commLabel = UITheme.headerLabel("Customer Comments:");
         commLabel.setAlignmentX(LEFT_ALIGNMENT);
-        card.add(commLabel); card.add(Box.createVerticalStrut(6));
+        card.add(commLabel); 
+        card.add(Box.createVerticalStrut(6));
         JTextArea taComments = new JTextArea(3, 40);
         taComments.setText(appointment.getComments() != null ? appointment.getComments() : "(none)");
         taComments.setEditable(false);
@@ -80,7 +87,8 @@ public class AppointmentDetailFrame extends JFrame {
         card.add(Box.createVerticalStrut(20));
         JLabel fbLabel = UITheme.headerLabel("Technician Feedback:");
         fbLabel.setAlignmentX(LEFT_ALIGNMENT);
-        card.add(fbLabel); card.add(Box.createVerticalStrut(6));
+        card.add(fbLabel); 
+        card.add(Box.createVerticalStrut(6));
         taFeedback = new JTextArea(4, 40);
         taFeedback.setText(appointment.getFeedback() != null ? appointment.getFeedback() : "");
         JScrollPane fbScroll = UITheme.styledTextArea(taFeedback);
@@ -94,7 +102,8 @@ public class AppointmentDetailFrame extends JFrame {
         // ── Buttons ──────────────────────────────────────────────────
         card.add(Box.createVerticalStrut(16));
         lblMsg = new JLabel(" ");
-        lblMsg.setFont(UITheme.FONT_SMALL); lblMsg.setForeground(UITheme.SUCCESS);
+        lblMsg.setFont(UITheme.FONT_SMALL); 
+        lblMsg.setForeground(UITheme.SUCCESS);
         lblMsg.setAlignmentX(LEFT_ALIGNMENT);
         card.add(lblMsg);
 
@@ -117,26 +126,37 @@ public class AppointmentDetailFrame extends JFrame {
         card.add(btnRow);
 
         JScrollPane outer = new JScrollPane(card);
-        outer.setBorder(null); outer.getViewport().setBackground(UITheme.BG_DARK);
+        outer.setBorder(null); 
+        outer.getViewport().setBackground(UITheme.BG_DARK);
         add(outer, BorderLayout.CENTER);
     }
 
     private JPanel infoRow(String label, String value) {
         JPanel row = new JPanel(new BorderLayout(10, 0));
         row.setOpaque(false);
-        JLabel lbl = new JLabel(label + ":"); lbl.setForeground(UITheme.TEXT_MUTED); lbl.setFont(UITheme.FONT_BODY);
+        JLabel lbl = new JLabel(label + ":"); 
+        lbl.setForeground(UITheme.TEXT_MUTED); 
+        lbl.setFont(UITheme.FONT_BODY);
         lbl.setPreferredSize(new Dimension(120, 26));
-        JLabel val = new JLabel(value);  val.setForeground(UITheme.TEXT_PRIMARY); val.setFont(UITheme.FONT_BODY);
-        row.add(lbl, BorderLayout.WEST); row.add(val, BorderLayout.CENTER);
+        JLabel val = new JLabel(value);  
+        val.setForeground(UITheme.TEXT_PRIMARY); 
+        val.setFont(UITheme.FONT_BODY);
+        row.add(lbl, BorderLayout.WEST); 
+        row.add(val, BorderLayout.CENTER);
         row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
         return row;
     }
 
     private void doSaveFeedback() {
         String text = taFeedback.getText().trim();
-        if (text.isEmpty()) { lblMsg.setText("Feedback is empty."); lblMsg.setForeground(UITheme.ACCENT); return; }
+        if (text.isEmpty()) { 
+            lblMsg.setText("Feedback is empty."); 
+            lblMsg.setForeground(UITheme.ACCENT); 
+            return; 
+        }
         FeedbackService.submitTechnicianFeedback(appointment, text);
-        lblMsg.setText("Feedback saved!"); lblMsg.setForeground(UITheme.SUCCESS);
+        lblMsg.setText("Feedback saved!"); 
+        lblMsg.setForeground(UITheme.SUCCESS);
     }
 
     private void doComplete() {
@@ -146,7 +166,9 @@ public class AppointmentDetailFrame extends JFrame {
         if (ok != JOptionPane.YES_OPTION) return;
         // Save feedback first if any
         String fb = taFeedback.getText().trim();
-        if (!fb.isEmpty()) FeedbackService.submitTechnicianFeedback(appointment, fb);
+        if (!fb.isEmpty()) {
+            FeedbackService.submitTechnicianFeedback(appointment, fb);
+        }
         AppointmentService.completeAppointment(appointment);
         JOptionPane.showMessageDialog(this, "Appointment marked as Completed.");
         dispose();

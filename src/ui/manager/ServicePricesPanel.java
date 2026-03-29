@@ -30,12 +30,14 @@ public class ServicePricesPanel extends JPanel {
         JLabel title = UITheme.titleLabel("Set Service Prices");
         title.setName("lblTitle");
         title.setAlignmentX(LEFT_ALIGNMENT);
-        card.add(title); card.add(Box.createVerticalStrut(8));
+        card.add(title);
+        card.add(Box.createVerticalStrut(8));
 
         JLabel hint = UITheme.mutedLabel("Prices are in Malaysian Ringgit (RM) and apply to new appointments immediately.");
         hint.setName("lblHint");
         hint.setAlignmentX(LEFT_ALIGNMENT);
-        card.add(hint); card.add(Box.createVerticalStrut(28));
+        card.add(hint);
+        card.add(Box.createVerticalStrut(28));
 
         // Load current prices
         double normalPrice = PaymentService.getServicePrice("Normal");

@@ -19,11 +19,11 @@ public class CustomerDashboard extends JFrame {
 
     private final Customer customer;
     private final CardLayout cardLayout = new CardLayout();
-    private final JPanel     contentArea = new JPanel(cardLayout);
+    private final JPanel contentArea = new JPanel(cardLayout);
 
-    private static final String PANEL_BOOK     = "book";
-    private static final String PANEL_APPTS    = "appointments";
-    private static final String PANEL_HISTORY  = "history";
+    private static final String PANEL_BOOK = "book";
+    private static final String PANEL_APPTS = "appointments";
+    private static final String PANEL_HISTORY = "history";
     private static final String PANEL_PAYMENTS = "payments";
 
     public CustomerDashboard(Customer customer) {
@@ -49,9 +49,9 @@ public class CustomerDashboard extends JFrame {
         
         // Initial panels with names for the switchTab logic
         addNamedPanel(new BookAppointmentPanel(customer), PANEL_BOOK);
-        addNamedPanel(new MyAppointmentsPanel(customer),  PANEL_APPTS);
-        addNamedPanel(new ServiceHistoryPanel(customer),  PANEL_HISTORY);
-        addNamedPanel(new PaymentHistoryPanel(customer),  PANEL_PAYMENTS);
+        addNamedPanel(new MyAppointmentsPanel(customer), PANEL_APPTS);
+        addNamedPanel(new ServiceHistoryPanel(customer), PANEL_HISTORY);
+        addNamedPanel(new PaymentHistoryPanel(customer), PANEL_PAYMENTS);
         
         add(contentArea, BorderLayout.CENTER);
 
@@ -111,20 +111,21 @@ public class CustomerDashboard extends JFrame {
         sidebar.add(role);
         sidebar.add(Box.createVerticalStrut(28));
 
-        JSeparator sep = new JSeparator(); sep.setForeground(new Color(0x1E4080));
+        JSeparator sep = new JSeparator();
+        sep.setForeground(new Color(0x1E4080));
         sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
         sidebar.add(sep);
         sidebar.add(Box.createVerticalStrut(16));
 
         // Navigation buttons
-        sidebar.add(sidebarBtn("📋  My Appointments",  () -> switchTab(PANEL_APPTS,    () -> new MyAppointmentsPanel(customer))));
-        sidebar.add(sidebarBtn("➕  Book Appointment",  () -> switchTab(PANEL_BOOK,     () -> new BookAppointmentPanel(customer))));
-        sidebar.add(sidebarBtn("🔧  Service History",   () -> switchTab(PANEL_HISTORY,  () -> new ServiceHistoryPanel(customer))));
-        sidebar.add(sidebarBtn("💳  Payment History",   () -> switchTab(PANEL_PAYMENTS, () -> new PaymentHistoryPanel(customer))));
+        sidebar.add(sidebarBtn("📋  My Appointments", () -> switchTab(PANEL_APPTS, () -> new MyAppointmentsPanel(customer))));
+        sidebar.add(sidebarBtn("➕  Book Appointment", () -> switchTab(PANEL_BOOK, () -> new BookAppointmentPanel(customer))));
+        sidebar.add(sidebarBtn("🔧  Service History", () -> switchTab(PANEL_HISTORY, () -> new ServiceHistoryPanel(customer))));
+        sidebar.add(sidebarBtn("💳  Payment History", () -> switchTab(PANEL_PAYMENTS, () -> new PaymentHistoryPanel(customer))));
         sidebar.add(Box.createVerticalGlue());
-        sidebar.add(sidebarBtn("✏️  Edit Profile",       () -> new EditProfileFrame(customer).setVisible(true)));
+        sidebar.add(sidebarBtn("✏️  Edit Profile", () -> new EditProfileFrame(customer).setVisible(true)));
         sidebar.add(Box.createVerticalStrut(8));
-        sidebar.add(sidebarBtn("🚪  Logout",            this::doLogout));
+        sidebar.add(sidebarBtn("🚪  Logout", this::doLogout));
 
         return sidebar;
     }
@@ -158,8 +159,7 @@ public class CustomerDashboard extends JFrame {
     }
 
     private void doLogout() {
-        int ok = JOptionPane.showConfirmDialog(this, "Are you sure you want to logout?",
-                "Logout", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        int ok = JOptionPane.showConfirmDialog(this, "Are you sure you want to logout?", "Logout", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (ok == JOptionPane.YES_OPTION) {
             dispose();
             new LoginFrame().setVisible(true);

@@ -74,16 +74,27 @@ public class RegisterFrame extends JFrame {
         btnBack.setContentAreaFilled(false);
         btnBack.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnBack.setAlignmentX(CENTER_ALIGNMENT);
-        btnBack.addActionListener(e -> { new LoginFrame().setVisible(true); dispose(); });
+        btnBack.addActionListener(e -> {
+            new LoginFrame().setVisible(true);
+            dispose();
+        });
 
-        card.add(title); card.add(Box.createVerticalStrut(4));
-        card.add(sub);   card.add(Box.createVerticalStrut(24));
-        card.add(UITheme.formRow("Username *",        tfUsername)); card.add(Box.createVerticalStrut(10));
-        card.add(UITheme.formRow("Full Name *",        tfName));     card.add(Box.createVerticalStrut(10));
-        card.add(UITheme.formRow("Email *",            tfEmail));    card.add(Box.createVerticalStrut(10));
-        card.add(UITheme.formRow("Phone",              tfPhone));    card.add(Box.createVerticalStrut(10));
-        card.add(UITheme.formRow("Password *",         pfPassword)); card.add(Box.createVerticalStrut(10));
-        card.add(UITheme.formRow("Confirm Password *", pfConfirm));  card.add(Box.createVerticalStrut(16));
+        card.add(title);
+        card.add(Box.createVerticalStrut(4));
+        card.add(sub);
+        card.add(Box.createVerticalStrut(24));
+        card.add(UITheme.formRow("Username *", tfUsername));
+        card.add(Box.createVerticalStrut(10));
+        card.add(UITheme.formRow("Full Name *", tfName));
+        card.add(Box.createVerticalStrut(10));
+        card.add(UITheme.formRow("Email *", tfEmail));
+        card.add(Box.createVerticalStrut(10));
+        card.add(UITheme.formRow("Phone", tfPhone));
+        card.add(Box.createVerticalStrut(10));
+        card.add(UITheme.formRow("Password *", pfPassword));
+        card.add(Box.createVerticalStrut(10));
+        card.add(UITheme.formRow("Confirm Password *", pfConfirm));
+        card.add(Box.createVerticalStrut(16));
         card.add(lblError);
         card.add(Box.createVerticalStrut(8));
         card.add(btnRegister);
@@ -92,7 +103,8 @@ public class RegisterFrame extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1; gbc.weighty = 1;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
         gbc.insets = new Insets(24, 24, 24, 24);
         add(card, gbc);
     }
@@ -106,19 +118,24 @@ public class RegisterFrame extends JFrame {
         String confirm  = new String(pfConfirm.getPassword());
 
         if (username.isEmpty() || name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            lblError.setText("Please fill in all required (*) fields."); return;
+            lblError.setText("Please fill in all required (*) fields.");
+            return;
         }
         if (!password.equals(confirm)) {
-            lblError.setText("Passwords do not match."); return;
+            lblError.setText("Passwords do not match.");
+            return;
         }
         if (password.length() < 6) {
-            lblError.setText("Password must be at least 6 characters."); return;
+            lblError.setText("Password must be at least 6 characters.");
+            return;
         }
         if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
-            lblError.setText("Invalid email format."); return;
+            lblError.setText("Invalid email format.");
+            return;
         }
         if (!phone.isEmpty() && !phone.matches("\\d+")) {
-            lblError.setText("Phone number must contain digits only."); return;
+            lblError.setText("Phone number must contain digits only.");
+            return;
         }
 
         try {

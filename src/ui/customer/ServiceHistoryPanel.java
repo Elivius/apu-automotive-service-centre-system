@@ -46,11 +46,17 @@ public class ServiceHistoryPanel extends JPanel {
         add(header, BorderLayout.NORTH);
 
         String[] cols = {"Appt ID", "Service", "Date & Time", "Status", "Technician Feedback"};
-        tableModel = new DefaultTableModel(cols, 0) { public boolean isCellEditable(int r, int c) { return false; } };
+        tableModel = new DefaultTableModel(cols, 0) {
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
+        };
         table = new JTable(tableModel);
         table.setName("tableAppointments");
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.getSelectionModel().addListSelectionListener(e -> { if (!e.getValueIsAdjusting()) onSelect(); });
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) onSelect();
+        });
 
         JScrollPane sp = UITheme.styledTable(table);
         sp.setPreferredSize(new Dimension(0, 300));
@@ -64,7 +70,8 @@ public class ServiceHistoryPanel extends JPanel {
         taDetail = new JTextArea(6, 40);
         taDetail.setName("taDetail");
         taDetail.setEditable(false);
-        taDetail.setLineWrap(true); taDetail.setWrapStyleWord(true);
+        taDetail.setLineWrap(true);
+        taDetail.setWrapStyleWord(true);
         detailCard.add(UITheme.styledTextArea(taDetail), BorderLayout.CENTER);
 
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, sp, detailCard);
