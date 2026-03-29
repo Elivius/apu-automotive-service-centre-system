@@ -19,10 +19,10 @@ public class TechMyAppointmentsPanel extends JPanel {
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    private final Technician       technician;
-    private DefaultTableModel      tableModel;
-    private JTable                 table;
-    private List<Appointment>      appointments;
+    private final Technician technician;
+    private DefaultTableModel tableModel;
+    private JTable table;
+    private List<Appointment> appointments;
 
     public TechMyAppointmentsPanel(Technician technician) {
         this.technician = technician;

@@ -27,9 +27,9 @@ public class AppointmentDetailFrame extends JFrame {
     private JLabel lblStatus, lblMsg;
 
     public AppointmentDetailFrame(Technician technician, Appointment appointment, Runnable onClose) {
-        this.technician  = technician;
+        this.technician = technician;
         this.appointment = appointment;
-        this.onClose     = onClose;
+        this.onClose = onClose;
         setTitle("Appointment Details — " + appointment.getAppointmentId());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(600, 580);

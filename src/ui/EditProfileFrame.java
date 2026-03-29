@@ -15,10 +15,10 @@ import java.awt.*;
  */
 public class EditProfileFrame extends JFrame {
 
-    private final User     currentUser;
-    private JTextField     tfName, tfEmail, tfPhone;
+    private final User currentUser;
+    private JTextField tfName, tfEmail, tfPhone;
     private JPasswordField pfOldPw, pfNewPw, pfConfirmPw;
-    private JLabel         lblError;
+    private JLabel lblError;
 
     public EditProfileFrame(User user) {
         this.currentUser = user;

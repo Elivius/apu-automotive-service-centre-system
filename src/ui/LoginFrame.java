@@ -20,9 +20,9 @@ import java.util.List;
  */
 public class LoginFrame extends JFrame {
 
-    private JTextField     tfUsername;
+    private JTextField tfUsername;
     private JPasswordField pfPassword;
-    private JLabel         lblError;
+    private JLabel lblError;
 
     public LoginFrame() {
         setTitle("APU Automotive Service Centre — Login");

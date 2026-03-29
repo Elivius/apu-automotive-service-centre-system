@@ -111,11 +111,11 @@ public class RegisterFrame extends JFrame {
 
     private void doRegister() {
         String username = tfUsername.getText().trim();
-        String name     = tfName.getText().trim();
-        String email    = tfEmail.getText().trim();
-        String phone    = tfPhone.getText().trim();
+        String name = tfName.getText().trim();
+        String email = tfEmail.getText().trim();
+        String phone = tfPhone.getText().trim();
         String password = new String(pfPassword.getPassword());
-        String confirm  = new String(pfConfirm.getPassword());
+        String confirm = new String(pfConfirm.getPassword());
 
         if (username.isEmpty() || name.isEmpty() || email.isEmpty() || password.isEmpty()) {
             lblError.setText("Please fill in all required (*) fields.");

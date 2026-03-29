@@ -25,13 +25,13 @@ import java.util.stream.Collectors;
 public class ManageAppointmentsPanel extends JPanel {
 
     private final CounterStaff staff;
-    private DefaultTableModel  tableModel;
-    private JTable             table;
+    private DefaultTableModel tableModel;
+    private JTable table;
     private TableRowSorter<DefaultTableModel> sorter;
-    private JTextField         tfSearch;
-    private List<Appointment>  appointments;
-    private List<User>         technicians;
-    private List<User>         customers;
+    private JTextField tfSearch;
+    private List<Appointment> appointments;
+    private List<User> technicians;
+    private List<User> customers;
 
     public ManageAppointmentsPanel(CounterStaff staff) {
         this.staff = staff;

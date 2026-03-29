@@ -16,7 +16,7 @@ public class TechnicianDashboard extends JFrame {
 
     private final Technician technician;
     private final CardLayout cardLayout = new CardLayout();
-    private final JPanel     contentArea = new JPanel(cardLayout);
+    private final JPanel contentArea = new JPanel(cardLayout);
 
     private static final String PANEL_APPTS = "appointments";
 

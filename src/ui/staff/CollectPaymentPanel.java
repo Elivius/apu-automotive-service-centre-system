@@ -24,10 +24,10 @@ public class CollectPaymentPanel extends JPanel {
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private final CounterStaff staff;
-    private DefaultTableModel  tableModel;
-    private JTable             table;
-    private List<Payment>      pendingPayments;
-    private JLabel             lblReceiptPath;
+    private DefaultTableModel tableModel;
+    private JTable table;
+    private List<Payment> pendingPayments;
+    private JLabel lblReceiptPath;
 
     public CollectPaymentPanel(CounterStaff staff) {
         this.staff = staff;

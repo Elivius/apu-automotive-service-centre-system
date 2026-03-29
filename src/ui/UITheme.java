@@ -12,64 +12,64 @@ import java.awt.*;
 public class UITheme {
 
     // ─── Colour Palette ────────────────────────────────────────────────
-    public static final Color BG_DARK       = new Color(0x1A1A2E);
-    public static final Color BG_CARD       = new Color(0x16213E);
-    public static final Color BG_SIDEBAR    = new Color(0x0F3460);
-    public static final Color ACCENT        = new Color(0xE94560);
-    public static final Color ACCENT_HOVER  = new Color(0xFF6B6B);
-    public static final Color TEXT_PRIMARY  = new Color(0xEAEAEA);
-    public static final Color TEXT_MUTED    = new Color(0x9CA3AF);
-    public static final Color SUCCESS       = new Color(0x10B981);
-    public static final Color WARNING       = new Color(0xF59E0B);
-    public static final Color DANGER        = new Color(0xEF4444);
-    public static final Color TABLE_HEADER  = new Color(0x0F3460);
+    public static final Color BG_DARK = new Color(0x1A1A2E);
+    public static final Color BG_CARD = new Color(0x16213E);
+    public static final Color BG_SIDEBAR = new Color(0x0F3460);
+    public static final Color ACCENT = new Color(0xE94560);
+    public static final Color ACCENT_HOVER = new Color(0xFF6B6B);
+    public static final Color TEXT_PRIMARY = new Color(0xEAEAEA);
+    public static final Color TEXT_MUTED = new Color(0x9CA3AF);
+    public static final Color SUCCESS = new Color(0x10B981);
+    public static final Color WARNING = new Color(0xF59E0B);
+    public static final Color DANGER = new Color(0xEF4444);
+    public static final Color TABLE_HEADER = new Color(0x0F3460);
     public static final Color TABLE_ALT_ROW = new Color(0x1E2A4A);
-    public static final Color FIELD_BG      = new Color(0x0D1B3E);
-    public static final Color FIELD_BORDER  = new Color(0x2D3B6E);
+    public static final Color FIELD_BG = new Color(0x0D1B3E);
+    public static final Color FIELD_BORDER = new Color(0x2D3B6E);
 
     // ─── Fonts ─────────────────────────────────────────────────────────
-    public static final Font FONT_TITLE  = new Font("SansSerif", Font.BOLD,  22);
-    public static final Font FONT_HEADER = new Font("SansSerif", Font.BOLD,  15);
-    public static final Font FONT_BODY   = new Font("SansSerif", Font.PLAIN, 13);
-    public static final Font FONT_SMALL  = new Font("SansSerif", Font.PLAIN, 11);
-    public static final Font FONT_BUTTON = new Font("SansSerif", Font.BOLD,  13);
+    public static final Font FONT_TITLE = new Font("SansSerif", Font.BOLD, 22);
+    public static final Font FONT_HEADER = new Font("SansSerif", Font.BOLD, 15);
+    public static final Font FONT_BODY = new Font("SansSerif", Font.PLAIN, 13);
+    public static final Font FONT_SMALL = new Font("SansSerif", Font.PLAIN, 11);
+    public static final Font FONT_BUTTON = new Font("SansSerif", Font.BOLD, 13);
 
     // ─── Global Defaults ───────────────────────────────────────────────
     public static void applyGlobalDefaults() {
-        UIManager.put("OptionPane.background",            BG_CARD);
-        UIManager.put("Panel.background",                 BG_DARK);
-        UIManager.put("OptionPane.messageForeground",     TEXT_PRIMARY);
-        UIManager.put("Button.background",                ACCENT);
-        UIManager.put("Button.foreground",                Color.WHITE);
-        UIManager.put("Button.font",                      FONT_BUTTON);
-        UIManager.put("Label.foreground",                 TEXT_PRIMARY);
-        UIManager.put("Label.font",                       FONT_BODY);
-        UIManager.put("TextField.background",             FIELD_BG);
-        UIManager.put("TextField.foreground",             TEXT_PRIMARY);
-        UIManager.put("TextField.caretForeground",        TEXT_PRIMARY);
-        UIManager.put("PasswordField.background",         FIELD_BG);
-        UIManager.put("PasswordField.foreground",         TEXT_PRIMARY);
-        UIManager.put("PasswordField.caretForeground",    TEXT_PRIMARY);
-        UIManager.put("ComboBox.background",              FIELD_BG);
-        UIManager.put("ComboBox.foreground",              TEXT_PRIMARY);
-        UIManager.put("TextArea.background",              FIELD_BG);
-        UIManager.put("TextArea.foreground",              TEXT_PRIMARY);
-        UIManager.put("TextArea.caretForeground",         TEXT_PRIMARY);
-        UIManager.put("ScrollPane.background",            BG_DARK);
-        UIManager.put("Viewport.background",              BG_DARK);
-        UIManager.put("Table.background",                 BG_CARD);
-        UIManager.put("Table.foreground",                 TEXT_PRIMARY);
-        UIManager.put("Table.gridColor",                  FIELD_BORDER);
-        UIManager.put("Table.selectionBackground",        ACCENT);
-        UIManager.put("Table.selectionForeground",        Color.WHITE);
-        UIManager.put("TableHeader.background",           TABLE_HEADER);
-        UIManager.put("TableHeader.foreground",           Color.WHITE);
-        UIManager.put("TableHeader.font",                 FONT_HEADER);
-        UIManager.put("TabbedPane.background",            BG_CARD);
-        UIManager.put("TabbedPane.foreground",            TEXT_PRIMARY);
-        UIManager.put("TabbedPane.selected",              BG_SIDEBAR);
-        UIManager.put("Spinner.background",               FIELD_BG);
-        UIManager.put("Spinner.foreground",               TEXT_PRIMARY);
+        UIManager.put("OptionPane.background", BG_CARD);
+        UIManager.put("Panel.background", BG_DARK);
+        UIManager.put("OptionPane.messageForeground", TEXT_PRIMARY);
+        UIManager.put("Button.background", ACCENT);
+        UIManager.put("Button.foreground", Color.WHITE);
+        UIManager.put("Button.font", FONT_BUTTON);
+        UIManager.put("Label.foreground", TEXT_PRIMARY);
+        UIManager.put("Label.font", FONT_BODY);
+        UIManager.put("TextField.background", FIELD_BG);
+        UIManager.put("TextField.foreground", TEXT_PRIMARY);
+        UIManager.put("TextField.caretForeground", TEXT_PRIMARY);
+        UIManager.put("PasswordField.background", FIELD_BG);
+        UIManager.put("PasswordField.foreground", TEXT_PRIMARY);
+        UIManager.put("PasswordField.caretForeground", TEXT_PRIMARY);
+        UIManager.put("ComboBox.background", FIELD_BG);
+        UIManager.put("ComboBox.foreground", TEXT_PRIMARY);
+        UIManager.put("TextArea.background", FIELD_BG);
+        UIManager.put("TextArea.foreground", TEXT_PRIMARY);
+        UIManager.put("TextArea.caretForeground", TEXT_PRIMARY);
+        UIManager.put("ScrollPane.background", BG_DARK);
+        UIManager.put("Viewport.background", BG_DARK);
+        UIManager.put("Table.background", BG_CARD);
+        UIManager.put("Table.foreground", TEXT_PRIMARY);
+        UIManager.put("Table.gridColor", FIELD_BORDER);
+        UIManager.put("Table.selectionBackground", ACCENT);
+        UIManager.put("Table.selectionForeground", Color.WHITE);
+        UIManager.put("TableHeader.background", TABLE_HEADER);
+        UIManager.put("TableHeader.foreground", Color.WHITE);
+        UIManager.put("TableHeader.font", FONT_HEADER);
+        UIManager.put("TabbedPane.background", BG_CARD);
+        UIManager.put("TabbedPane.foreground", TEXT_PRIMARY);
+        UIManager.put("TabbedPane.selected", BG_SIDEBAR);
+        UIManager.put("Spinner.background", FIELD_BG);
+        UIManager.put("Spinner.foreground", TEXT_PRIMARY);
     }
 
     // ─── Factory Methods ───────────────────────────────────────────────
