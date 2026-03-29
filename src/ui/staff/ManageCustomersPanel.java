@@ -98,8 +98,8 @@ public class ManageCustomersPanel extends JPanel {
                 .map(UserService::parseUser)
                 .filter(u -> u != null && "Customer".equals(u.getRole()))
                 .collect(Collectors.toList());
-        for (User u : customers) {
-            tableModel.addRow(new Object[]{u.getUserId(), u.getName(), u.getUsername(), u.getEmail(), u.getPhone()});
+        for (User user : customers) {
+            tableModel.addRow(new Object[]{user.getUserId(), user.getName(), user.getUsername(), user.getEmail(), user.getPhone()});
         }
     }
 
@@ -109,15 +109,15 @@ public class ManageCustomersPanel extends JPanel {
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (res != JOptionPane.OK_OPTION) return;
 
-        JTextField tfU = (JTextField) ((JPanel)form.getComponent(0)).getComponent(1);
-        JTextField tfN = (JTextField) ((JPanel)form.getComponent(1)).getComponent(1);
-        JTextField tfE = (JTextField) ((JPanel)form.getComponent(2)).getComponent(1);
-        JTextField tfP = (JTextField) ((JPanel)form.getComponent(3)).getComponent(1);
-        JPasswordField pfPw = (JPasswordField) ((JPanel)form.getComponent(4)).getComponent(1);
+        JTextField tfUsername = (JTextField) ((JPanel)form.getComponent(0)).getComponent(1);
+        JTextField tfName = (JTextField) ((JPanel)form.getComponent(1)).getComponent(1);
+        JTextField tfEmail = (JTextField) ((JPanel)form.getComponent(2)).getComponent(1);
+        JTextField tfPhone = (JTextField) ((JPanel)form.getComponent(3)).getComponent(1);
+        JPasswordField pfPassword = (JPasswordField) ((JPanel)form.getComponent(4)).getComponent(1);
 
-        String username = tfU.getText().trim(), name = tfN.getText().trim(),
-               email = tfE.getText().trim(), phone = tfP.getText().trim(),
-               pw = new String(pfPw.getPassword());
+        String username = tfUsername.getText().trim(), name = tfName.getText().trim(),
+               email = tfEmail.getText().trim(), phone = tfPhone.getText().trim(),
+               pw = new String(pfPassword.getPassword());
 
         if (username.isEmpty() || name.isEmpty() || pw.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Username, Name and Password are required.");
@@ -135,22 +135,22 @@ public class ManageCustomersPanel extends JPanel {
         int row = table.getSelectedRow();
         if (row < 0) { JOptionPane.showMessageDialog(this, "Please select a customer to edit."); return; }
         int modelRow = table.convertRowIndexToModel(row);
-        User u = customers.get(modelRow);
+        User user = customers.get(modelRow);
 
-        JPanel form = buildCustomerForm(u);
-        int res = JOptionPane.showConfirmDialog(this, form, "Edit Customer: " + u.getName(),
+        JPanel form = buildCustomerForm(user);
+        int res = JOptionPane.showConfirmDialog(this, form, "Edit Customer: " + user.getName(),
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (res != JOptionPane.OK_OPTION) return;
 
-        JTextField tfN = (JTextField) ((JPanel)form.getComponent(1)).getComponent(1);
-        JTextField tfE = (JTextField) ((JPanel)form.getComponent(2)).getComponent(1);
-        JTextField tfP = (JTextField) ((JPanel)form.getComponent(3)).getComponent(1);
+        JTextField tfName = (JTextField) ((JPanel)form.getComponent(1)).getComponent(1);
+        JTextField tfEmail = (JTextField) ((JPanel)form.getComponent(2)).getComponent(1);
+        JTextField tfPhone = (JTextField) ((JPanel)form.getComponent(3)).getComponent(1);
 
         try {
-            u.setName(tfN.getText().trim());
-            u.setEmail(tfE.getText().trim());
-            u.setPhone(tfP.getText().trim());
-            UserService.updateUser(u);
+            user.setName(tfName.getText().trim());
+            user.setEmail(tfEmail.getText().trim());
+            user.setPhone(tfPhone.getText().trim());
+            UserService.updateUser(user);
             refresh();
         } catch (IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
@@ -172,40 +172,40 @@ public class ManageCustomersPanel extends JPanel {
     }
 
     private JPanel buildCustomerForm(User prefill) {
-        JPanel p = new JPanel();
-        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-        p.setBackground(UITheme.BG_CARD);
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(UITheme.BG_CARD);
 
-        JTextField tfU = UITheme.styledTextField(20);
+        JTextField tfUsername = UITheme.styledTextField(20);
         if (prefill != null) {
-            tfU.setText(prefill.getUsername());
-            tfU.setEditable(false);
+            tfUsername.setText(prefill.getUsername());
+            tfUsername.setEditable(false);
         }
-        JTextField tfN = UITheme.styledTextField(20);
+        JTextField tfName = UITheme.styledTextField(20);
         if (prefill != null) {
-            tfN.setText(prefill.getName());
+            tfName.setText(prefill.getName());
         }
-        JTextField tfE = UITheme.styledTextField(20);
+        JTextField tfEmail = UITheme.styledTextField(20);
         if (prefill != null) {
-            tfE.setText(prefill.getEmail());
+            tfEmail.setText(prefill.getEmail());
         }
-        JTextField tfP = UITheme.styledTextField(20);
+        JTextField tfPhone = UITheme.styledTextField(20);
         if (prefill != null) {
-            tfP.setText(prefill.getPhone() != null ? prefill.getPhone() : "");
+            tfPhone.setText(prefill.getPhone() != null ? prefill.getPhone() : "");
         }
-        JPasswordField pfPw = UITheme.styledPasswordField(20);
+        JPasswordField pfPassword = UITheme.styledPasswordField(20);
 
-        p.add(UITheme.formRow("Username *", tfU));
-        p.add(Box.createVerticalStrut(8));
-        p.add(UITheme.formRow("Full Name *", tfN));
-        p.add(Box.createVerticalStrut(8));
-        p.add(UITheme.formRow("Email", tfE));
-        p.add(Box.createVerticalStrut(8));
-        p.add(UITheme.formRow("Phone", tfP));
-        p.add(Box.createVerticalStrut(8));
+        panel.add(UITheme.formRow("Username *", tfUsername));
+        panel.add(Box.createVerticalStrut(8));
+        panel.add(UITheme.formRow("Full Name *", tfName));
+        panel.add(Box.createVerticalStrut(8));
+        panel.add(UITheme.formRow("Email", tfEmail));
+        panel.add(Box.createVerticalStrut(8));
+        panel.add(UITheme.formRow("Phone", tfPhone));
+        panel.add(Box.createVerticalStrut(8));
         if (prefill == null) {
-            p.add(UITheme.formRow("Password *", pfPw));
+            panel.add(UITheme.formRow("Password *", pfPassword));
         }
-        return p;
+        return panel;
     }
 }

@@ -123,9 +123,9 @@ public class ManageAppointmentsPanel extends JPanel {
         // Cache reference lists
         List<String> lines = utils.FileHandler.getInstance().readAllLines(utils.FileHandler.USERS_FILE);
         technicians = lines.stream().map(UserService::parseUser)
-                .filter(u -> u != null && "Technician".equals(u.getRole())).collect(Collectors.toList());
+                .filter(user -> user != null && "Technician".equals(user.getRole())).collect(Collectors.toList());
         customers   = lines.stream().map(UserService::parseUser)
-                .filter(u -> u != null && "Customer".equals(u.getRole())).collect(Collectors.toList());
+                .filter(user -> user != null && "Customer".equals(user.getRole())).collect(Collectors.toList());
     }
 
     private void showAssignDialog() {
@@ -142,7 +142,7 @@ public class ManageAppointmentsPanel extends JPanel {
         if (technicians.isEmpty()) { JOptionPane.showMessageDialog(this, "No technicians registered."); return; }
 
         String[] techNames = technicians.stream()
-                .map(t -> t.getUserId() + " — " + t.getName()).toArray(String[]::new);
+                .map(tech -> tech.getUserId() + " — " + tech.getName()).toArray(String[]::new);
         String chosen = (String) JOptionPane.showInputDialog(this,
                 "Select a technician for appointment " + apt.getAppointmentId() + ":",
                 "Assign Technician", JOptionPane.PLAIN_MESSAGE, null, techNames, techNames[0]);
@@ -183,7 +183,7 @@ public class ManageAppointmentsPanel extends JPanel {
         form.setBackground(UITheme.BG_CARD);
 
         String[] custNames = customers.stream()
-                .map(c -> c.getUserId() + " — " + c.getName()).toArray(String[]::new);
+                .map(customer -> customer.getUserId() + " — " + customer.getName()).toArray(String[]::new);
         JComboBox<String> cbCustomer = new JComboBox<>(custNames);
         cbCustomer.setBackground(UITheme.FIELD_BG);
         cbCustomer.setForeground(UITheme.TEXT_PRIMARY);
@@ -191,8 +191,8 @@ public class ManageAppointmentsPanel extends JPanel {
         cbService.setBackground(UITheme.FIELD_BG);
         cbService.setForeground(UITheme.TEXT_PRIMARY);
 
-        SpinnerDateModel dm = new SpinnerDateModel();
-        JSpinner spDate = new JSpinner(dm);
+        SpinnerDateModel dateModel = new SpinnerDateModel();
+        JSpinner spDate = new JSpinner(dateModel);
         spDate.setEditor(new JSpinner.DateEditor(spDate, "yyyy-MM-dd HH:mm"));
 
         JTextArea taComments = new JTextArea(3, 20);
@@ -213,11 +213,11 @@ public class ManageAppointmentsPanel extends JPanel {
 
         String custId     = custNames[cbCustomer.getSelectedIndex()].split(" — ")[0].trim();
         String serviceType= (String) cbService.getSelectedItem();
-        java.util.Date dv = (java.util.Date) spDate.getValue();
-        LocalDateTime dt  = LocalDateTime.ofInstant(dv.toInstant(), java.time.ZoneId.systemDefault());
+        java.util.Date dateValue = (java.util.Date) spDate.getValue();
+        LocalDateTime dateTime  = LocalDateTime.ofInstant(dateValue.toInstant(), java.time.ZoneId.systemDefault());
         String comments   = taComments.getText().trim();
 
-        AppointmentService.bookAppointment(custId, serviceType, dt, comments);
+        AppointmentService.bookAppointment(custId, serviceType, dateTime, comments);
         refresh();
         JOptionPane.showMessageDialog(this, "Appointment created successfully.");
     }

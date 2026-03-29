@@ -217,7 +217,7 @@ public class UITheme {
 
     /** A card-style panel (rounded dark surface). */
     public static JPanel cardPanel() {
-        JPanel p = new JPanel() {
+        JPanel panel = new JPanel() {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -226,8 +226,8 @@ public class UITheme {
                 g2.dispose();
             }
         };
-        p.setOpaque(false);
-        return p;
+        panel.setOpaque(false);
+        return panel;
     }
 
     /** Status badge label (colour-coded). */
