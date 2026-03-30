@@ -93,6 +93,7 @@ public class ManageCustomersPanel extends JPanel {
 
     private void refresh() {
         tableModel.setRowCount(0);
+        // Cache the list of customers
         customers = new java.util.ArrayList<>(UserService.getAllCustomers());
         for (User user : customers) {
             tableModel.addRow(new Object[]{user.getUserId(), user.getName(), user.getUsername(), user.getEmail(), user.getPhone()});
