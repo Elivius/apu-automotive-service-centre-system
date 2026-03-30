@@ -93,11 +93,7 @@ public class ManageCustomersPanel extends JPanel {
 
     private void refresh() {
         tableModel.setRowCount(0);
-        List<String> lines = utils.FileHandler.getInstance().readAllLines(utils.FileHandler.USERS_FILE);
-        customers = lines.stream()
-                .map(UserService::parseUser)
-                .filter(u -> u != null && "Customer".equals(u.getRole()))
-                .collect(Collectors.toList());
+        customers = new java.util.ArrayList<>(UserService.getAllCustomers());
         for (User user : customers) {
             tableModel.addRow(new Object[]{user.getUserId(), user.getName(), user.getUsername(), user.getEmail(), user.getPhone()});
         }

@@ -9,6 +9,7 @@ import utils.FileHandler;
 import utils.PasswordHasher;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Business logic class for managing Users.
@@ -142,6 +143,29 @@ public class UserService {
             }
         }
         return null;
+    }
+
+    /**
+     * Retrieves all registered Customers from the system.
+     */
+    public static List<Customer> getAllCustomers() {
+        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.USERS_FILE);
+        return lines.stream()
+                .map(UserService::parseUser)
+                .filter(user -> user instanceof Customer)
+                .map(user -> (Customer) user)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves all registered Staff members (Manager, CounterStaff, Technician).
+     */
+    public static List<User> getAllStaff() {
+        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.USERS_FILE);
+        return lines.stream()
+                .map(UserService::parseUser)
+                .filter(user -> user != null && !(user instanceof Customer))
+                .collect(Collectors.toList());
     }
 
     /**

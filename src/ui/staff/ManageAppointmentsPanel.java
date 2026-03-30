@@ -14,6 +14,7 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -100,7 +101,7 @@ public class ManageAppointmentsPanel extends JPanel {
         String text = tfSearch.getText().trim();
         if (text.isEmpty()) { sorter.setRowFilter(null); return; }
         // Search across all visible columns
-        List<RowFilter<Object, Object>> filters = new java.util.ArrayList<>();
+        List<RowFilter<Object, Object>> filters = new ArrayList<>();
         for (int i = 0; i < tableModel.getColumnCount(); i++) {
             filters.add(RowFilter.regexFilter("(?i)" + text, i));
         }
@@ -121,11 +122,9 @@ public class ManageAppointmentsPanel extends JPanel {
         }
 
         // Cache reference lists
-        List<String> lines = utils.FileHandler.getInstance().readAllLines(utils.FileHandler.USERS_FILE);
-        technicians = lines.stream().map(UserService::parseUser)
-                .filter(user -> user != null && "Technician".equals(user.getRole())).collect(Collectors.toList());
-        customers   = lines.stream().map(UserService::parseUser)
-                .filter(user -> user != null && "Customer".equals(user.getRole())).collect(Collectors.toList());
+        technicians = UserService.getAllStaff().stream()
+                .filter(user -> "Technician".equals(user.getRole())).collect(Collectors.toList());
+        customers = new ArrayList<>(UserService.getAllCustomers());
     }
 
     private void showAssignDialog() {
