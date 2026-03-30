@@ -3,20 +3,18 @@ package ui.manager;
 import models.Appointment;
 import services.FeedbackService;
 import utils.StringUtils;
+import utils.DateUtils;
 import ui.UITheme;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
  * Panel for Manager to view all feedback, comments, and service reviews.
  */
 public class AllFeedbackPanel extends JPanel {
-
-    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private DefaultTableModel tableModel;
     private JTable table;
@@ -91,7 +89,7 @@ public class AllFeedbackPanel extends JPanel {
         for (Appointment apt : appointments) {
             tableModel.addRow(new Object[]{
                 apt.getAppointmentId(), apt.getCustomerId(),
-                apt.getDateTime() != null ? apt.getDateTime().format(FMT) : "",
+                apt.getDateTime() != null ? apt.getDateTime().format(DateUtils.FORMATTER) : "",
                 StringUtils.truncate(apt.getComments(), 40),
                 StringUtils.truncate(apt.getFeedback(), 40),
                 StringUtils.truncate(apt.getServiceReview(), 40)

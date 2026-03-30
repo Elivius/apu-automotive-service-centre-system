@@ -1,7 +1,8 @@
 package models;
 
+import utils.DateUtils;
+
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Appointment entity class.
@@ -14,8 +15,11 @@ import java.time.format.DateTimeFormatter;
  */
 public class Appointment {
 
-    // ───── Date Format ─────
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    // ───── Public Constants ─────
+    public static final String STATUS_PENDING   = "Pending";
+    public static final String STATUS_ASSIGNED  = "Assigned";
+    public static final String STATUS_COMPLETED = "Completed";
+    public static final String STATUS_DECLINED  = "Declined";
 
     // ───── Private Attributes (Encapsulation) ─────
     private String appointmentId;
@@ -31,7 +35,7 @@ public class Appointment {
 
     // ───── Constructors ─────
     public Appointment() {
-        this.status = "Pending";
+        this.status = STATUS_PENDING;
     }
 
     public Appointment(String appointmentId, String customerId, String technicianId,
@@ -162,8 +166,8 @@ public class Appointment {
                 safe(this.technicianId),
                 safe(this.serviceType),
                 safe(this.status),
-                this.dateTime != null ? this.dateTime.format(FORMATTER) : "",
-                this.endDateTime != null ? this.endDateTime.format(FORMATTER) : "",
+                this.dateTime != null ? this.dateTime.format(DateUtils.FORMATTER) : "",
+                this.endDateTime != null ? this.endDateTime.format(DateUtils.FORMATTER) : "",
                 safe(this.comments),
                 safe(this.feedback),
                 safe(this.serviceReview));
@@ -182,10 +186,10 @@ public class Appointment {
             apt.serviceType = parts[3]; // Use direct assignment to skip validation on load
             apt.setStatus(parts[4]);
             if (!parts[5].isEmpty()) {
-                apt.setDateTime(LocalDateTime.parse(parts[5], FORMATTER));
+                apt.setDateTime(LocalDateTime.parse(parts[5], DateUtils.FORMATTER));
             }
             if (!parts[6].isEmpty()) {
-                apt.setEndDateTime(LocalDateTime.parse(parts[6], FORMATTER));
+                apt.setEndDateTime(LocalDateTime.parse(parts[6], DateUtils.FORMATTER));
             }
             apt.setComments(parts[7]);
             apt.setFeedback(parts[8]);
@@ -202,6 +206,6 @@ public class Appointment {
     @Override
     public String toString() {
         return "Appointment [ID=" + this.appointmentId + ", Service=" + this.serviceType
-                + ", Status=" + this.status + ", Date=" + (this.dateTime != null ? this.dateTime.format(FORMATTER) : "N/A") + "]";
+                + ", Status=" + this.status + ", Date=" + (this.dateTime != null ? this.dateTime.format(DateUtils.FORMATTER) : "N/A") + "]";
     }
 }

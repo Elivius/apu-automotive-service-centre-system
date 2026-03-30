@@ -5,12 +5,12 @@ import models.CounterStaff;
 import models.Payment;
 import services.AppointmentService;
 import services.PaymentService;
+import utils.DateUtils;
 import ui.UITheme;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,9 +20,6 @@ import java.util.stream.Collectors;
  * and auto-generate a receipt .txt file.
  */
 public class CollectPaymentPanel extends JPanel {
-
-    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
     private final CounterStaff staff;
     private DefaultTableModel tableModel;
     private JTable table;
@@ -100,7 +97,7 @@ public class CollectPaymentPanel extends JPanel {
                 payment.getPaymentId(), payment.getAppointmentId(),
                 String.format("%.2f", payment.getAmount()),
                 payment.getPaymentMethod(), payment.getPaymentStatus(),
-                payment.getDateTime() != null ? payment.getDateTime().format(FMT) : ""
+                payment.getDateTime() != null ? payment.getDateTime().format(DateUtils.FORMATTER) : ""
             });
         }
         lblReceiptPath.setText(" ");

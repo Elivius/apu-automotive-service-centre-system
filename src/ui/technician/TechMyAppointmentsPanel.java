@@ -3,12 +3,12 @@ package ui.technician;
 import models.Appointment;
 import models.Technician;
 import services.AppointmentService;
+import utils.DateUtils;
 import ui.UITheme;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -17,7 +17,6 @@ import java.util.List;
  */
 public class TechMyAppointmentsPanel extends JPanel {
 
-    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private final Technician technician;
     private DefaultTableModel tableModel;
@@ -78,8 +77,8 @@ public class TechMyAppointmentsPanel extends JPanel {
         for (Appointment apt : appointments) {
             tableModel.addRow(new Object[]{
                 apt.getAppointmentId(), apt.getCustomerId(), apt.getServiceType(), apt.getStatus(),
-                apt.getDateTime()    != null ? apt.getDateTime().format(FMT)    : "",
-                apt.getEndDateTime() != null ? apt.getEndDateTime().format(FMT) : ""
+                apt.getDateTime() != null ? apt.getDateTime().format(DateUtils.FORMATTER) : "",
+                apt.getEndDateTime() != null ? apt.getEndDateTime().format(DateUtils.FORMATTER) : ""
             });
         }
     }

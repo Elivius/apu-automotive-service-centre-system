@@ -1,7 +1,8 @@
 package models;
 
+import utils.DateUtils;
+
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Payment entity class.
@@ -13,8 +14,12 @@ import java.time.format.DateTimeFormatter;
  */
 public class Payment {
 
-    // ───── Date Format ─────
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    // ───── Public Constants ─────
+    public static final String STATUS_PENDING   = "Pending";
+    public static final String STATUS_PAID      = "Paid";
+
+    public static final String METHOD_PHYSICAL  = "Physical";
+    public static final String METHOD_ONLINE    = "Online";
 
     // ───── Private Attributes (Encapsulation) ─────
     private String paymentId;
@@ -26,7 +31,7 @@ public class Payment {
 
     // ───── Constructors ─────
     public Payment() {
-        this.paymentStatus = "Pending";
+        this.paymentStatus = STATUS_PENDING;
     }
 
     public Payment(String paymentId, String appointmentId, double amount,
@@ -111,7 +116,7 @@ public class Payment {
                 String.format("%.2f", this.amount),
                 safe(this.paymentMethod),
                 safe(this.paymentStatus),
-                this.dateTime != null ? this.dateTime.format(FORMATTER) : "");
+                this.dateTime != null ? this.dateTime.format(DateUtils.FORMATTER) : "");
     }
 
     /**
@@ -131,7 +136,7 @@ public class Payment {
             payment.paymentMethod = parts[3]; // Direct to skip validation on load
             payment.setPaymentStatus(parts[4]);
             if (!parts[5].isEmpty()) {
-                payment.setDateTime(LocalDateTime.parse(parts[5], FORMATTER));
+                payment.setDateTime(LocalDateTime.parse(parts[5], DateUtils.FORMATTER));
             }
             return payment;
         }

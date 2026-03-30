@@ -6,6 +6,7 @@ import models.CounterStaff;
 import models.User;
 import services.AppointmentService;
 import services.UserService;
+import utils.DateUtils;
 import ui.UITheme;
 
 import javax.swing.*;
@@ -109,14 +110,13 @@ public class ManageAppointmentsPanel extends JPanel {
     void refresh() {
         tableModel.setRowCount(0);
         appointments = AppointmentService.getAllAppointments();
-        java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         for (Appointment apt : appointments) {
             tableModel.addRow(new Object[]{
                 apt.getAppointmentId(), apt.getCustomerId(),
                 apt.getTechnicianId().isEmpty() ? "(unassigned)" : apt.getTechnicianId(),
                 apt.getServiceType(), apt.getStatus(),
-                apt.getDateTime()    != null ? apt.getDateTime().format(fmt)    : "",
-                apt.getEndDateTime() != null ? apt.getEndDateTime().format(fmt) : ""
+                apt.getDateTime() != null ? apt.getDateTime().format(DateUtils.FORMATTER)    : "",
+                apt.getEndDateTime() != null ? apt.getEndDateTime().format(DateUtils.FORMATTER) : ""
             });
         }
 

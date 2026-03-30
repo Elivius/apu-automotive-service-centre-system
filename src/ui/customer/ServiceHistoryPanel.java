@@ -4,12 +4,12 @@ import models.Appointment;
 import models.Customer;
 import services.FeedbackService;
 import utils.StringUtils;
+import utils.DateUtils;
 import ui.UITheme;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -18,7 +18,6 @@ import java.util.List;
  */
 public class ServiceHistoryPanel extends JPanel {
 
-    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private final Customer customer;
     private DefaultTableModel tableModel;
@@ -94,7 +93,7 @@ public class ServiceHistoryPanel extends JPanel {
             tableModel.addRow(new Object[]{
                 apt.getAppointmentId(),
                 apt.getServiceType(),
-                apt.getDateTime() != null ? apt.getDateTime().format(FMT) : "",
+                apt.getDateTime() != null ? apt.getDateTime().format(DateUtils.FORMATTER) : "",
                 apt.getStatus(),
                 preview
             });

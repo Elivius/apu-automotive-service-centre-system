@@ -4,20 +4,18 @@ import models.Appointment;
 import models.Technician;
 import services.AppointmentService;
 import services.FeedbackService;
+import utils.DateUtils;
 import ui.UITheme;
 
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Popup frame showing full appointment details for a Technician.
  * Allows: reading customer comments, marking as Completed, and writing feedback.
  */
 public class AppointmentDetailFrame extends JFrame {
-
-    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private final Technician technician;
     private final Appointment appointment;
@@ -59,10 +57,10 @@ public class AppointmentDetailFrame extends JFrame {
         card.add(title); 
         card.add(Box.createVerticalStrut(16));
 
-        card.add(infoRow("Customer ID",  appointment.getCustomerId()));
+        card.add(infoRow("Customer ID", appointment.getCustomerId()));
         card.add(infoRow("Service Type", appointment.getServiceType()));
-        card.add(infoRow("Start Time",   appointment.getDateTime()    != null ? appointment.getDateTime().format(FMT)    : "—"));
-        card.add(infoRow("End Time",     appointment.getEndDateTime() != null ? appointment.getEndDateTime().format(FMT) : "—"));
+        card.add(infoRow("Start Time", appointment.getDateTime() != null ? appointment.getDateTime().format(DateUtils.FORMATTER) : "—"));
+        card.add(infoRow("End Time", appointment.getEndDateTime() != null ? appointment.getEndDateTime().format(DateUtils.FORMATTER) : "—"));
 
         lblStatus = UITheme.headerLabel("Status: " + appointment.getStatus());
         lblStatus.setForeground(UITheme.WARNING);

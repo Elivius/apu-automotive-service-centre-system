@@ -2,13 +2,13 @@ package services;
 
 import models.Appointment;
 import models.Payment;
+import utils.DateUtils;
 import utils.FileHandler;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
  * Handles payment processing, receipt generation, and payment history retrieval.
  */
 public class PaymentService {
-
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     /**
      * Processes a payment for a given appointment.
@@ -155,7 +153,7 @@ public class PaymentService {
             writer.newLine();
             writer.write("  Transaction ID  : " + payment.getPaymentId());
             writer.newLine();
-            writer.write("  Date            : " + (payment.getDateTime() != null ? payment.getDateTime().format(FORMATTER) : "N/A"));
+            writer.write("  Date            : " + (payment.getDateTime() != null ? payment.getDateTime().format(DateUtils.FORMATTER) : "N/A"));
             writer.newLine();
             writer.newLine();
             writer.write("───────────────────────────────────────────");
@@ -172,7 +170,7 @@ public class PaymentService {
             writer.newLine();
             writer.write("  Service Type    : " + appointment.getServiceType());
             writer.newLine();
-            writer.write("  Service Date    : " + (appointment.getDateTime() != null ? appointment.getDateTime().format(FORMATTER) : "N/A"));
+            writer.write("  Service Date    : " + (appointment.getDateTime() != null ? appointment.getDateTime().format(DateUtils.FORMATTER) : "N/A"));
             writer.newLine();
             writer.newLine();
             writer.write("───────────────────────────────────────────");

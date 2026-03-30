@@ -3,12 +3,12 @@ package ui.customer;
 import models.Customer;
 import models.Payment;
 import services.PaymentService;
+import utils.DateUtils;
 import ui.UITheme;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -16,7 +16,6 @@ import java.util.List;
  */
 public class PaymentHistoryPanel extends JPanel {
 
-    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private final Customer customer;
     private DefaultTableModel tableModel;
@@ -71,7 +70,7 @@ public class PaymentHistoryPanel extends JPanel {
                 String.format("%.2f", payment.getAmount()),
                 payment.getPaymentMethod(),
                 payment.getPaymentStatus(),
-                payment.getDateTime() != null ? payment.getDateTime().format(FMT) : ""
+                payment.getDateTime() != null ? payment.getDateTime().format(DateUtils.FORMATTER) : ""
             });
         }
     }
