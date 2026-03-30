@@ -89,9 +89,8 @@ public class ManageStaffPanel extends JPanel {
 
         Runnable loadData = () -> {
             model.setRowCount(0);
-            List<String> lines = utils.FileHandler.getInstance().readAllLines(utils.FileHandler.USERS_FILE);
-            userRef[0] = lines.stream().map(UserService::parseUser)
-                    .filter(user -> user != null && role.equals(user.getRole())).collect(Collectors.toList());
+            userRef[0] = UserService.getAllStaff().stream()
+                    .filter(user -> role.equals(user.getRole())).collect(Collectors.toList());
             for (User user : userRef[0]) {
                 if (isTech) {
                     models.Technician tech = (models.Technician) user;

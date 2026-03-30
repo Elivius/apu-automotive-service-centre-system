@@ -12,7 +12,6 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Panel for booking a new appointment.

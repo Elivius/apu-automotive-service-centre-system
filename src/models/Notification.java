@@ -1,7 +1,8 @@
 package models;
 
+import utils.DateUtils;
+
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Notification entity class.
@@ -11,9 +12,6 @@ import java.time.format.DateTimeFormatter;
  * broadcast notifications (to all users of a role, or "ALL").
  */
 public class Notification {
-
-    // ───── Date Format ─────
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     // ───── Private Attributes (Encapsulation) ─────
     private String notificationId;
@@ -92,7 +90,7 @@ public class Notification {
         return String.join(utils.FileHandler.SEPARATOR,
                 safe(this.notificationId),
                 safe(this.targetUserId),
-                this.dateTime != null ? this.dateTime.format(FORMATTER) : "",
+                this.dateTime != null ? this.dateTime.format(DateUtils.FORMATTER) : "",
                 safe(this.message),
                 String.valueOf(this.isRead)); // convert boolean to "true" or "false"
     }
@@ -107,7 +105,7 @@ public class Notification {
             notification.setNotificationId(parts[0]);
             notification.setTargetUserId(parts[1]);
             if (!parts[2].isEmpty()) {
-                notification.setDateTime(LocalDateTime.parse(parts[2], FORMATTER));
+                notification.setDateTime(LocalDateTime.parse(parts[2], DateUtils.FORMATTER));
             }
             notification.setMessage(parts[3]);
             notification.setRead(Boolean.parseBoolean(parts[4]));
