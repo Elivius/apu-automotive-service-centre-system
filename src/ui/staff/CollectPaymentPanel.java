@@ -85,12 +85,7 @@ public class CollectPaymentPanel extends JPanel {
 
     void refresh() {
         tableModel.setRowCount(0);
-        // Load all payments. Keep only Physical + Pending
-        List<String> lines = utils.FileHandler.getInstance().readAllLines(utils.FileHandler.PAYMENTS_FILE);
-        pendingPayments = lines.stream()
-                .map(Payment::fromFileString)
-                .filter(payment -> payment != null && "Physical".equals(payment.getPaymentMethod()) && "Pending".equals(payment.getPaymentStatus()))
-                .collect(Collectors.toList());
+        pendingPayments = PaymentService.getPendingPhysicalPayments();
 
         for (Payment payment : pendingPayments) {
             tableModel.addRow(new Object[]{

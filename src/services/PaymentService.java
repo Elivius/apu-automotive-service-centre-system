@@ -56,6 +56,17 @@ public class PaymentService {
     }
 
     /**
+     * Retrieves all pending physical payments.
+     */
+    public static List<Payment> getPendingPhysicalPayments() {
+        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.PAYMENTS_FILE);
+        return lines.stream()
+                .map(Payment::fromFileString)
+                .filter(payment -> payment != null && Payment.METHOD_PHYSICAL.equals(payment.getPaymentMethod()) && Payment.STATUS_PENDING.equals(payment.getPaymentStatus()))
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Retrieves the payment history for a specific customer.
      * Matches payments by cross-referencing appointment IDs.
      *
