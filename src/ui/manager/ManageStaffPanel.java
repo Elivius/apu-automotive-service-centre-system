@@ -109,13 +109,21 @@ public class ManageStaffPanel extends JPanel {
             loadData.run();
         });
         btnEdit.addActionListener(e -> {
-            int row = table.getSelectedRow(); if (row < 0) return;
+            int row = table.getSelectedRow();
+            if (row < 0) {
+				JOptionPane.showMessageDialog(this, "Please select a user to edit.");
+				return;
+            };
             User user = userRef[0].get(table.convertRowIndexToModel(row));
             showStaffForm(user, role, isTech);
             loadData.run();
         });
         btnDelete.addActionListener(e -> {
-            int row = table.getSelectedRow(); if (row < 0) return;
+            int row = table.getSelectedRow();
+            if (row < 0) {
+				JOptionPane.showMessageDialog(this, "Please select a user to delete.");
+				return;
+            }
             User user = userRef[0].get(table.convertRowIndexToModel(row));
             int ok = JOptionPane.showConfirmDialog(this,
                 "Delete \"" + user.getName() + "\"?", "Confirm", JOptionPane.YES_NO_OPTION);
@@ -139,7 +147,7 @@ public class ManageStaffPanel extends JPanel {
         topBar.add(btnRow, BorderLayout.EAST);
 
         panel.add(topBar, BorderLayout.NORTH);
-        panel.add(sp,     BorderLayout.CENTER);
+        panel.add(sp, BorderLayout.CENTER);
         return panel;
     }
 

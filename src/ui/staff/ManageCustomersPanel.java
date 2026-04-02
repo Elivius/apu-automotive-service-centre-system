@@ -130,7 +130,10 @@ public class ManageCustomersPanel extends JPanel {
 
     private void showEditDialog() {
         int row = table.getSelectedRow();
-        if (row < 0) { JOptionPane.showMessageDialog(this, "Please select a customer to edit."); return; }
+        if (row < 0) {
+        	JOptionPane.showMessageDialog(this, "Please select a customer to edit.");
+        	return;
+        }
         int modelRow = table.convertRowIndexToModel(row);
         User user = customers.get(modelRow);
 
