@@ -163,12 +163,15 @@ public class EditProfileFrame extends JFrame {
             currentUser.setEmail(email);
             currentUser.setPhone(phone);
             UserService.updateUser(currentUser);
-
-            JOptionPane.showMessageDialog(this, "Profile updated successfully!", "Success",
-                    JOptionPane.INFORMATION_MESSAGE);
+            
+//          Reflect on the dashboard
             if (onProfileUpdate != null) {
                 onProfileUpdate.run();
             }
+
+            JOptionPane.showMessageDialog(this, "Profile updated successfully!", "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
+            
             dispose();
         } catch (IllegalArgumentException ex) {
             lblError.setText(ex.getMessage());
