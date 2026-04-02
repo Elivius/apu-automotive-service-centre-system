@@ -17,6 +17,7 @@ public class StaffDashboard extends JFrame {
     private final CounterStaff staff;
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel contentArea = new JPanel(cardLayout);
+    private JLabel lblName;
 
     private static final String PANEL_CUSTOMERS = "customers";
     private static final String PANEL_APPOINTMENTS = "appointments";
@@ -77,23 +78,29 @@ public class StaffDashboard extends JFrame {
         sidebar.setPreferredSize(new Dimension(220, 0));
         sidebar.setBorder(BorderFactory.createEmptyBorder(24, 0, 24, 0));
 
-        JLabel avatar   = new JLabel("🧑‍💼", SwingConstants.CENTER);
-        avatar.setFont(new Font("SansSerif", Font.PLAIN, 36));
-        avatar.setAlignmentX(CENTER_ALIGNMENT);
-        JLabel name = new JLabel(staff.getName(), SwingConstants.CENTER);
-        name.setFont(UITheme.FONT_HEADER); 
-        name.setForeground(UITheme.TEXT_PRIMARY);
-        name.setAlignmentX(CENTER_ALIGNMENT);
-        JLabel role = UITheme.mutedLabel("Counter Staff  •  " + staff.getUserId());
-        role.setAlignmentX(CENTER_ALIGNMENT); 
-        role.setHorizontalAlignment(SwingConstants.CENTER);
+        JLabel lblAvatar = new JLabel("🧑‍💼", SwingConstants.CENTER);
+        setName("lblAvatar");
+        lblAvatar.setFont(new Font("SansSerif", Font.PLAIN, 36));
+        lblAvatar.setAlignmentX(CENTER_ALIGNMENT);
+        
+        lblName = new JLabel(staff.getName(), SwingConstants.CENTER);
+        setName("lblName");
+        lblName.setFont(UITheme.FONT_HEADER); 
+        lblName.setForeground(UITheme.TEXT_PRIMARY);
+        lblName.setAlignmentX(CENTER_ALIGNMENT);
+        
+        JLabel lblRole = UITheme.mutedLabel("Counter Staff  •  " + staff.getUserId());
+        setName("lblRole");
+        lblRole.setAlignmentX(CENTER_ALIGNMENT); 
+        lblRole.setHorizontalAlignment(SwingConstants.CENTER);
 
-        sidebar.add(avatar); 
+        sidebar.add(lblAvatar); 
         sidebar.add(Box.createVerticalStrut(8));
-        sidebar.add(name);   
+        sidebar.add(lblName);   
         sidebar.add(Box.createVerticalStrut(4));
-        sidebar.add(role);   
+        sidebar.add(lblRole);   
         sidebar.add(Box.createVerticalStrut(28));
+        
         JSeparator sep = new JSeparator(); 
         sep.setForeground(new Color(0x1E4080));
         sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
@@ -104,7 +111,7 @@ public class StaffDashboard extends JFrame {
         sidebar.add(sidebarBtn("👥  Customers", () -> switchTab(PANEL_CUSTOMERS, () -> new ManageCustomersPanel(staff))));
         sidebar.add(sidebarBtn("💳  Collect Payment", () -> switchTab(PANEL_PAYMENTS, () -> new CollectPaymentPanel(staff))));
         sidebar.add(Box.createVerticalGlue());
-        sidebar.add(sidebarBtn("✏️  Edit Profile", () -> new EditProfileFrame(staff).setVisible(true)));
+        sidebar.add(sidebarBtn("✏️  Edit Profile", () -> new EditProfileFrame(staff, () -> lblName.setText(staff.getName())).setVisible(true)));
         sidebar.add(Box.createVerticalStrut(8));
         sidebar.add(sidebarBtn("🚪  Logout", this::doLogout));
         return sidebar;

@@ -20,6 +20,7 @@ public class CustomerDashboard extends JFrame {
     private final Customer customer;
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel contentArea = new JPanel(cardLayout);
+    private JLabel lblName;
 
     private static final String PANEL_BOOK = "book";
     private static final String PANEL_APPTS = "appointments";
@@ -88,27 +89,27 @@ public class CustomerDashboard extends JFrame {
         sidebar.setBorder(BorderFactory.createEmptyBorder(24, 0, 24, 0));
 
         // Avatar / name area
-        JLabel avatar = new JLabel("👤", SwingConstants.CENTER);
-        avatar.setName("lblAvatar");
-        avatar.setFont(new Font("SansSerif", Font.PLAIN, 36));
-        avatar.setAlignmentX(CENTER_ALIGNMENT);
+        JLabel lblAvatar = new JLabel("👤", SwingConstants.CENTER);
+        lblAvatar.setName("lblAvatar");
+        lblAvatar.setFont(new Font("SansSerif", Font.PLAIN, 36));
+        lblAvatar.setAlignmentX(CENTER_ALIGNMENT);
 
-        JLabel name = new JLabel(customer.getName(), SwingConstants.CENTER);
-        name.setName("lblName");
-        name.setFont(UITheme.FONT_HEADER);
-        name.setForeground(UITheme.TEXT_PRIMARY);
-        name.setAlignmentX(CENTER_ALIGNMENT);
+        lblName = new JLabel(customer.getName(), SwingConstants.CENTER);
+        lblName.setName("lblName");
+        lblName.setFont(UITheme.FONT_HEADER);
+        lblName.setForeground(UITheme.TEXT_PRIMARY);
+        lblName.setAlignmentX(CENTER_ALIGNMENT);
 
-        JLabel role = UITheme.mutedLabel("Customer  •  " + customer.getUserId());
-        role.setName("lblRole");
-        role.setAlignmentX(CENTER_ALIGNMENT);
-        role.setHorizontalAlignment(SwingConstants.CENTER);
+        JLabel lblRole = UITheme.mutedLabel("Customer  •  " + customer.getUserId());
+        lblRole.setName("lblRole");
+        lblRole.setAlignmentX(CENTER_ALIGNMENT);
+        lblRole.setHorizontalAlignment(SwingConstants.CENTER);
 
-        sidebar.add(avatar);
+        sidebar.add(lblAvatar);
         sidebar.add(Box.createVerticalStrut(8));
-        sidebar.add(name);
+        sidebar.add(lblName);
         sidebar.add(Box.createVerticalStrut(4));
-        sidebar.add(role);
+        sidebar.add(lblRole);
         sidebar.add(Box.createVerticalStrut(28));
 
         JSeparator sep = new JSeparator();
@@ -123,7 +124,7 @@ public class CustomerDashboard extends JFrame {
         sidebar.add(sidebarBtn("🔧  Service History", () -> switchTab(PANEL_HISTORY, () -> new ServiceHistoryPanel(customer))));
         sidebar.add(sidebarBtn("💳  Payment History", () -> switchTab(PANEL_PAYMENTS, () -> new PaymentHistoryPanel(customer))));
         sidebar.add(Box.createVerticalGlue());
-        sidebar.add(sidebarBtn("✏️  Edit Profile", () -> new EditProfileFrame(customer).setVisible(true)));
+        sidebar.add(sidebarBtn("✏️  Edit Profile", () -> new EditProfileFrame(customer, () -> lblName.setText(customer.getName())).setVisible(true)));
         sidebar.add(Box.createVerticalStrut(8));
         sidebar.add(sidebarBtn("🚪  Logout", this::doLogout));
 

@@ -74,7 +74,7 @@ public class ManageCustomersPanel extends JPanel {
         // ── Action bar ────────────────────────────────────────────────
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         actions.setOpaque(false);
-        JButton btnEdit   = UITheme.secondaryButton("✏️  Edit");
+        JButton btnEdit = UITheme.secondaryButton("✏️  Edit");
         JButton btnDelete = UITheme.dangerButton("🗑  Delete");
         btnEdit.addActionListener(e -> showEditDialog());
         btnDelete.addActionListener(e -> doDelete());

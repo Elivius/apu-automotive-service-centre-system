@@ -17,6 +17,7 @@ public class TechnicianDashboard extends JFrame {
     private final Technician technician;
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel contentArea = new JPanel(cardLayout);
+    private JLabel lblName;
 
     private static final String PANEL_APPTS = "appointments";
 
@@ -72,16 +73,21 @@ public class TechnicianDashboard extends JFrame {
         sidebar.setPreferredSize(new Dimension(220, 0));
         sidebar.setBorder(BorderFactory.createEmptyBorder(24, 0, 24, 0));
 
-        JLabel avatar = new JLabel("🔧", SwingConstants.CENTER);
-        avatar.setFont(new Font("SansSerif", Font.PLAIN, 36));
-        avatar.setAlignmentX(CENTER_ALIGNMENT);
-        JLabel name = new JLabel(technician.getName(), SwingConstants.CENTER);
-        name.setFont(UITheme.FONT_HEADER); 
-        name.setForeground(UITheme.TEXT_PRIMARY);
-        name.setAlignmentX(CENTER_ALIGNMENT);
-        JLabel sub = UITheme.mutedLabel("Technician  •  " + technician.getUserId());
-        sub.setAlignmentX(CENTER_ALIGNMENT); 
-        sub.setHorizontalAlignment(SwingConstants.CENTER);
+        JLabel lblAvatar = new JLabel("🔧", SwingConstants.CENTER);
+        setName("lblAvatar");
+        lblAvatar.setFont(new Font("SansSerif", Font.PLAIN, 36));
+        lblAvatar.setAlignmentX(CENTER_ALIGNMENT);
+        
+        lblName = new JLabel(technician.getName(), SwingConstants.CENTER);
+        setName("lblName");
+        lblName.setFont(UITheme.FONT_HEADER); 
+        lblName.setForeground(UITheme.TEXT_PRIMARY);
+        lblName.setAlignmentX(CENTER_ALIGNMENT);
+        
+        JLabel lblRole = UITheme.mutedLabel("Technician  •  " + technician.getUserId());
+        setName("lblRole");
+        lblRole.setAlignmentX(CENTER_ALIGNMENT); 
+        lblRole.setHorizontalAlignment(SwingConstants.CENTER);
 
         String spec = technician.getSpecialization();
         if (spec != null && !spec.isEmpty()) {
@@ -92,11 +98,11 @@ public class TechnicianDashboard extends JFrame {
             sidebar.add(specLabel);
         }
 
-        sidebar.add(avatar); 
+        sidebar.add(lblAvatar); 
         sidebar.add(Box.createVerticalStrut(8));
-        sidebar.add(name);   
+        sidebar.add(lblName);   
         sidebar.add(Box.createVerticalStrut(4));
-        sidebar.add(sub);    
+        sidebar.add(lblRole);    
         sidebar.add(Box.createVerticalStrut(28));
 
         JSeparator sep = new JSeparator(); 
@@ -107,9 +113,9 @@ public class TechnicianDashboard extends JFrame {
 
         sidebar.add(sidebarBtn("📋  My Appointments", () -> switchTab(PANEL_APPTS, () -> new TechMyAppointmentsPanel(technician))));
         sidebar.add(Box.createVerticalGlue());
-        sidebar.add(sidebarBtn("✏️  Edit Profile",     () -> new EditProfileFrame(technician).setVisible(true)));
+        sidebar.add(sidebarBtn("✏️  Edit Profile", () -> new EditProfileFrame(technician, () -> lblName.setText(technician.getName())).setVisible(true)));
         sidebar.add(Box.createVerticalStrut(8));
-        sidebar.add(sidebarBtn("🚪  Logout",           this::doLogout));
+        sidebar.add(sidebarBtn("🚪  Logout", this::doLogout));
         return sidebar;
     }
 
