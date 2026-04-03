@@ -22,12 +22,14 @@ public class AppointmentService {
      * The appointment starts as "Pending" with no technician assigned.
      * A notification is pushed to Counter Staff to assign it.
      *
-     * @param customerId  the customer's ID
-     * @param serviceType "Normal" or "Major"
-     * @param dateTime    the requested date and time
-     * @param comments    optional comments from the customer
+     * @param customerId     the customer's ID
+     * @param serviceType    "Normal" or "Major"
+     * @param dateTime       the requested date and time
+     * @param comments       optional comments from the customer
+     * @param paymentMethod  "Online" or "Physical"
+     * @return the generated Appointment ID
      */
-    public static void bookAppointment(String customerId, String serviceType, LocalDateTime dateTime, String comments) {
+    public static String bookAppointment(String customerId, String serviceType, LocalDateTime dateTime, String comments, String paymentMethod) {
         // 1. Generate a new Appointment ID
         String newId = FileHandler.getInstance().generateNextId(FileHandler.APPOINTMENTS_FILE, "APT");
 
@@ -47,8 +49,14 @@ public class AppointmentService {
         // 3. Save to the database
         FileHandler.getInstance().appendLine(FileHandler.APPOINTMENTS_FILE, appointment.toFileString());
 
-        // 4. Push notification to Counter Staff
+        // 4. Process Payment
+        double price = PaymentService.getServicePrice(serviceType);
+        PaymentService.processPayment(newId, price, paymentMethod);
+
+        // 5. Push notification to Counter Staff
         NotificationService.push("CounterStaff", "New appointment " + newId + " from customer " + customerId + " is waiting for assignment.");
+        
+        return newId;
     }
 
     /**

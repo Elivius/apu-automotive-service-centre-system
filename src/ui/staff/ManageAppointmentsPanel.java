@@ -198,13 +198,13 @@ public class ManageAppointmentsPanel extends JPanel {
         taComments.setBackground(UITheme.FIELD_BG);
         taComments.setForeground(UITheme.TEXT_PRIMARY);
 
-        form.add(UITheme.formRow("Customer",     cbCustomer));
+        form.add(UITheme.formRow("Customer", cbCustomer));
         form.add(Box.createVerticalStrut(8));
         form.add(UITheme.formRow("Service Type", cbService));
         form.add(Box.createVerticalStrut(8));
-        form.add(UITheme.formRow("Date & Time",  spDate));
+        form.add(UITheme.formRow("Date & Time", spDate));
         form.add(Box.createVerticalStrut(8));
-        form.add(UITheme.formRow("Comments",     new JScrollPane(taComments)));
+        form.add(UITheme.formRow("Comments", new JScrollPane(taComments)));
 
         int res = JOptionPane.showConfirmDialog(this, form, "Create Appointment",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -216,7 +216,7 @@ public class ManageAppointmentsPanel extends JPanel {
         LocalDateTime dateTime = LocalDateTime.ofInstant(dateValue.toInstant(), java.time.ZoneId.systemDefault());
         String comments = taComments.getText().trim();
 
-        AppointmentService.bookAppointment(custId, serviceType, dateTime, comments);
+        AppointmentService.bookAppointment(custId, serviceType, dateTime, comments, "Physical");
         refresh();
         JOptionPane.showMessageDialog(this, "Appointment created successfully.");
     }

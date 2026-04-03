@@ -77,9 +77,9 @@ public class ManageStaffPanel extends JPanel {
 
         JButton btnRefresh = UITheme.secondaryButton("↻");
         btnRefresh.setName("btnRefresh");
-        JButton btnAdd     = UITheme.accentButton("+ Add");
+        JButton btnAdd = UITheme.accentButton("+ Add");
         btnAdd.setName("btnAdd");
-        JButton btnEdit    = UITheme.secondaryButton("✏️  Edit");
+        JButton btnEdit = UITheme.secondaryButton("✏️  Edit");
         btnEdit.setName("btnEdit");
         JButton btnDelete  = UITheme.dangerButton("🗑  Delete");
         btnDelete.setName("btnDelete");
