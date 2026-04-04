@@ -180,7 +180,7 @@ public class NotificationPanel extends JPopupMenu {
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
         textPanel.setOpaque(false);
 
-        JLabel lblMessage = new JLabel("<html><body style='width:260px'>"
+        JLabel lblMessage = new JLabel("<html><body style='width:220px'>"
                 + notification.getMessage() + "</body></html>");
         lblMessage.setFont(UITheme.FONT_BODY);
         lblMessage.setForeground(UITheme.TEXT_PRIMARY);
@@ -200,23 +200,31 @@ public class NotificationPanel extends JPopupMenu {
         row.add(textPanel, BorderLayout.CENTER);
 
         // Right: dismiss button
-        JLabel btnDismiss = new JLabel("✕");
-        btnDismiss.setName("btnDismiss_" + notification.getNotificationId());
-        btnDismiss.setFont(new Font("SansSerif", Font.BOLD, 14));
-        btnDismiss.setForeground(UITheme.TEXT_MUTED);
-        btnDismiss.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnDismiss.setVerticalAlignment(SwingConstants.TOP);
-        btnDismiss.setBorder(BorderFactory.createEmptyBorder(2, 4, 0, 4));
-        btnDismiss.addMouseListener(new MouseAdapter() {
+        JButton btnDismiss = new JButton("\u00D7") {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                NotificationService.markAsRead(notification, user.getUserId(), user.getRole());
-                buildContent(); // rebuild the list
-                if (onDismissCallback != null) {
-                    onDismissCallback.run();
-                }
+            protected void paintComponent(Graphics g) {
+                // No background — transparent
+                super.paintComponent(g);
             }
-
+        };
+        btnDismiss.setName("btnDismiss_" + notification.getNotificationId());
+        btnDismiss.setFont(new Font("SansSerif", Font.BOLD, 13));
+        btnDismiss.setForeground(UITheme.TEXT_MUTED);
+        btnDismiss.setOpaque(false);
+        btnDismiss.setContentAreaFilled(false);
+        btnDismiss.setBorderPainted(false);
+        btnDismiss.setFocusPainted(false);
+        btnDismiss.setMargin(new Insets(0, 0, 0, 0));
+        btnDismiss.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnDismiss.setPreferredSize(new Dimension(36, 28));
+        btnDismiss.addActionListener(e -> {
+            NotificationService.markAsRead(notification, user.getUserId(), user.getRole());
+            buildContent(); // rebuild the list
+            if (onDismissCallback != null) {
+                onDismissCallback.run();
+            }
+        });
+        btnDismiss.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 btnDismiss.setForeground(UITheme.ACCENT);
