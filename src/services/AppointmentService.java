@@ -39,7 +39,7 @@ public class AppointmentService {
         appointment.setCustomerId(customerId);
         appointment.setTechnicianId("");          // No technician yet — Counter Staff will assign
         appointment.setServiceType(serviceType);
-        appointment.setStatus("Pending");
+        appointment.setStatus(Appointment.STATUS_PENDING);
         appointment.setDateTime(dateTime);
         appointment.calculateEndDateTime();        // Auto-calculate end time (1hr Normal / 3hr Major)
         appointment.setComments(comments != null ? comments : "");
@@ -138,8 +138,12 @@ public class AppointmentService {
      */
     public static void declineAppointment(Appointment appointment) {
         if (appointment != null && appointment.getAppointmentId() != null) {
-            appointment.setStatus("Declined");
+            appointment.setStatus(Appointment.STATUS_DECLINED);
             FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
+            
+            // Also decline the associated payment
+            PaymentService.declinePaymentForAppointment(appointment.getAppointmentId());
+
             NotificationService.push(appointment.getCustomerId(), "Your appointment " + appointment.getAppointmentId() + " has been declined.");
         }
     }
@@ -151,7 +155,7 @@ public class AppointmentService {
      */
     public static void completeAppointment(Appointment appointment) {
         if (appointment != null && appointment.getAppointmentId() != null) {
-            appointment.setStatus("Completed");
+            appointment.setStatus(Appointment.STATUS_COMPLETED);
             FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
 
             // Notify the customer

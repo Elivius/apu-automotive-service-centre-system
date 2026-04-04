@@ -226,4 +226,21 @@ public class PaymentService {
                 .findFirst()
                 .orElse(null);
     }
+
+    /**
+     * Finds the payment for a specific appointment and marks its status as "Declined".
+     *
+     * @param appointmentId the appointment ID to search for
+     */
+    public static void declinePaymentForAppointment(String appointmentId) {
+        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.PAYMENTS_FILE);
+        for (String line : lines) {
+            Payment payment = Payment.fromFileString(line);
+            if (payment != null && appointmentId.equals(payment.getAppointmentId())) {
+                payment.setPaymentStatus(Payment.STATUS_DECLINED);
+                FileHandler.getInstance().updateLine(FileHandler.PAYMENTS_FILE, payment.getPaymentId(), payment.toFileString());
+                break;
+            }
+        }
+    }
 }
