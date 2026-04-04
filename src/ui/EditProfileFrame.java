@@ -155,14 +155,10 @@ public class EditProfileFrame extends JFrame {
                 lblError.setText("New passwords do not match.");
                 return;
             }
-            currentUser.setHashedPassword(newPw);
         }
 
         try {
-            currentUser.setName(name);
-            currentUser.setEmail(email);
-            currentUser.setPhone(phone);
-            UserService.updateUser(currentUser);
+            UserService.updateUserProfile(currentUser, name, email, phone, changingPassword ? newPw : null);
             
 //          Reflect on the dashboard
             if (onProfileUpdate != null) {

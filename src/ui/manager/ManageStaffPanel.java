@@ -216,11 +216,7 @@ public class ManageStaffPanel extends JPanel {
             }
         } else {
             try {
-                prefill.setName(tfName.getText().trim());
-                prefill.setEmail(tfEmail.getText().trim());
-                prefill.setPhone(tfPhone.getText().trim());
-                if (isTech) ((models.Technician)prefill).setSpecialization(tfSpecialization.getText().trim());
-                UserService.updateUser(prefill);
+                UserService.updateStaffProfile(prefill, tfName.getText().trim(), tfEmail.getText().trim(), tfPhone.getText().trim(), isTech ? tfSpecialization.getText().trim() : null);
             } catch (IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
             }

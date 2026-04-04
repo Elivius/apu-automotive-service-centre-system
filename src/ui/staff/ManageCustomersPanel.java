@@ -168,10 +168,7 @@ public class ManageCustomersPanel extends JPanel {
             }
         } else {
             try {
-                prefill.setName(tfName.getText().trim());
-                prefill.setEmail(tfEmail.getText().trim());
-                prefill.setPhone(tfPhone.getText().trim());
-                UserService.updateUser(prefill);
+                UserService.updateUserProfile(prefill, tfName.getText().trim(), tfEmail.getText().trim(), tfPhone.getText().trim(), null);
                 refresh();
             } catch (IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
