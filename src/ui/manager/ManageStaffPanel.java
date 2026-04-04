@@ -186,26 +186,33 @@ public class ManageStaffPanel extends JPanel {
         form.add(Box.createVerticalStrut(8));
         form.add(UITheme.formRow("Phone", tfPhone));
         form.add(Box.createVerticalStrut(8));
-        if (isTech) { form.add(UITheme.formRow("Specialization", tfSpecialization));
-        form.add(Box.createVerticalStrut(8)); }
-        if (prefill == null) { form.add(UITheme.formRow("Password *", pfPassword)); }
+        if (isTech) {
+        	form.add(UITheme.formRow("Specialization", tfSpecialization));
+        	form.add(Box.createVerticalStrut(8));
+        }
+        if (prefill == null) {
+        	form.add(UITheme.formRow("Password *", pfPassword));
+        	form.add(Box.createVerticalStrut(8));
+        }
 
         String title = (prefill == null ? "Add " : "Edit ") + role;
         int res = JOptionPane.showConfirmDialog(this, form, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        if (res != JOptionPane.OK_OPTION) return;
+        if (res != JOptionPane.OK_OPTION) {
+        	return;
+        }
 
         if (prefill == null) {
-            String pw = new String(pfPassword.getPassword());
+            String password = new String(pfPassword.getPassword());
             String username = tfUsername.getText().trim();
             String name = tfName.getText().trim();
-            if (username.isEmpty() || name.isEmpty() || pw.isEmpty()) {
+            if (username.isEmpty() || name.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Username, Name, Password are required.");
                 return;
             }
             if (isTech) {
-                UserService.registerUser(username, pw, name, tfEmail.getText().trim(), tfPhone.getText().trim(), role, tfSpecialization.getText().trim());
+                UserService.registerUser(username, password, name, tfEmail.getText().trim(), tfPhone.getText().trim(), role, tfSpecialization.getText().trim());
             } else {
-                UserService.registerUser(username, pw, name, tfEmail.getText().trim(), tfPhone.getText().trim(), role);
+                UserService.registerUser(username, password, name, tfEmail.getText().trim(), tfPhone.getText().trim(), role);
             }
         } else {
             try {

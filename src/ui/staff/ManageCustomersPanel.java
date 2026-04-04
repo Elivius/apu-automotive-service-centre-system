@@ -50,7 +50,7 @@ public class ManageCustomersPanel extends JPanel {
             public void changedUpdate(javax.swing.event.DocumentEvent e) { filterTable(); }
         });
         JButton btnAdd = UITheme.accentButton("+ Add Customer");
-        btnAdd.addActionListener(e -> showAddDialog());
+        btnAdd.addActionListener(e -> showCustomerForm(null));
         JButton btnRefresh = UITheme.secondaryButton("↻");
         btnRefresh.addActionListener(e -> refresh());
 
@@ -76,7 +76,16 @@ public class ManageCustomersPanel extends JPanel {
         actions.setOpaque(false);
         JButton btnEdit = UITheme.secondaryButton("✏️  Edit");
         JButton btnDelete = UITheme.dangerButton("🗑  Delete");
-        btnEdit.addActionListener(e -> showEditDialog());
+        btnEdit.addActionListener(e -> {
+            int row = table.getSelectedRow();
+            if (row < 0) {
+            	JOptionPane.showMessageDialog(this, "Please select a customer to edit.");
+            	return;
+            }
+            int modelRow = table.convertRowIndexToModel(row);
+            User user = customers.get(modelRow);
+            showCustomerForm(user);
+        });
         btnDelete.addActionListener(e -> doDelete());
         actions.add(btnEdit);
         actions.add(btnDelete);
@@ -100,60 +109,73 @@ public class ManageCustomersPanel extends JPanel {
         }
     }
 
-    private void showAddDialog() {
-        JPanel form = buildCustomerForm(null);
-        int res = JOptionPane.showConfirmDialog(this, form, "Add New Customer",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        if (res != JOptionPane.OK_OPTION) return;
+    private void showCustomerForm(User prefill) {
+        JPanel form = new JPanel();
+        form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
+        form.setBackground(UITheme.BG_CARD);
 
-        JTextField tfUsername = (JTextField) ((JPanel)form.getComponent(0)).getComponent(1);
-        JTextField tfName = (JTextField) ((JPanel)form.getComponent(1)).getComponent(1);
-        JTextField tfEmail = (JTextField) ((JPanel)form.getComponent(2)).getComponent(1);
-        JTextField tfPhone = (JTextField) ((JPanel)form.getComponent(3)).getComponent(1);
-        JPasswordField pfPassword = (JPasswordField) ((JPanel)form.getComponent(4)).getComponent(1);
+        JTextField tfUsername = UITheme.styledTextField(20);
+        tfUsername.setName("tfUsername");
+        JTextField tfName = UITheme.styledTextField(20);
+        tfName.setName("tfName");
+        JTextField tfEmail = UITheme.styledTextField(20);
+        tfEmail.setName("tfEmail");
+        JTextField tfPhone = UITheme.styledTextField(20);
+        tfPhone.setName("tfPhone");
+        JPasswordField pfPassword = UITheme.styledPasswordField(20);
+        pfPassword.setName("pfPassword");
 
-        String username = tfUsername.getText().trim(), name = tfName.getText().trim(),
-               email = tfEmail.getText().trim(), phone = tfPhone.getText().trim(),
-               pw = new String(pfPassword.getPassword());
+        if (prefill != null) {
+            tfUsername.setText(prefill.getUsername());
+            tfUsername.setEditable(false);
+            tfName.setText(prefill.getName());
+            tfEmail.setText(prefill.getEmail());
+            tfPhone.setText(prefill.getPhone() != null ? prefill.getPhone() : "");
+        }
 
-        if (username.isEmpty() || name.isEmpty() || pw.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Username, Name and Password are required.");
+        form.add(UITheme.formRow("Username *", tfUsername));
+        form.add(Box.createVerticalStrut(8));
+        form.add(UITheme.formRow("Full Name *", tfName));
+        form.add(Box.createVerticalStrut(8));
+        form.add(UITheme.formRow("Email", tfEmail));
+        form.add(Box.createVerticalStrut(8));
+        form.add(UITheme.formRow("Phone", tfPhone));
+        form.add(Box.createVerticalStrut(8));
+        if (prefill == null) {
+            form.add(UITheme.formRow("Password *", pfPassword));
+            form.add(Box.createVerticalStrut(8));
+        }
+
+        String title = prefill == null ? "Add New Customer" : "Edit Customer: " + prefill.getName();
+        int res = JOptionPane.showConfirmDialog(this, form, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (res != JOptionPane.OK_OPTION) {
             return;
         }
-        try {
-            UserService.registerUser(username, pw, name, email, phone, "Customer");
-            refresh();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
-        }
-    }
 
-    private void showEditDialog() {
-        int row = table.getSelectedRow();
-        if (row < 0) {
-        	JOptionPane.showMessageDialog(this, "Please select a customer to edit.");
-        	return;
-        }
-        int modelRow = table.convertRowIndexToModel(row);
-        User user = customers.get(modelRow);
-
-        JPanel form = buildCustomerForm(user);
-        int res = JOptionPane.showConfirmDialog(this, form, "Edit Customer: " + user.getName(),
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        if (res != JOptionPane.OK_OPTION) return;
-
-        JTextField tfName = (JTextField) ((JPanel)form.getComponent(1)).getComponent(1);
-        JTextField tfEmail = (JTextField) ((JPanel)form.getComponent(2)).getComponent(1);
-        JTextField tfPhone = (JTextField) ((JPanel)form.getComponent(3)).getComponent(1);
-
-        try {
-            user.setName(tfName.getText().trim());
-            user.setEmail(tfEmail.getText().trim());
-            user.setPhone(tfPhone.getText().trim());
-            UserService.updateUser(user);
-            refresh();
-        } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        if (prefill == null) {
+            String username = tfUsername.getText().trim();
+            String name = tfName.getText().trim();
+            String password = new String(pfPassword.getPassword());
+            if (username.isEmpty() || name.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Username, Name and Password are required.");
+                return;
+            }
+            try {
+                UserService.registerUser(username, password, name, tfEmail.getText().trim(), tfPhone.getText().trim(), "Customer");
+                refresh();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+            }
+        } else {
+            try {
+                prefill.setName(tfName.getText().trim());
+                prefill.setEmail(tfEmail.getText().trim());
+                prefill.setPhone(tfPhone.getText().trim());
+                UserService.updateUser(prefill);
+                refresh();
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+            }
         }
     }
 
@@ -169,43 +191,5 @@ public class ManageCustomersPanel extends JPanel {
             UserService.deleteUser(user);
             refresh();
         }
-    }
-
-    private JPanel buildCustomerForm(User prefill) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(UITheme.BG_CARD);
-
-        JTextField tfUsername = UITheme.styledTextField(20);
-        if (prefill != null) {
-            tfUsername.setText(prefill.getUsername());
-            tfUsername.setEditable(false);
-        }
-        JTextField tfName = UITheme.styledTextField(20);
-        if (prefill != null) {
-            tfName.setText(prefill.getName());
-        }
-        JTextField tfEmail = UITheme.styledTextField(20);
-        if (prefill != null) {
-            tfEmail.setText(prefill.getEmail());
-        }
-        JTextField tfPhone = UITheme.styledTextField(20);
-        if (prefill != null) {
-            tfPhone.setText(prefill.getPhone() != null ? prefill.getPhone() : "");
-        }
-        JPasswordField pfPassword = UITheme.styledPasswordField(20);
-
-        panel.add(UITheme.formRow("Username *", tfUsername));
-        panel.add(Box.createVerticalStrut(8));
-        panel.add(UITheme.formRow("Full Name *", tfName));
-        panel.add(Box.createVerticalStrut(8));
-        panel.add(UITheme.formRow("Email", tfEmail));
-        panel.add(Box.createVerticalStrut(8));
-        panel.add(UITheme.formRow("Phone", tfPhone));
-        panel.add(Box.createVerticalStrut(8));
-        if (prefill == null) {
-            panel.add(UITheme.formRow("Password *", pfPassword));
-        }
-        return panel;
     }
 }
