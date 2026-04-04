@@ -5,7 +5,9 @@ import utils.FileHandler;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -14,7 +16,12 @@ import java.util.stream.Collectors;
  * keeping notification logic in a single place (DRY Principle).
  *
  * Notifications are stored in notifications.txt and displayed
- * as pop-ups when a user logs in or performs certain actions.
+ * via the notification bell icon on each dashboard.
+ *
+ * Read tracking strategy:
+ * - Direct notifications (target = specific userId): flip isRead on the record.
+ * - Role/broadcast notifications (target = role name or "ALL"): track per-user
+ *   in notification_reads.txt so one user's read action doesn't hide it from others.
  */
 public class NotificationService {
 
@@ -48,7 +55,8 @@ public class NotificationService {
 
     /**
      * Retrieves all unread notifications for a specific user.
-     * Also includes broadcast ("ALL") and role-based notifications.
+     * Also includes broadcast ("ALL") and role-based notifications
+     * that this user has not yet personally dismissed.
      *
      * @param userId the user's ID (e.g., "CUS0001")
      * @param role   the user's role (e.g., "CounterStaff")
@@ -56,46 +64,116 @@ public class NotificationService {
      */
     public static List<Notification> getNotificationsForUser(String userId, String role) {
         List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.NOTIFICATIONS_FILE);
+        // Set that contains all the notification IDs that the user has read
+        Set<String> userReads = getReadNotificationIds(userId);
+
         return lines.stream()
                 .map(Notification::fromFileString)
-                .filter(n -> n != null && !n.isRead())
-                .filter(n -> n.getTargetUserId().equals(userId) ||
-                             n.getTargetUserId().equals(role) ||
-                             n.getTargetUserId().equals("ALL"))
+                .filter(notification -> notification != null)
+                .filter(notification -> isNotificationForUser(notification, userId, role))
+                .filter(notification -> {
+                    if (isDirectNotification(notification, userId)) {
+                        // Direct notification: use the isRead flag on the record - notification.txt
+                        return !notification.isRead();
+                    } else {
+                        // Role/broadcast: check per-user reads file - notification_reads.txt
+                        return !userReads.contains(notification.getNotificationId());
+                    }
+                })
                 .collect(Collectors.toList());
     }
 
     /**
-     * Marks a specific notification as read.
+     * Marks a specific notification as read for a given user.
+     * - Direct notifications: flips isRead on the shared record.
+     * - Role/broadcast notifications: records per-user read in notification_reads.txt.
      *
      * @param notification the Notification object to mark as read
-     * @param userId the user's ID (e.g., "CUS0001")
+     * @param userId       the user's ID (e.g., "CUS0001")
+     * @param role         the user's role (e.g., "CounterStaff")
      */
-    public static void markAsRead(Notification notification, String userId) {
-        if (notification != null && notification.getNotificationId() != null && notification.getTargetUserId().equals(userId)) {
+    public static void markAsRead(Notification notification, String userId, String role) {
+        if (notification == null || notification.getNotificationId() == null) {
+            return;
+        }
+        if (!isNotificationForUser(notification, userId, role)) {
+            return;
+        }
+
+        if (isDirectNotification(notification, userId)) {
+            // Direct notification — flip the flag on the record itself
             notification.setRead(true);
             FileHandler.getInstance().updateLine(FileHandler.NOTIFICATIONS_FILE, notification.getNotificationId(), notification.toFileString());
+        } else {
+            // Role/broadcast — record per-user read (don't touch the shared record)
+            String readEntry = notification.getNotificationId() + FileHandler.SEPARATOR + userId;
+            FileHandler.getInstance().appendLine(FileHandler.NOTIFICATION_READS_FILE, readEntry);
         }
     }
 
     /**
      * Marks all notifications for a specific user as read.
-     * Called when a user views their notification panel.
+     * Called when a user clicks "Mark All as Read" in the notification panel.
      *
      * @param userId the user's ID
+     * @param role   the user's role (e.g., "CounterStaff")
      */
-    public static void markAllAsRead(String userId) {
-        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.NOTIFICATIONS_FILE);
-        List<String> updatedLines = new ArrayList<>();
+    public static void markAllAsRead(String userId, String role) {
+        List<Notification> unreadNotifications = getNotificationsForUser(userId, role);
+        for (Notification notification : unreadNotifications) {
+            markAsRead(notification, userId, role);
+        }
+    }
+
+    /**
+     * Returns the count of unread notifications for a user.
+     * Useful for the bell icon badge.
+     *
+     * @param userId the user's ID
+     * @param role   the user's role
+     * @return the number of unread notifications
+     */
+    public static int getUnreadCount(String userId, String role) {
+        return getNotificationsForUser(userId, role).size();
+    }
+
+    // ═══════════════════════════════════════════
+    //  PRIVATE HELPERS
+    // ═══════════════════════════════════════════
+
+    /**
+     * Checks whether a notification targets a specific user.
+     * Matches by direct userId, role, or broadcast ("ALL").
+     */
+    private static boolean isNotificationForUser(Notification notification, String userId, String role) {
+        String target = notification.getTargetUserId();
+        return target.equals(userId) || target.equals(role) || target.equals("ALL");
+    }
+
+    /**
+     * Checks whether a notification is a direct (1-to-1) notification for a specific user.
+     * Returns false for role-based or broadcast notifications.
+     */
+    private static boolean isDirectNotification(Notification notification, String userId) {
+        return notification.getTargetUserId().equals(userId);
+    }
+
+    /**
+     * Loads the set of notification IDs that a specific user has already read.
+     * Reads from notification_reads.txt.
+     *
+     * @param userId the user's ID
+     * @return a set of notification IDs the user has read
+     */
+    private static Set<String> getReadNotificationIds(String userId) {
+        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.NOTIFICATION_READS_FILE);
+        Set<String> readIds = new HashSet<>();
         for (String line : lines) {
-            Notification notification = Notification.fromFileString(line);
-            if (notification != null && notification.getTargetUserId().equals(userId)) {
-                notification.setRead(true);
-                updatedLines.add(notification.toFileString());
-            } else {
-                updatedLines.add(line);
+            String[] parts = line.split(FileHandler.DELIMITER, -1);
+            if (parts.length >= 2 && parts[1].equals(userId)) {
+                readIds.add(parts[0]);
             }
         }
-        FileHandler.getInstance().writeAllLines(FileHandler.NOTIFICATIONS_FILE, updatedLines);
+        return readIds;
     }
 }

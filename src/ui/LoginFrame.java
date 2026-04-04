@@ -1,22 +1,18 @@
 package ui;
 
 import models.User;
-import models.Notification;
-import services.NotificationService;
 import services.UserService;
 
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.List;
 
 /**
  * Login screen — entry point for all users.
  *
  * On successful login:
- *   1. Fires ToastNotification for each unread notification.
- *   2. Calls user.displayDashboard() via polymorphism to open the right JFrame.
+ *   1. Calls user.displayDashboard() via polymorphism to open the right JFrame.
  */
 public class LoginFrame extends JFrame {
 
@@ -124,14 +120,6 @@ public class LoginFrame extends JFrame {
             lblError.setText("Invalid username or password.");
             pfPassword.setText("");
             return;
-        }
-
-        // Show unread notifications as toast popups
-        List<Notification> notifications =
-                NotificationService.getNotificationsForUser(user.getUserId(), user.getRole());
-        for (Notification notification : notifications) {
-            ToastNotification.show(notification.getMessage());
-            NotificationService.markAsRead(notification, user.getUserId());
         }
 
         // Polymorphism: open the role-specific dashboard
