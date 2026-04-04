@@ -16,12 +16,18 @@ import java.awt.*;
 public class EditProfileFrame extends JFrame {
 
     private final User currentUser;
+    private Runnable onProfileUpdate;
     private JTextField tfName, tfEmail, tfPhone;
     private JPasswordField pfOldPw, pfNewPw, pfConfirmPw;
     private JLabel lblError;
 
     public EditProfileFrame(User user) {
+        this(user, null);
+    }
+
+    public EditProfileFrame(User user, Runnable onProfileUpdate) {
         this.currentUser = user;
+        this.onProfileUpdate = onProfileUpdate;
         setTitle("Edit Profile — " + user.getName());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(500, 580);
@@ -61,9 +67,9 @@ public class EditProfileFrame extends JFrame {
         JLabel pwHeader = UITheme.headerLabel("Change Password (optional)");
         pwHeader.setName("pwHeader");
         pwHeader.setAlignmentX(LEFT_ALIGNMENT);
-        pfOldPw     = UITheme.styledPasswordField(20);
+        pfOldPw = UITheme.styledPasswordField(20);
         pfOldPw.setName("pfOldPw");
-        pfNewPw     = UITheme.styledPasswordField(20);
+        pfNewPw = UITheme.styledPasswordField(20);
         pfNewPw.setName("pfNewPw");
         pfConfirmPw = UITheme.styledPasswordField(20);
         pfConfirmPw.setName("pfConfirmPw");
@@ -118,11 +124,11 @@ public class EditProfileFrame extends JFrame {
     }
 
     private void doSave() {
-        String name   = tfName.getText().trim();
-        String email  = tfEmail.getText().trim();
-        String phone  = tfPhone.getText().trim();
-        String oldPw  = new String(pfOldPw.getPassword());
-        String newPw  = new String(pfNewPw.getPassword());
+        String name = tfName.getText().trim();
+        String email = tfEmail.getText().trim();
+        String phone = tfPhone.getText().trim();
+        String oldPw = new String(pfOldPw.getPassword());
+        String newPw = new String(pfNewPw.getPassword());
         String confPw = new String(pfConfirmPw.getPassword());
 
         if (name.isEmpty() || email.isEmpty()) {
@@ -149,17 +155,19 @@ public class EditProfileFrame extends JFrame {
                 lblError.setText("New passwords do not match.");
                 return;
             }
-            currentUser.setHashedPassword(newPw);
         }
 
         try {
-            currentUser.setName(name);
-            currentUser.setEmail(email);
-            currentUser.setPhone(phone);
-            UserService.updateUser(currentUser);
+            UserService.updateUserProfile(currentUser, name, email, phone, changingPassword ? newPw : null);
+            
+//          Reflect on the dashboard
+            if (onProfileUpdate != null) {
+                onProfileUpdate.run();
+            }
 
             JOptionPane.showMessageDialog(this, "Profile updated successfully!", "Success",
                     JOptionPane.INFORMATION_MESSAGE);
+            
             dispose();
         } catch (IllegalArgumentException ex) {
             lblError.setText(ex.getMessage());

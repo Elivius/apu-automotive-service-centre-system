@@ -27,16 +27,16 @@ public class SystemTest {
             // 2. TEST APPOINTMENT BOOKING
             System.out.println("[TEST 2] Customer booking an appointment...");
             LocalDateTime apptTime = LocalDateTime.now().plusDays(1).withHour(10).withMinute(0);
-            AppointmentService.bookAppointment("CUS0001", "Normal", apptTime, "Brakes feel squeaky");
-            AppointmentService.bookAppointment("CUS0001", "Major", apptTime, "Steering feel squeaky");
             
-            // Get the ID of the new appointment
-            List<Appointment> apt = AppointmentService.getAllAppointmentsForCustomer("CUS0001");
-            String apptId = apt.get(0).getAppointmentId();
+            // Now returns the ID directly and processes payment internaly
+            String apptId = AppointmentService.bookAppointment("CUS0001", "Normal", apptTime, "Brakes feel squeaky", "Online");
+            AppointmentService.bookAppointment("CUS0001", "Major", apptTime, "Steering feel squeaky", "Physical");
+            
             System.out.println("✅ Appointment booked with ID: " + apptId + "\n");
 
             // 3. TEST TECHNICIAN ASSIGNMENT & COLLISION
             System.out.println("[TEST 3] Assigning technician to appointment...");
+            List<Appointment> apt = AppointmentService.getAllAppointmentsForCustomer("CUS0001");
             AppointmentService.assignAppointment(apt.get(0), "TEC0001");
             System.out.println("✅ Technician 'TEC0001' assigned successfully.");
 
@@ -48,10 +48,8 @@ public class SystemTest {
                 System.out.println("✅ Collision detection works! Error: " + e.getMessage() + "\n");
             }
 
-            // 4. TEST PAYMENT
-            System.out.println("[TEST 4] Processing payment...");
-            PaymentService.processPayment(apptId, 150.00, "Online");
-            System.out.println("✅ Payment processed for " + apptId + ".\n");
+            // 4. TEST PAYMENT (Not needed manually anymore as bookAppointment does it)
+            System.out.println("[TEST 4] Payment was already processed during booking.\n");
 
             // 5. TEST NOTIFICATIONS
             System.out.println("[TEST 5] Checking notifications for Customer...");

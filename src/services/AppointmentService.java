@@ -22,12 +22,14 @@ public class AppointmentService {
      * The appointment starts as "Pending" with no technician assigned.
      * A notification is pushed to Counter Staff to assign it.
      *
-     * @param customerId  the customer's ID
-     * @param serviceType "Normal" or "Major"
-     * @param dateTime    the requested date and time
-     * @param comments    optional comments from the customer
+     * @param customerId     the customer's ID
+     * @param serviceType    "Normal" or "Major"
+     * @param dateTime       the requested date and time
+     * @param comments       optional comments from the customer
+     * @param paymentMethod  "Online" or "Physical"
+     * @return the generated Appointment ID
      */
-    public static void bookAppointment(String customerId, String serviceType, LocalDateTime dateTime, String comments) {
+    public static String bookAppointment(String customerId, String serviceType, LocalDateTime dateTime, String comments, String paymentMethod) {
         // 1. Generate a new Appointment ID
         String newId = FileHandler.getInstance().generateNextId(FileHandler.APPOINTMENTS_FILE, "APT");
 
@@ -37,7 +39,7 @@ public class AppointmentService {
         appointment.setCustomerId(customerId);
         appointment.setTechnicianId("");          // No technician yet — Counter Staff will assign
         appointment.setServiceType(serviceType);
-        appointment.setStatus("Pending");
+        appointment.setStatus(Appointment.STATUS_PENDING);
         appointment.setDateTime(dateTime);
         appointment.calculateEndDateTime();        // Auto-calculate end time (1hr Normal / 3hr Major)
         appointment.setComments(comments != null ? comments : "");
@@ -47,8 +49,14 @@ public class AppointmentService {
         // 3. Save to the database
         FileHandler.getInstance().appendLine(FileHandler.APPOINTMENTS_FILE, appointment.toFileString());
 
-        // 4. Push notification to Counter Staff
+        // 4. Process Payment
+        double price = PaymentService.getServicePrice(serviceType);
+        PaymentService.processPayment(newId, price, paymentMethod);
+
+        // 5. Push notification to Counter Staff
         NotificationService.push("CounterStaff", "New appointment " + newId + " from customer " + customerId + " is waiting for assignment.");
+        
+        return newId;
     }
 
     /**
@@ -96,7 +104,7 @@ public class AppointmentService {
 
         // No collision — assign the technician and update status
         targetAppointment.setTechnicianId(technicianId);
-        targetAppointment.setStatus("Assigned to " + technicianId);
+        targetAppointment.setStatus(Appointment.STATUS_ASSIGNED);
         FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, targetAppointment.getAppointmentId(), targetAppointment.toFileString());
 
         // Push notifications to both the customer and the technician
@@ -130,8 +138,12 @@ public class AppointmentService {
      */
     public static void declineAppointment(Appointment appointment) {
         if (appointment != null && appointment.getAppointmentId() != null) {
-            appointment.setStatus("Declined");
+            appointment.setStatus(Appointment.STATUS_DECLINED);
             FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
+            
+            // Also decline the associated payment
+            PaymentService.declinePaymentForAppointment(appointment.getAppointmentId());
+
             NotificationService.push(appointment.getCustomerId(), "Your appointment " + appointment.getAppointmentId() + " has been declined.");
         }
     }
@@ -143,7 +155,7 @@ public class AppointmentService {
      */
     public static void completeAppointment(Appointment appointment) {
         if (appointment != null && appointment.getAppointmentId() != null) {
-            appointment.setStatus("Completed");
+            appointment.setStatus(Appointment.STATUS_COMPLETED);
             FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
 
             // Notify the customer

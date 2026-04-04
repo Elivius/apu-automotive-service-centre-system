@@ -187,13 +187,7 @@ public class BookAppointmentPanel extends JPanel {
         }
 
         try {
-            AppointmentService.bookAppointment(customer.getUserId(), serviceType, dateTime, comments);
-            // Retrieve the new appointment ID (last booked)
-            List<models.Appointment> apts = AppointmentService.getAllAppointmentsForCustomer(customer.getUserId());
-            if (!apts.isEmpty()) {
-                String aptId = apts.get(apts.size() - 1).getAppointmentId();
-                PaymentService.processPayment(aptId, price, payMethod);
-            }
+            AppointmentService.bookAppointment(customer.getUserId(), serviceType, dateTime, comments, payMethod);
             lblSuccess.setText("Appointment booked! Status: Pending. Check 'My Appointments'.");
             taComments.setText("");
         } catch (Exception ex) {

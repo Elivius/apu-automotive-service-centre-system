@@ -17,6 +17,7 @@ public class Payment {
     // ───── Public Constants ─────
     public static final String STATUS_PENDING   = "Pending";
     public static final String STATUS_PAID      = "Paid";
+    public static final String STATUS_DECLINED	= "Declined";
 
     public static final String METHOD_PHYSICAL  = "Physical";
     public static final String METHOD_ONLINE    = "Online";

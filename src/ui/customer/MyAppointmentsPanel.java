@@ -51,7 +51,7 @@ public class MyAppointmentsPanel extends JPanel {
         add(header, BorderLayout.NORTH);
 
         // ── Table ─────────────────────────────────────────────────────
-        String[] cols = {"ID", "Service", "Date & Time", "Status", "Comments"};
+        String[] cols = {"ID", "Service", "Date & Time", "Technician", "Status", "Comments"};
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -124,6 +124,7 @@ public class MyAppointmentsPanel extends JPanel {
                 apt.getAppointmentId(),
                 apt.getServiceType(),
                 apt.getDateTime() != null ? apt.getDateTime().format(DateUtils.FORMATTER) : "",
+                apt.getTechnicianId() != null && !apt.getTechnicianId().isEmpty() ? apt.getTechnicianId() : "-",
                 apt.getStatus(),
                 apt.getComments()
             });
@@ -152,7 +153,7 @@ public class MyAppointmentsPanel extends JPanel {
             taAction.setEnabled(true);
             btnSubmit.setText("Submit Review");
             btnSubmit.setEnabled(true);
-        } else if ("Pending".equals(status) || status.startsWith("Assigned")) {
+        } else if ("Pending".equals(status) || "Assigned".equals(status)) {
             lblActionTitle.setText("Add / Edit Comments");
             lblActionHint.setText("Help the technician understand your situation");
             taAction.setText(apt.getComments() != null ? apt.getComments() : "");

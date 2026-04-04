@@ -77,9 +77,9 @@ public class ManageStaffPanel extends JPanel {
 
         JButton btnRefresh = UITheme.secondaryButton("↻");
         btnRefresh.setName("btnRefresh");
-        JButton btnAdd     = UITheme.accentButton("+ Add");
+        JButton btnAdd = UITheme.accentButton("+ Add");
         btnAdd.setName("btnAdd");
-        JButton btnEdit    = UITheme.secondaryButton("✏️  Edit");
+        JButton btnEdit = UITheme.secondaryButton("✏️  Edit");
         btnEdit.setName("btnEdit");
         JButton btnDelete  = UITheme.dangerButton("🗑  Delete");
         btnDelete.setName("btnDelete");
@@ -109,13 +109,21 @@ public class ManageStaffPanel extends JPanel {
             loadData.run();
         });
         btnEdit.addActionListener(e -> {
-            int row = table.getSelectedRow(); if (row < 0) return;
+            int row = table.getSelectedRow();
+            if (row < 0) {
+				JOptionPane.showMessageDialog(this, "Please select a user to edit.");
+				return;
+            };
             User user = userRef[0].get(table.convertRowIndexToModel(row));
             showStaffForm(user, role, isTech);
             loadData.run();
         });
         btnDelete.addActionListener(e -> {
-            int row = table.getSelectedRow(); if (row < 0) return;
+            int row = table.getSelectedRow();
+            if (row < 0) {
+				JOptionPane.showMessageDialog(this, "Please select a user to delete.");
+				return;
+            }
             User user = userRef[0].get(table.convertRowIndexToModel(row));
             int ok = JOptionPane.showConfirmDialog(this,
                 "Delete \"" + user.getName() + "\"?", "Confirm", JOptionPane.YES_NO_OPTION);
@@ -139,7 +147,7 @@ public class ManageStaffPanel extends JPanel {
         topBar.add(btnRow, BorderLayout.EAST);
 
         panel.add(topBar, BorderLayout.NORTH);
-        panel.add(sp,     BorderLayout.CENTER);
+        panel.add(sp, BorderLayout.CENTER);
         return panel;
     }
 
@@ -178,34 +186,37 @@ public class ManageStaffPanel extends JPanel {
         form.add(Box.createVerticalStrut(8));
         form.add(UITheme.formRow("Phone", tfPhone));
         form.add(Box.createVerticalStrut(8));
-        if (isTech) { form.add(UITheme.formRow("Specialization", tfSpecialization));
-        form.add(Box.createVerticalStrut(8)); }
-        if (prefill == null) { form.add(UITheme.formRow("Password *", pfPassword)); }
+        if (isTech) {
+        	form.add(UITheme.formRow("Specialization", tfSpecialization));
+        	form.add(Box.createVerticalStrut(8));
+        }
+        if (prefill == null) {
+        	form.add(UITheme.formRow("Password *", pfPassword));
+        	form.add(Box.createVerticalStrut(8));
+        }
 
         String title = (prefill == null ? "Add " : "Edit ") + role;
         int res = JOptionPane.showConfirmDialog(this, form, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        if (res != JOptionPane.OK_OPTION) return;
+        if (res != JOptionPane.OK_OPTION) {
+        	return;
+        }
 
         if (prefill == null) {
-            String pw = new String(pfPassword.getPassword());
+            String password = new String(pfPassword.getPassword());
             String username = tfUsername.getText().trim();
             String name = tfName.getText().trim();
-            if (username.isEmpty() || name.isEmpty() || pw.isEmpty()) {
+            if (username.isEmpty() || name.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Username, Name, Password are required.");
                 return;
             }
             if (isTech) {
-                UserService.registerUser(username, pw, name, tfEmail.getText().trim(), tfPhone.getText().trim(), role, tfSpecialization.getText().trim());
+                UserService.registerUser(username, password, name, tfEmail.getText().trim(), tfPhone.getText().trim(), role, tfSpecialization.getText().trim());
             } else {
-                UserService.registerUser(username, pw, name, tfEmail.getText().trim(), tfPhone.getText().trim(), role);
+                UserService.registerUser(username, password, name, tfEmail.getText().trim(), tfPhone.getText().trim(), role);
             }
         } else {
             try {
-                prefill.setName(tfName.getText().trim());
-                prefill.setEmail(tfEmail.getText().trim());
-                prefill.setPhone(tfPhone.getText().trim());
-                if (isTech) ((models.Technician)prefill).setSpecialization(tfSpecialization.getText().trim());
-                UserService.updateUser(prefill);
+                UserService.updateStaffProfile(prefill, tfName.getText().trim(), tfEmail.getText().trim(), tfPhone.getText().trim(), isTech ? tfSpecialization.getText().trim() : null);
             } catch (IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
             }

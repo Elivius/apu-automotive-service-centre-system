@@ -67,12 +67,37 @@ public class UserService {
      * Updates an existing user's information in the database.
      * Replaces the old record with the new updated User object's data.
      */
-    public static void updateUser(User user) {
+    private static void updateUser(User user) {
         if (user != null && user.getUserId() != null) {
             FileHandler.getInstance().updateLine(FileHandler.USERS_FILE, user.getUserId(), user.toFileString());
             NotificationService.push(user, "Your profile has been updated.");
         }
+    }
 
+    /**
+     * Updates a generic user profile (Customer, Generic Staff).
+     */
+    public static void updateUserProfile(User user, String name, String email, String phone, String newPassword) {
+        user.setName(name);
+        user.setEmail(email);
+        user.setPhone(phone);
+        if (newPassword != null && !newPassword.isEmpty()) {
+            user.setHashedPassword(newPassword);
+        }
+        updateUser(user);
+    }
+
+    /**
+     * Updates a staff profile. If the user is a technician, it also updates the specialization.
+     */
+    public static void updateStaffProfile(User user, String name, String email, String phone, String specialization) {
+        user.setName(name);
+        user.setEmail(email);
+        user.setPhone(phone);
+        if (user instanceof Technician && specialization != null) {
+            ((Technician) user).setSpecialization(specialization);
+        }
+        updateUser(user);
     }
 
     /**

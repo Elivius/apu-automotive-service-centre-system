@@ -111,6 +111,11 @@ public class CollectPaymentPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Could not find the related appointment.");
             return;
         }
+        
+        if (apt.getTechnicianId() == null || apt.getTechnicianId().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Cannot make payment for an appointment without an assigned technician.");
+			return;
+		}
 
         int ok = JOptionPane.showConfirmDialog(this,
                 "Confirm physical payment of RM " + String.format("%.2f", payment.getAmount())
