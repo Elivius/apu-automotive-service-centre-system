@@ -104,7 +104,7 @@ public class AppointmentService {
 
         // No collision — assign the technician and update status
         targetAppointment.setTechnicianId(technicianId);
-        targetAppointment.setStatus("Assigned to " + technicianId);
+        targetAppointment.setStatus(Appointment.STATUS_ASSIGNED);
         FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, targetAppointment.getAppointmentId(), targetAppointment.toFileString());
 
         // Push notifications to both the customer and the technician

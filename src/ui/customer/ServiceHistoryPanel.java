@@ -44,7 +44,7 @@ public class ServiceHistoryPanel extends JPanel {
         header.add(btnRefresh, BorderLayout.EAST);
         add(header, BorderLayout.NORTH);
 
-        String[] cols = {"Appt ID", "Service", "Date & Time", "Status", "Technician Feedback"};
+        String[] cols = {"Appt ID", "Service", "Date & Time", "Technician", "Status", "Technician Feedback"};
         tableModel = new DefaultTableModel(cols, 0) {
             public boolean isCellEditable(int r, int c) {
                 return false;
@@ -94,6 +94,7 @@ public class ServiceHistoryPanel extends JPanel {
                 apt.getAppointmentId(),
                 apt.getServiceType(),
                 apt.getDateTime() != null ? apt.getDateTime().format(DateUtils.FORMATTER) : "",
+                apt.getTechnicianId() != null && !apt.getTechnicianId().isEmpty() ? apt.getTechnicianId() : "-",
                 apt.getStatus(),
                 preview
             });
