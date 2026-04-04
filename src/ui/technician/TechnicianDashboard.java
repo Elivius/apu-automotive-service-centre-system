@@ -1,8 +1,10 @@
 package ui.technician;
 
 import models.Technician;
+import services.NotificationService;
 import ui.EditProfileFrame;
 import ui.LoginFrame;
+import ui.NotificationPanel;
 import ui.UITheme;
 
 import javax.swing.*;
@@ -18,6 +20,7 @@ public class TechnicianDashboard extends JFrame {
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel contentArea = new JPanel(cardLayout);
     private JLabel lblName;
+    private JLabel lblBadge;
 
     private static final String PANEL_APPTS = "appointments";
 
@@ -35,6 +38,7 @@ public class TechnicianDashboard extends JFrame {
     private void buildUI() {
         setLayout(new BorderLayout());
         add(buildSidebar(), BorderLayout.WEST);
+        add(buildTopBar(), BorderLayout.NORTH);
 
         contentArea.setBackground(UITheme.BG_DARK);
         
@@ -64,6 +68,82 @@ public class TechnicianDashboard extends JFrame {
         cardLayout.show(contentArea, name);
         contentArea.revalidate();
         contentArea.repaint();
+    }
+
+    // ── Top Bar with Notification Bell ──────────────────────────────────
+    private JPanel buildTopBar() {
+        JPanel topBar = new JPanel(new BorderLayout());
+        topBar.setBackground(UITheme.BG_CARD);
+        topBar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, UITheme.FIELD_BORDER),
+                BorderFactory.createEmptyBorder(8, 20, 8, 20)));
+
+        JLabel lblPageTitle = new JLabel("Technician Dashboard");
+        lblPageTitle.setName("lblPageTitle");
+        lblPageTitle.setFont(UITheme.FONT_HEADER);
+        lblPageTitle.setForeground(UITheme.TEXT_PRIMARY);
+        topBar.add(lblPageTitle, BorderLayout.WEST);
+
+        // Bell button with badge
+        JPanel bellPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        bellPanel.setOpaque(false);
+
+        JButton btnBell = createBellButton();
+        bellPanel.add(btnBell);
+
+        topBar.add(bellPanel, BorderLayout.EAST);
+        return topBar;
+    }
+
+    private JButton createBellButton() {
+        int unread = NotificationService.getUnreadCount(technician.getUserId(), technician.getRole());
+
+        lblBadge = new JLabel(String.valueOf(unread));
+        lblBadge.setName("lblNotificationBadge");
+
+        JButton btnBell = new JButton("🔔") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                if (getModel().isRollover()) {
+                    g2.setColor(new Color(0x1E4080));
+                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                }
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        btnBell.setName("btnNotificationBell");
+        btnBell.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        btnBell.setForeground(UITheme.TEXT_PRIMARY);
+        btnBell.setOpaque(false);
+        btnBell.setContentAreaFilled(false);
+        btnBell.setBorderPainted(false);
+        btnBell.setFocusPainted(false);
+        btnBell.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnBell.setPreferredSize(new Dimension(80, 36));
+
+        updateBellText(btnBell, unread);
+
+        btnBell.addActionListener(e -> {
+            NotificationPanel.show(btnBell, technician, () -> {
+                int count = NotificationService.getUnreadCount(technician.getUserId(), technician.getRole());
+                updateBellText(btnBell, count);
+            });
+        });
+
+        return btnBell;
+    }
+
+    private void updateBellText(JButton btnBell, int count) {
+        if (count > 0) {
+            btnBell.setText("🔔 " + count);
+            btnBell.setForeground(UITheme.ACCENT);
+        } else {
+            btnBell.setText("🔔");
+            btnBell.setForeground(UITheme.TEXT_MUTED);
+        }
     }
 
     private JPanel buildSidebar() {
