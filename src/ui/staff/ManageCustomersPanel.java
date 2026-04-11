@@ -109,7 +109,7 @@ public class ManageCustomersPanel extends JPanel {
         }
     }
 
-    private void showCustomerForm(User prefill) {
+    private void showCustomerForm(User prefillUser) {
         JPanel form = new JPanel();
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
         form.setBackground(UITheme.BG_CARD);
@@ -125,12 +125,12 @@ public class ManageCustomersPanel extends JPanel {
         JPasswordField pfPassword = UITheme.styledPasswordField(20);
         pfPassword.setName("pfPassword");
 
-        if (prefill != null) {
-            tfUsername.setText(prefill.getUsername());
+        if (prefillUser != null) {
+            tfUsername.setText(prefillUser.getUsername());
             tfUsername.setEditable(false);
-            tfName.setText(prefill.getName());
-            tfEmail.setText(prefill.getEmail());
-            tfPhone.setText(prefill.getPhone() != null ? prefill.getPhone() : "");
+            tfName.setText(prefillUser.getName());
+            tfEmail.setText(prefillUser.getEmail());
+            tfPhone.setText(prefillUser.getPhone() != null ? prefillUser.getPhone() : "");
         }
 
         form.add(UITheme.formRow("Username *", tfUsername));
@@ -141,18 +141,18 @@ public class ManageCustomersPanel extends JPanel {
         form.add(Box.createVerticalStrut(8));
         form.add(UITheme.formRow("Phone", tfPhone));
         form.add(Box.createVerticalStrut(8));
-        if (prefill == null) {
+        if (prefillUser == null) {
             form.add(UITheme.formRow("Password *", pfPassword));
             form.add(Box.createVerticalStrut(8));
         }
 
-        String title = prefill == null ? "Add New Customer" : "Edit Customer: " + prefill.getName();
+        String title = prefillUser == null ? "Add New Customer" : "Edit Customer: " + prefillUser.getName();
         int res = JOptionPane.showConfirmDialog(this, form, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (res != JOptionPane.OK_OPTION) {
             return;
         }
 
-        if (prefill == null) {
+        if (prefillUser == null) {
             String username = tfUsername.getText().trim();
             String name = tfName.getText().trim();
             String password = new String(pfPassword.getPassword());
@@ -168,7 +168,7 @@ public class ManageCustomersPanel extends JPanel {
             }
         } else {
             try {
-                UserService.updateUserProfile(prefill, tfName.getText().trim(), tfEmail.getText().trim(), tfPhone.getText().trim(), null);
+                UserService.updateUserProfile(prefillUser, tfName.getText().trim(), tfEmail.getText().trim(), tfPhone.getText().trim(), null);
                 refresh();
             } catch (IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
