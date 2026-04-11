@@ -22,10 +22,11 @@ public class ManagerDashboard extends JFrame {
     private JLabel lblName;
     private JLabel lblBadge;
 
-    private static final String PANEL_STAFF = "staff";
-    private static final String PANEL_PRICES = "prices";
-    private static final String PANEL_REPORTS = "reports";
+    private static final String PANEL_STAFF    = "staff";
+    private static final String PANEL_PRICES   = "prices";
+    private static final String PANEL_REPORTS  = "reports";
     private static final String PANEL_FEEDBACK = "feedback";
+    private static final String PANEL_AUDIT    = "audit";
 
     public ManagerDashboard(Manager manager) {
         this.manager = manager;
@@ -50,6 +51,7 @@ public class ManagerDashboard extends JFrame {
         addNamedPanel(new ServicePricesPanel(), PANEL_PRICES);
         addNamedPanel(new ReportsPanel(), PANEL_REPORTS);
         addNamedPanel(new AllFeedbackPanel(), PANEL_FEEDBACK);
+        addNamedPanel(new AuditLogPanel(), PANEL_AUDIT);
         
         add(contentArea, BorderLayout.CENTER);
         cardLayout.show(contentArea, PANEL_REPORTS);
@@ -192,6 +194,7 @@ public class ManagerDashboard extends JFrame {
         sidebar.add(sidebarBtn("👥  Manage Staff", () -> switchTab(PANEL_STAFF, ManageStaffPanel::new)));
         sidebar.add(sidebarBtn("💲  Service Prices", () -> switchTab(PANEL_PRICES, ServicePricesPanel::new)));
         sidebar.add(sidebarBtn("💬  All Feedback", () -> switchTab(PANEL_FEEDBACK, AllFeedbackPanel::new)));
+        sidebar.add(sidebarBtn("📋  Audit Log", () -> switchTab(PANEL_AUDIT, AuditLogPanel::new)));
         sidebar.add(Box.createVerticalGlue());
         sidebar.add(sidebarBtn("✏️  Edit Profile", () -> new EditProfileFrame(manager, () -> lblName.setText(manager.getName())).setVisible(true)));
         sidebar.add(Box.createVerticalStrut(8));

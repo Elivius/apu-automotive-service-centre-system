@@ -3,6 +3,7 @@ package services;
 import exceptions.TechnicianUnavailableException;
 import models.Appointment;
 import utils.FileHandler;
+import utils.AuditLogger;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,6 +56,13 @@ public class AppointmentService {
 
         // 5. Push notification to Counter Staff
         NotificationService.push("CounterStaff", "New appointment " + newId + " from customer " + customerId + " is waiting for assignment.");
+
+        AuditLogger.log(customerId, "BOOK_APPOINTMENT", newId + " | " + serviceType + " | " + dateTime.format(utils.DateUtils.FORMATTER) + " | Payment: " + paymentMethod);
+        
+        // Log "SUBMIT_COMMENTS" if the customer provided comments during booking
+        if (comments != null && !comments.trim().isEmpty()) {
+            AuditLogger.log(customerId, "SUBMIT_COMMENTS", newId);
+        }
         
         return newId;
     }
@@ -110,6 +118,8 @@ public class AppointmentService {
         // Push notifications to both the customer and the technician
         NotificationService.push(targetAppointment.getCustomerId(), "Your appointment " + targetAppointment.getAppointmentId() + " has been assigned to technician " + technicianId + ".");
         NotificationService.push(technicianId, "You have been assigned to appointment " + targetAppointment.getAppointmentId() + ".");
+
+        AuditLogger.log(technicianId, "ASSIGN_APPOINTMENT", targetAppointment.getAppointmentId() + " | Customer: " + targetAppointment.getCustomerId() + " | Technician: " + technicianId);
     }
 
     /**
@@ -127,6 +137,7 @@ public class AppointmentService {
             if (appointment.getTechnicianId() != null && !appointment.getTechnicianId().isEmpty()) {
                 NotificationService.push(appointment.getTechnicianId(), "Appointment " + appointment.getAppointmentId() + " has been updated.");
             }
+            AuditLogger.log(appointment.getCustomerId(), "UPDATE_APPOINTMENT", appointment.getAppointmentId() + " | Status: " + appointment.getStatus());
         }
     }
 
@@ -145,6 +156,7 @@ public class AppointmentService {
             PaymentService.declinePaymentForAppointment(appointment.getAppointmentId());
 
             NotificationService.push(appointment.getCustomerId(), "Your appointment " + appointment.getAppointmentId() + " has been declined.");
+            AuditLogger.log(appointment.getCustomerId(), "DECLINE_APPOINTMENT", appointment.getAppointmentId());
         }
     }
     
@@ -160,6 +172,7 @@ public class AppointmentService {
 
             // Notify the customer
             NotificationService.push(appointment.getCustomerId(), "Your appointment " + appointment.getAppointmentId() + " has been completed.");
+            AuditLogger.log(appointment.getTechnicianId(), "COMPLETE_APPOINTMENT", appointment.getAppointmentId() + " | Customer: " + appointment.getCustomerId());
         }
     }
 

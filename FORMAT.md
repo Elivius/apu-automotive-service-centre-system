@@ -80,6 +80,23 @@ Stores the base prices for different service types.
 | `serviceType` | Name of the service | `Normal`, `Major` |
 | `price` | Base cost in RM | `130.0` |
 
+### 6. `audit_log.txt`
+Stores system-wide audit logs of all user actions.
+**Format:** `timestamp:::userId:::action:::details`
+
+| Field | Description | Example |
+| :--- | :--- | :--- |
+| `timestamp` | Time of the action (yyyy-MM-dd HH:mm) | `2026-04-10 11:32` |
+| `userId` | User who performed the action (or `SYSTEM`, `UNKNOWN`) | `CUS0001` |
+| `action` | Action type performed | `LOGIN_SUCCESS`, `BOOK_APPOINTMENT` |
+| `details` | Contextual details about the action | `APT0003 \| Normal` |
+
+#### Available Audit Actions:
+* **Account:** `REGISTER`, `LOGIN_SUCCESS`, `LOGIN_FAILED`, `UPDATE_USER`, `DELETE_USER`
+* **Appointments:** `BOOK_APPOINTMENT`, `ASSIGN_APPOINTMENT`, `UPDATE_APPOINTMENT`, `DECLINE_APPOINTMENT`, `COMPLETE_APPOINTMENT`
+* **Payments:** `PROCESS_PAYMENT`, `CONFIRM_PAYMENT`, `DECLINE_PAYMENT`, `UPDATE_SERVICE_PRICE`, `GENERATE_RECEIPT`
+* **Feedback:** `SUBMIT_COMMENTS`, `SUBMIT_FEEDBACK`, `SUBMIT_REVIEW`
+
 ---
 
 ## ID Format Summary

@@ -7,6 +7,7 @@ import models.Customer;
 import models.User;
 import utils.FileHandler;
 import utils.PasswordHasher;
+import utils.AuditLogger;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,6 +62,8 @@ public class UserService {
 
         // 4. Save to the database
         FileHandler.getInstance().appendLine(FileHandler.USERS_FILE, newUser.toFileString());
+
+        AuditLogger.log(newId, "REGISTER", "Username: " + username + " | Role: " + role);
     }
 
     /**
@@ -71,11 +74,14 @@ public class UserService {
         if (user != null && user.getUserId() != null) {
             FileHandler.getInstance().updateLine(FileHandler.USERS_FILE, user.getUserId(), user.toFileString());
             NotificationService.push(user, "Your profile has been updated.");
+            AuditLogger.log(user.getUserId(), "UPDATE_USER", "User record saved for: " + user.getName());
         }
     }
 
     /**
      * Updates a generic user profile (Customer, Generic Staff).
+     * Used by self to update no matter STAFF, CUS, MANAGER, TECH
+     * Used by Staff to update Customer details
      */
     public static void updateUserProfile(User user, String name, String email, String phone, String newPassword) {
         user.setName(name);
@@ -89,6 +95,8 @@ public class UserService {
 
     /**
      * Updates a staff profile. If the user is a technician, it also updates the specialization.
+     * Used by Manager to update
+     * NO PASSWORD UPDATE ALLOWED
      */
     public static void updateStaffProfile(User user, String name, String email, String phone, String specialization) {
         user.setName(name);
@@ -108,6 +116,7 @@ public class UserService {
     public static void deleteUser(User user) {
         if (user != null && user.getUserId() != null) {
             FileHandler.getInstance().deleteLine(FileHandler.USERS_FILE, user.getUserId());
+            AuditLogger.log(user.getUserId(), "DELETE_USER", "Deleted user: " + user.getName() + " | Role: " + user.getRole());
         }
     }
 
@@ -130,10 +139,15 @@ public class UserService {
                 // If username matches and the password hash matches
                 if (fileUsername.equals(username) && PasswordHasher.verify(password, filePasswordHash)) {
                     // Polymorphism in action: parseUser returns the specific subclass
-                    return parseUser(line);
+                    User loggedInUser = parseUser(line);
+                    if (loggedInUser != null) {
+                        AuditLogger.log(loggedInUser.getUserId(), "LOGIN_SUCCESS", "Username: " + username + " | Role: " + loggedInUser.getRole());
+                    }
+                    return loggedInUser;
                 }
             }
         }
+        AuditLogger.log("UNKNOWN", "LOGIN_FAILED", "Username: " + username);
         return null; // Login failed
     }
 

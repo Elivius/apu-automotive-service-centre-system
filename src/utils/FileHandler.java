@@ -25,6 +25,7 @@ public class FileHandler {
     public static final String SERVICE_PRICES_FILE = DATA_DIR + File.separator + "service_prices.txt";
     public static final String NOTIFICATIONS_FILE = DATA_DIR + File.separator + "notifications.txt";
     public static final String NOTIFICATION_READS_FILE = DATA_DIR + File.separator + "notification_reads.txt";
+    public static final String AUDIT_LOG_FILE = DATA_DIR + File.separator + "audit_log.txt";
 
     /** Delimiter for splitting lines (Regex-escaped) */
     public static final String DELIMITER = ":::";
@@ -59,6 +60,9 @@ public class FileHandler {
         
         // Format: notificationId:::userId (per-user read tracking for role/broadcast notifications)
         createFileIfNotExists(NOTIFICATION_READS_FILE);
+        
+        // Format: timestamp:::userId:::action:::details
+        createFileIfNotExists(AUDIT_LOG_FILE);
     }
 
     /**
