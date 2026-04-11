@@ -2,6 +2,7 @@ package services;
 
 import models.Appointment;
 import utils.FileHandler;
+import utils.AuditLogger;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ public class FeedbackService {
             // Push a notification for the assigned technician and counter staff
             NotificationService.push(appointment.getTechnicianId(), "Customer added comments to appointment " + appointment.getAppointmentId());
             NotificationService.push("CounterStaff", "Customer added comments to appointment " + appointment.getAppointmentId());
+            AuditLogger.log(appointment.getCustomerId(), "SUBMIT_COMMENTS", appointment.getAppointmentId());
         }
     }
 
@@ -49,6 +51,7 @@ public class FeedbackService {
             
             // Push a notification for the customer
             NotificationService.push(appointment.getCustomerId(), "Technician submitted feedback for appointment " + appointment.getAppointmentId());
+            AuditLogger.log(appointment.getTechnicianId(), "SUBMIT_FEEDBACK", appointment.getAppointmentId());
         }
     }
 
@@ -63,6 +66,7 @@ public class FeedbackService {
         if (appointment != null && appointment.getAppointmentId() != null) {
             appointment.setServiceReview(review);
             FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
+            AuditLogger.log(appointment.getCustomerId(), "SUBMIT_REVIEW", appointment.getAppointmentId());
         }
     }
 

@@ -4,6 +4,7 @@ import models.Appointment;
 import models.Payment;
 import utils.DateUtils;
 import utils.FileHandler;
+import utils.AuditLogger;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -40,6 +41,8 @@ public class PaymentService {
 
         // Save to the database
         FileHandler.getInstance().appendLine(FileHandler.PAYMENTS_FILE, payment.toFileString());
+
+        AuditLogger.log("SYSTEM", "PROCESS_PAYMENT", newId + " | Appointment: " + appointmentId + " | Amount: RM" + String.format("%.2f", amount) + " | Method: " + paymentMethod + " | Status: " + status);
     }
 
     /**
@@ -52,6 +55,7 @@ public class PaymentService {
         if (payment != null && payment.getPaymentId() != null) {
             payment.setPaymentStatus("Paid");
             FileHandler.getInstance().updateLine(FileHandler.PAYMENTS_FILE, payment.getPaymentId(), payment.toFileString());
+            AuditLogger.log("SYSTEM", "CONFIRM_PAYMENT", payment.getPaymentId() + " | Appointment: " + payment.getAppointmentId());
         }
     }
 
@@ -127,11 +131,13 @@ public class PaymentService {
             if (parts.length >= 2 && parts[0].equals(serviceType)) {
                 parts[1] = String.valueOf(price);
                 FileHandler.getInstance().updateLine(FileHandler.SERVICE_PRICES_FILE, serviceType, String.join(FileHandler.DELIMITER, parts));
+                AuditLogger.log("SYSTEM", "UPDATE_SERVICE_PRICE", serviceType + " | RM" + price);
                 return;
             }
         }
 
         FileHandler.getInstance().appendLine(FileHandler.SERVICE_PRICES_FILE, serviceType + FileHandler.DELIMITER + price);
+        AuditLogger.log("SYSTEM", "UPDATE_SERVICE_PRICE", serviceType + " | RM" + price);
     }
 
     /**
@@ -208,6 +214,7 @@ public class PaymentService {
             System.err.println("Error generating receipt: " + e.getMessage());
         }
 
+        AuditLogger.log("SYSTEM", "GENERATE_RECEIPT", receiptFileName + " | Payment: " + payment.getPaymentId() + " | Appointment: " + appointment.getAppointmentId());
         return receiptFileName;
     }
 
@@ -239,6 +246,7 @@ public class PaymentService {
             if (payment != null && appointmentId.equals(payment.getAppointmentId())) {
                 payment.setPaymentStatus(Payment.STATUS_DECLINED);
                 FileHandler.getInstance().updateLine(FileHandler.PAYMENTS_FILE, payment.getPaymentId(), payment.toFileString());
+                AuditLogger.log("SYSTEM", "DECLINE_PAYMENT", payment.getPaymentId() + " | Appointment: " + appointmentId);
                 break;
             }
         }
