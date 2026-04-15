@@ -20,7 +20,7 @@ public class Main {
         // Apply global dark theme defaults
         UITheme.applyGlobalDefaults();
 
-        // Launch on the EDT
+        // Launch on the Event Dispatch Thread (EDT) - Prevent Racing / Bugs / Not Crash with BE
         SwingUtilities.invokeLater(() -> new LoginFrame().setVisible(true));
     }
 }
