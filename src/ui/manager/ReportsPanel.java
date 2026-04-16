@@ -57,7 +57,7 @@ public class ReportsPanel extends JPanel {
         ChartPanel barChart = new ChartPanel(
             new String[]{"Pending", "Assigned", "Completed", "Declined"},
             new long[]{pending, assigned, completed, declined},
-            new Color[]{UITheme.WARNING, UITheme.BG_SIDEBAR, UITheme.SUCCESS, UITheme.DANGER},
+            new Color[]{UITheme.WARNING, UITheme.ACCENT_SECONDARY, UITheme.SUCCESS, UITheme.DANGER},
             "Appointments by Status"
         );
         barChart.setName("barChart");
@@ -68,7 +68,7 @@ public class ReportsPanel extends JPanel {
         summaryRow.setOpaque(false);
         summaryRow.add(statCard("Total Appointments", total, UITheme.TEXT_PRIMARY));
         summaryRow.add(statCard("Pending",   pending,   UITheme.WARNING));
-        summaryRow.add(statCard("Assigned",  assigned,  UITheme.BG_SIDEBAR));
+        summaryRow.add(statCard("Assigned",  assigned,  UITheme.ACCENT_SECONDARY));
         summaryRow.add(statCard("Completed", completed, UITheme.SUCCESS));
         summaryRow.add(statCard("Declined",  declined,  UITheme.DANGER));
 

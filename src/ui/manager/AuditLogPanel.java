@@ -36,7 +36,7 @@ public class AuditLogPanel extends JPanel {
         header.setBackground(UITheme.BG_DARK);
         header.setBorder(BorderFactory.createEmptyBorder(24, 24, 16, 24));
 
-        JLabel lblTitle = UITheme.titleLabel("📋  Audit Log");
+        JLabel lblTitle = UITheme.titleLabel("Audit Log");
         lblTitle.setName("lblAuditLogTitle");
         header.add(lblTitle, BorderLayout.WEST);
 
@@ -54,9 +54,8 @@ public class AuditLogPanel extends JPanel {
             public void changedUpdate(javax.swing.event.DocumentEvent e) { applyFilter(); }
         });
 
-        JButton btnRefresh = UITheme.accentButton("⟳  Refresh");
+        JButton btnRefresh = UITheme.secondaryButton("↻ Refresh");
         btnRefresh.setName("btnAuditRefresh");
-        btnRefresh.setPreferredSize(new Dimension(110, 32));
         btnRefresh.addActionListener(e -> {
             tableModel.setRowCount(0);
             refresh();
