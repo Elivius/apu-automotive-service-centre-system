@@ -178,7 +178,7 @@ public class StaffDashboard extends JFrame {
         sidebar.setPreferredSize(new Dimension(230, 0));
         sidebar.setBorder(BorderFactory.createEmptyBorder(28, 0, 24, 0));
 
-        JLabel avatar = UITheme.avatarLabel("🧑‍💼", 56);
+        JLabel avatar = UITheme.avatarLabel("💼", 56);
         avatar.setName("lblAvatar");
         avatar.setAlignmentX(CENTER_ALIGNMENT);
 
