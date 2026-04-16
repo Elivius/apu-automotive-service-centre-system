@@ -75,14 +75,14 @@ public class ManageStaffPanel extends JPanel {
 
         JScrollPane sp = UITheme.styledTable(table);
 
-        JButton btnRefresh = UITheme.secondaryButton("↻");
-        btnRefresh.setName("btnRefresh");
         JButton btnAdd = UITheme.accentButton("+ Add");
         btnAdd.setName("btnAdd");
-        JButton btnEdit = UITheme.secondaryButton("✏️  Edit");
+        JButton btnEdit = UITheme.warningButton("✏️  Edit");
         btnEdit.setName("btnEdit");
         JButton btnDelete  = UITheme.dangerButton("🗑  Delete");
         btnDelete.setName("btnDelete");
+        JButton btnRefresh = UITheme.secondaryButton("↻ Refresh");
+        btnRefresh.setName("btnRefresh");
 
         // Holder for current list
         final java.util.List<User>[] userRef = new java.util.List[]{java.util.Collections.emptyList()};
@@ -126,7 +126,7 @@ public class ManageStaffPanel extends JPanel {
             }
             User user = userRef[0].get(table.convertRowIndexToModel(row));
             int ok = JOptionPane.showConfirmDialog(this,
-                "Delete \"" + user.getName() + "\"?", "Confirm", JOptionPane.YES_NO_OPTION);
+                "Delete \"" + user.getName() + "\"?\nThis action cannot be undone.", "Confirm Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             if (ok == JOptionPane.YES_OPTION) { UserService.deleteUser(user); loadData.run(); }
         });
 

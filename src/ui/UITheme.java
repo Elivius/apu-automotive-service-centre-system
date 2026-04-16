@@ -149,14 +149,14 @@ public class UITheme {
                 super.paintComponent(g);
             }
         };
-        btn.setFont(FONT_BODY);
+        btn.setFont(FONT_BUTTON);
         btn.setForeground(ACCENT_SECONDARY);
         btn.setOpaque(false);
         btn.setContentAreaFilled(false);
         btn.setBorderPainted(false);
         btn.setFocusPainted(false);
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btn.setPreferredSize(new Dimension(btn.getPreferredSize().width + 24, 36));
+        btn.setPreferredSize(new Dimension(btn.getPreferredSize().width + 28, 40));
         return btn;
     }
 
@@ -179,7 +179,32 @@ public class UITheme {
                 setBorderPainted(false);
                 setFocusPainted(false);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                setPreferredSize(new Dimension(getPreferredSize().width + 24, 38));
+                setPreferredSize(new Dimension(getPreferredSize().width + 28, 40));
+            }
+        };
+        return btn;
+    }
+
+    /** Warning (amber) button for cautionary actions. */
+    public static JButton warningButton(String text) {
+        JButton btn = new JButton(text) {
+            @Override protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getModel().isRollover() ? new Color(0xFFC04D) : WARNING);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+            {
+                setFont(FONT_BUTTON);
+                setForeground(Color.WHITE);
+                setOpaque(false);
+                setContentAreaFilled(false);
+                setBorderPainted(false);
+                setFocusPainted(false);
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                setPreferredSize(new Dimension(getPreferredSize().width + 28, 40));
             }
         };
         return btn;

@@ -25,14 +25,14 @@ public class ServicePricesPanel extends JPanel {
     private void buildUI() {
         JPanel card = UITheme.cardPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setBorder(BorderFactory.createEmptyBorder(40, 48, 40, 48));
+        card.setBorder(BorderFactory.createEmptyBorder(60, 80, 60, 80));
 
         // ── Title & Intro ────────────────────────────────────────────
         JLabel title = UITheme.titleLabel("Set Service Prices");
         title.setName("lblTitle");
         title.setAlignmentX(CENTER_ALIGNMENT);
         card.add(title);
-        card.add(Box.createVerticalStrut(12));
+        card.add(Box.createVerticalStrut(16));
 
         JLabel hint = UITheme.mutedLabel("Prices are in Malaysian Ringgit (RM) and apply to new appointments.");
         hint.setName("lblHint");
@@ -57,17 +57,17 @@ public class ServicePricesPanel extends JPanel {
         styleSpinner(spMajor);
 
         card.add(pricingRow("🔧  Normal Service", "Duration: 1 hour", spNormal));
-        card.add(Box.createVerticalStrut(20));
+        card.add(Box.createVerticalStrut(24));
         card.add(pricingRow("🛠  Major Service",  "Duration: 3 hours", spMajor));
-        card.add(Box.createVerticalStrut(32));
+        card.add(Box.createVerticalStrut(40));
 
         // ── Status & Footer ──────────────────────────────────────────
         lblMsg = new JLabel(" ");
         lblMsg.setName("lblMsg");
-        lblMsg.setFont(UITheme.FONT_SMALL);
+        lblMsg.setFont(UITheme.FONT_BODY);
         lblMsg.setAlignmentX(CENTER_ALIGNMENT);
         card.add(lblMsg);
-        card.add(Box.createVerticalStrut(12));
+        card.add(Box.createVerticalStrut(16));
 
         JButton btnSave = UITheme.accentButton("💾  Save All Prices");
         btnSave.setName("btnSave");
@@ -75,25 +75,21 @@ public class ServicePricesPanel extends JPanel {
         btnSave.addActionListener(e -> doSave());
         card.add(btnSave);
 
-        // GridBag constraints to keep the card centered and reasonably sized
+        // GridBag constraints
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1;
         gbc.weighty = 1;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(0, 0, 40, 0); // Slight offset for visual balance
+        gbc.insets = new Insets(0, 0, 40, 0);
         add(card, gbc);
     }
 
-    /**
-     * Creates a horizontal row for a service price setting.
-     * Groups: [Label + Duration] on left, [Spinner] on right.
-     */
     private JPanel pricingRow(String title, String subtitle, JSpinner spinner) {
-        JPanel row = new JPanel(new BorderLayout(24, 0));
+        JPanel row = new JPanel(new BorderLayout(32, 0));
         row.setOpaque(false);
-        row.setMaximumSize(new Dimension(500, 60)); // Constrain width
+        row.setMaximumSize(new Dimension(650, 80));
 
         // Left side: Text info
         JPanel left = new JPanel();
@@ -101,17 +97,17 @@ public class ServicePricesPanel extends JPanel {
         left.setOpaque(false);
 
         JLabel lblTitle = UITheme.headerLabel(title);
-        lblTitle.setFont(UITheme.FONT_BODY.deriveFont(Font.BOLD));
+        lblTitle.setFont(UITheme.FONT_TITLE.deriveFont(18f));
         left.add(lblTitle);
-        left.add(Box.createVerticalStrut(2));
+        left.add(Box.createVerticalStrut(4));
         left.add(UITheme.mutedLabel(subtitle));
         
         row.add(left, BorderLayout.CENTER);
 
-        // Right side: Spinner with fixed width
-        JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 10));
+        // Right side
+        JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 15));
         right.setOpaque(false);
-        spinner.setPreferredSize(new Dimension(140, 36));
+        spinner.setPreferredSize(new Dimension(180, 44));
         right.add(spinner);
 
         row.add(right, BorderLayout.EAST);

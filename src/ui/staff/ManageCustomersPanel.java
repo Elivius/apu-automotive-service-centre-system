@@ -51,7 +51,7 @@ public class ManageCustomersPanel extends JPanel {
         });
         JButton btnAdd = UITheme.accentButton("+ Add Customer");
         btnAdd.addActionListener(e -> showCustomerForm(null));
-        JButton btnRefresh = UITheme.secondaryButton("↻");
+        JButton btnRefresh = UITheme.secondaryButton("↻ Refresh");
         btnRefresh.addActionListener(e -> refresh());
 
         right.add(new JLabel("🔍"));

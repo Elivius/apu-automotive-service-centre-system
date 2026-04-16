@@ -59,7 +59,7 @@ public class ManageAppointmentsPanel extends JPanel {
         });
         JButton btnCreate  = UITheme.accentButton("+ New Appointment");
         btnCreate.setName("btnCreate");
-        JButton btnRefresh = UITheme.secondaryButton("↻");
+        JButton btnRefresh = UITheme.secondaryButton("↻ Refresh");
         btnRefresh.setName("btnRefresh");
         btnCreate.addActionListener(e -> showCreateDialog());
         btnRefresh.addActionListener(e -> refresh());
