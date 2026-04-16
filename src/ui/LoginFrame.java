@@ -23,7 +23,7 @@ public class LoginFrame extends JFrame {
     public LoginFrame() {
         setTitle("APU Automotive Service Centre — Login");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(480, 560);
+        setSize(480, 580);
         setLocationRelativeTo(null);
         setResizable(false);
         getContentPane().setBackground(UITheme.BG_DARK);
@@ -34,7 +34,7 @@ public class LoginFrame extends JFrame {
     private void buildUI() {
         JPanel card = UITheme.cardPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setBorder(BorderFactory.createEmptyBorder(40, 44, 40, 44));
+        card.setBorder(BorderFactory.createEmptyBorder(44, 44, 40, 44));
 
         // ── Logo / Title ─────────────────────────────────────────────
         JLabel logo = new JLabel("🔧 APU-ASC", SwingConstants.CENTER);
@@ -50,7 +50,7 @@ public class LoginFrame extends JFrame {
 
         // ── Fields ───────────────────────────────────────────────────
         tfUsername = UITheme.styledTextField(20);
-        tfUsername.setName("tfUsername"); // Kinda like HTML id="tfUsername" for automated test locating
+        tfUsername.setName("tfUsername");
         pfPassword = UITheme.styledPasswordField(20);
         pfPassword.setName("pfPassword");
 
@@ -58,7 +58,7 @@ public class LoginFrame extends JFrame {
         lblError = new JLabel(" ");
         lblError.setName("lblError");
         lblError.setFont(UITheme.FONT_SMALL);
-        lblError.setForeground(UITheme.ACCENT);
+        lblError.setForeground(UITheme.DANGER);
         lblError.setAlignmentX(CENTER_ALIGNMENT);
 
         // ── Login button ─────────────────────────────────────────────
@@ -73,7 +73,7 @@ public class LoginFrame extends JFrame {
         JButton btnRegister = new JButton("New customer? Register here");
         btnRegister.setName("btnRegister");
         btnRegister.setFont(UITheme.FONT_SMALL);
-        btnRegister.setForeground(UITheme.TEXT_MUTED);
+        btnRegister.setForeground(UITheme.ACCENT_SECONDARY);
         btnRegister.setBorderPainted(false);
         btnRegister.setContentAreaFilled(false);
         btnRegister.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -85,11 +85,11 @@ public class LoginFrame extends JFrame {
 
         // ── Assemble ──────────────────────────────────────────────────
         card.add(logo);
-        card.add(Box.createVerticalStrut(4));
+        card.add(Box.createVerticalStrut(6));
         card.add(subtitle);
-        card.add(Box.createVerticalStrut(32));
+        card.add(Box.createVerticalStrut(36));
         card.add(UITheme.formRow("Username", tfUsername));
-        card.add(Box.createVerticalStrut(12));
+        card.add(Box.createVerticalStrut(14));
         card.add(UITheme.formRow("Password", pfPassword));
         card.add(Box.createVerticalStrut(20));
         card.add(lblError);
@@ -102,7 +102,7 @@ public class LoginFrame extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1;
         gbc.weighty = 1;
-        gbc.insets = new Insets(24, 24, 24, 24);
+        gbc.insets = new Insets(28, 28, 28, 28);
         add(card, gbc);
     }
 
