@@ -17,7 +17,7 @@ public class ServicePricesPanel extends JPanel {
 
     public ServicePricesPanel() {
         setBackground(UITheme.BG_DARK);
-        setLayout(new GridBagLayout());
+        setLayout(new GridBagLayout()); // Use GridBag to center the card
         setBorder(BorderFactory.createEmptyBorder(24, 28, 24, 28));
         buildUI();
     }
@@ -25,21 +25,22 @@ public class ServicePricesPanel extends JPanel {
     private void buildUI() {
         JPanel card = UITheme.cardPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setBorder(BorderFactory.createEmptyBorder(32, 40, 32, 40));
+        card.setBorder(BorderFactory.createEmptyBorder(40, 48, 40, 48));
 
+        // ── Title & Intro ────────────────────────────────────────────
         JLabel title = UITheme.titleLabel("Set Service Prices");
         title.setName("lblTitle");
-        title.setAlignmentX(LEFT_ALIGNMENT);
+        title.setAlignmentX(CENTER_ALIGNMENT);
         card.add(title);
-        card.add(Box.createVerticalStrut(8));
+        card.add(Box.createVerticalStrut(12));
 
-        JLabel hint = UITheme.mutedLabel("Prices are in Malaysian Ringgit (RM) and apply to new appointments immediately.");
+        JLabel hint = UITheme.mutedLabel("Prices are in Malaysian Ringgit (RM) and apply to new appointments.");
         hint.setName("lblHint");
-        hint.setAlignmentX(LEFT_ALIGNMENT);
+        hint.setAlignmentX(CENTER_ALIGNMENT);
         card.add(hint);
-        card.add(Box.createVerticalStrut(28));
+        card.add(Box.createVerticalStrut(32));
 
-        // Load current prices
+        // ── Pricing Inputs ───────────────────────────────────────────
         double normalPrice = PaymentService.getServicePrice("Normal");
         double majorPrice  = PaymentService.getServicePrice("Major");
 
@@ -55,57 +56,110 @@ public class ServicePricesPanel extends JPanel {
         styleSpinner(spNormal);
         styleSpinner(spMajor);
 
-        card.add(UITheme.formRow("Normal Service (RM)", spNormal));
-        card.add(Box.createVerticalStrut(4));
-        card.add(UITheme.mutedLabel("  Duration: 1 hour"));
-        card.add(Box.createVerticalStrut(16));
-        card.add(UITheme.formRow("Major Service (RM)",  spMajor));
-        card.add(Box.createVerticalStrut(4));
-        card.add(UITheme.mutedLabel("  Duration: 3 hours"));
-        card.add(Box.createVerticalStrut(28));
+        card.add(pricingRow("🔧  Normal Service", "Duration: 1 hour", spNormal));
+        card.add(Box.createVerticalStrut(20));
+        card.add(pricingRow("🛠  Major Service",  "Duration: 3 hours", spMajor));
+        card.add(Box.createVerticalStrut(32));
 
+        // ── Status & Footer ──────────────────────────────────────────
         lblMsg = new JLabel(" ");
         lblMsg.setName("lblMsg");
         lblMsg.setFont(UITheme.FONT_SMALL);
-        lblMsg.setAlignmentX(LEFT_ALIGNMENT);
+        lblMsg.setAlignmentX(CENTER_ALIGNMENT);
         card.add(lblMsg);
-        card.add(Box.createVerticalStrut(8));
+        card.add(Box.createVerticalStrut(12));
 
-        JButton btnSave = UITheme.accentButton("💾  Save Prices");
+        JButton btnSave = UITheme.accentButton("💾  Save All Prices");
         btnSave.setName("btnSave");
-        btnSave.setAlignmentX(LEFT_ALIGNMENT);
+        btnSave.setAlignmentX(CENTER_ALIGNMENT);
         btnSave.addActionListener(e -> doSave());
         card.add(btnSave);
 
+        // GridBag constraints to keep the card centered and reasonably sized
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         gbc.weightx = 1;
         gbc.weighty = 1;
-        gbc.insets = new Insets(24, 80, 24, 80);
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(0, 0, 40, 0); // Slight offset for visual balance
         add(card, gbc);
+    }
+
+    /**
+     * Creates a horizontal row for a service price setting.
+     * Groups: [Label + Duration] on left, [Spinner] on right.
+     */
+    private JPanel pricingRow(String title, String subtitle, JSpinner spinner) {
+        JPanel row = new JPanel(new BorderLayout(24, 0));
+        row.setOpaque(false);
+        row.setMaximumSize(new Dimension(500, 60)); // Constrain width
+
+        // Left side: Text info
+        JPanel left = new JPanel();
+        left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
+        left.setOpaque(false);
+
+        JLabel lblTitle = UITheme.headerLabel(title);
+        lblTitle.setFont(UITheme.FONT_BODY.deriveFont(Font.BOLD));
+        left.add(lblTitle);
+        left.add(Box.createVerticalStrut(2));
+        left.add(UITheme.mutedLabel(subtitle));
+        
+        row.add(left, BorderLayout.CENTER);
+
+        // Right side: Spinner with fixed width
+        JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 10));
+        right.setOpaque(false);
+        spinner.setPreferredSize(new Dimension(140, 36));
+        right.add(spinner);
+
+        row.add(right, BorderLayout.EAST);
+        return row;
     }
 
     private void styleSpinner(JSpinner sp) {
         sp.setBackground(UITheme.FIELD_BG);
         sp.setForeground(UITheme.TEXT_PRIMARY);
         sp.setFont(UITheme.FONT_BODY);
-        ((JSpinner.DefaultEditor) sp.getEditor()).getTextField().setBackground(UITheme.FIELD_BG);
-        ((JSpinner.DefaultEditor) sp.getEditor()).getTextField().setForeground(UITheme.TEXT_PRIMARY);
-        ((JSpinner.DefaultEditor) sp.getEditor()).getTextField().setFont(UITheme.FONT_BODY);
-        sp.setBorder(BorderFactory.createLineBorder(UITheme.FIELD_BORDER, 1));
+        
+        // Style the text field
+        JComponent editor = sp.getEditor();
+        if (editor instanceof JSpinner.DefaultEditor) {
+            JTextField tf = ((JSpinner.DefaultEditor) editor).getTextField();
+            tf.setBackground(UITheme.FIELD_BG);
+            tf.setForeground(UITheme.TEXT_PRIMARY);
+            tf.setCaretColor(UITheme.ACCENT);
+            tf.setFont(UITheme.FONT_BODY);
+            tf.setBorder(null); // Remove inner border
+        }
+        
+        // Modern borders and padding
+        sp.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(UITheme.FIELD_BORDER, 1),
+            BorderFactory.createEmptyBorder(2, 4, 2, 4)
+        ));
     }
 
     private void doSave() {
         double normalPrice = (Double) spNormal.getValue();
         double majorPrice = (Double) spMajor.getValue();
+        
         if (normalPrice <= 0 || majorPrice <= 0) {
             lblMsg.setText("Prices must be greater than zero.");
-            lblMsg.setForeground(UITheme.ACCENT);
+            lblMsg.setForeground(UITheme.DANGER);
             return;
         }
+        
         PaymentService.setServicePrice("Normal", normalPrice);
         PaymentService.setServicePrice("Major",  majorPrice);
-        lblMsg.setText("✔ Prices saved: Normal RM " + String.format("%.2f", normalPrice) + ", Major RM " + String.format("%.2f", majorPrice));
+        
+        lblMsg.setText("✔ Prices updated successfully!");
         lblMsg.setForeground(UITheme.SUCCESS);
+        
+        // Clear message after 3 seconds
+        Timer timer = new Timer(3000, e -> lblMsg.setText(" "));
+        timer.setRepeats(false);
+        timer.start();
     }
 }
