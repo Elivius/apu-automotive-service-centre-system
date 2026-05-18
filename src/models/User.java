@@ -122,6 +122,9 @@ public abstract class User {
         if (plainPassword == null || plainPassword.trim().isEmpty()) {
             throw new IllegalArgumentException("Password cannot be empty.");
         }
+        if (plainPassword.length() < 6) {
+            throw new IllegalArgumentException("Password must be at least 6 characters.");
+        }
         this.password = PasswordHasher.hash(plainPassword);
     }
 
