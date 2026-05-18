@@ -4,6 +4,7 @@ import models.CounterStaff;
 import models.User;
 import services.UserService;
 import ui.UITheme;
+import utils.InputValidator;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -137,7 +138,7 @@ public class ManageCustomersPanel extends JPanel {
         form.add(Box.createVerticalStrut(8));
         form.add(UITheme.formRow("Full Name *", tfName));
         form.add(Box.createVerticalStrut(8));
-        form.add(UITheme.formRow("Email", tfEmail));
+        form.add(UITheme.formRow("Email *", tfEmail));
         form.add(Box.createVerticalStrut(8));
         form.add(UITheme.formRow("Phone", tfPhone));
         form.add(Box.createVerticalStrut(8));
@@ -155,20 +156,50 @@ public class ManageCustomersPanel extends JPanel {
         if (prefillUser == null) {
             String username = tfUsername.getText().trim();
             String name = tfName.getText().trim();
+            String email = tfEmail.getText().trim();
+            String phone = tfPhone.getText().trim();
             String password = new String(pfPassword.getPassword());
-            if (username.isEmpty() || name.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Username, Name and Password are required.");
+            if (username.isEmpty() || name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Username, Name, Email and Password are required.");
+                return;
+            }
+            if (password.length() < 6) {
+                JOptionPane.showMessageDialog(this, "Password must be at least 6 characters.");
+                return;
+            }
+            if (!InputValidator.isValidEmail(email)) {
+                JOptionPane.showMessageDialog(this, "Invalid email format.");
+                return;
+            }
+            if (!phone.isEmpty() && !InputValidator.isValidPhone(phone)) {
+                JOptionPane.showMessageDialog(this, "Phone number must contain digits only.");
                 return;
             }
             try {
-                UserService.registerUser(username, password, name, tfEmail.getText().trim(), tfPhone.getText().trim(), "Customer");
+                UserService.registerUser(username, password, name, email, phone, "Customer");
                 refresh();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
             }
         } else {
+            String name = tfName.getText().trim();
+            String email = tfEmail.getText().trim();
+            String phone = tfPhone.getText().trim();
+            
+            if (name.isEmpty() || email.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Name and Email are required.");
+                return;
+            }
+            if (!InputValidator.isValidEmail(email)) {
+                JOptionPane.showMessageDialog(this, "Invalid email format.");
+                return;
+            }
+            if (!phone.isEmpty() && !InputValidator.isValidPhone(phone)) {
+                JOptionPane.showMessageDialog(this, "Phone number must contain digits only.");
+                return;
+            }
             try {
-                UserService.updateUserProfile(prefillUser, tfName.getText().trim(), tfEmail.getText().trim(), tfPhone.getText().trim(), null);
+                UserService.updateUserProfile(prefillUser, name, email, phone, null);
                 refresh();
             } catch (IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
