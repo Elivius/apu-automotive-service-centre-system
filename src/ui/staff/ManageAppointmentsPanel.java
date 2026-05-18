@@ -165,6 +165,11 @@ public class ManageAppointmentsPanel extends JPanel {
         int modelRow = table.convertRowIndexToModel(row);
         Appointment apt = appointments.get(modelRow);
 
+        if ("Completed".equals(apt.getStatus()) || "Declined".equals(apt.getStatus())) {
+            JOptionPane.showMessageDialog(this, "Cannot decline an appointment that is already " + apt.getStatus() + ".");
+            return;
+        }
+
         int ok = JOptionPane.showConfirmDialog(this,
                 "Decline appointment " + apt.getAppointmentId() + "?",
                 "Confirm Decline", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
