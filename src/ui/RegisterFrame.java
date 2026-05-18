@@ -1,6 +1,7 @@
 package ui;
 
 import services.UserService;
+import utils.InputValidator;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -165,11 +166,12 @@ public class RegisterFrame extends JFrame {
             lblError.setText("Password must be at least 6 characters.");
             return;
         }
-        if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+        if (!InputValidator.isValidEmail(email)) {
             lblError.setText("Invalid email format.");
             return;
         }
-        if (!phone.isEmpty() && !phone.matches("\\d+")) {
+        // Optional field
+        if (!phone.isEmpty() && !InputValidator.isValidPhone(phone)) {
             lblError.setText("Phone number must contain digits only.");
             return;
         }

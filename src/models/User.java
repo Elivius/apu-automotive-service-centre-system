@@ -1,5 +1,6 @@
 package models;
 
+import utils.InputValidator;
 import utils.PasswordHasher;
 
 /**
@@ -140,7 +141,7 @@ public abstract class User {
     }
 
     public void setEmail(String email) {
-        if (email != null && !email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+        if (email != null && !InputValidator.isValidEmail(email)) {
             throw new IllegalArgumentException("Invalid email format.");
         }
         this.email = email;
@@ -151,6 +152,9 @@ public abstract class User {
     }
 
     public void setPhone(String phone) {
+        if (phone != null && !phone.isEmpty() && !InputValidator.isValidPhone(phone)) {
+            throw new IllegalArgumentException("Phone number must contain digits only.");
+        }
         this.phone = phone;
     }
 

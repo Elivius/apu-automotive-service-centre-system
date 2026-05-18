@@ -2,6 +2,7 @@ package ui;
 
 import models.User;
 import services.UserService;
+import utils.InputValidator;
 import utils.PasswordHasher;
 
 import javax.swing.*;
@@ -153,8 +154,13 @@ public class EditProfileFrame extends JFrame {
             lblError.setText("Name and email are required.");
             return;
         }
-        if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+        if (!InputValidator.isValidEmail(email)) {
             lblError.setText("Invalid email format.");
+            return;
+        }
+        // Optional field
+        if (!phone.isEmpty() && !InputValidator.isValidPhone(phone)) {
+            lblError.setText("Phone number must contain digits only.");
             return;
         }
 
