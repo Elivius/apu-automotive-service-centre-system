@@ -33,13 +33,27 @@ public class UserService {
      * @param role The role of the user (e.g., "Customer", "Technician")
      */
     public static void registerUser(String username, String plainPassword, String name, String email, String phone, String role, String specialization) {
-        // 1. Generate a new User ID based on the role prefix
+        // 1. Validate uniqueness of username and email
+        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.USERS_FILE);
+        for (String line : lines) {
+            String[] parts = line.split(FileHandler.DELIMITER, -1);
+            if (parts.length >= 7) {
+                if (parts[1].equalsIgnoreCase(username)) {
+                    throw new IllegalArgumentException("Username '" + username + "' is already taken.");
+                }
+                if (parts[4].equalsIgnoreCase(email)) {
+                    throw new IllegalArgumentException("Email '" + email + "' is already registered.");
+                }
+            }
+        }
+
+        // 2. Generate a new User ID based on the role prefix
         String prefix = role.equals("Customer") ? "CUS" : 
                         role.equals("Manager") ? "MGR" : 
                         role.equals("CounterStaff") ? "STF" : "TEC";
         String newId = FileHandler.getInstance().generateNextId(FileHandler.USERS_FILE, prefix);
 
-        // 2. Create the specific User object based on the role
+        // 3. Create the specific User object based on the role
         User newUser = null;
         switch (role) {
             case "Manager":
@@ -57,10 +71,10 @@ public class UserService {
                 break;
         }
 
-        // 3. Hash the password securely using our existing model logic
+        // 4. Hash the password securely using our existing model logic
         newUser.setHashedPassword(plainPassword);
 
-        // 4. Save to the database
+        // 5. Save to the database
         FileHandler.getInstance().appendLine(FileHandler.USERS_FILE, newUser.toFileString());
 
         AuditLogger.log(newId, "REGISTER", "Username: " + username + " | Role: " + role);
@@ -69,6 +83,9 @@ public class UserService {
     /**
      * Updates an existing user's information in the database.
      * Replaces the old record with the new updated User object's data.
+     * Private method - used by updateUserProfile()
+     * 
+     * @param user the User object to update
      */
     private static void updateUser(User user) {
         if (user != null && user.getUserId() != null) {
