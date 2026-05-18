@@ -16,7 +16,7 @@ import java.awt.*;
 public class RegisterFrame extends JFrame {
 
     private JTextField     tfUsername, tfName, tfEmail, tfPhone;
-    private JPasswordField pfPassword, pfConfirm;
+    private JPasswordField pfPassword, pfConfirmPassword;
     private JLabel         lblError;
 
     public RegisterFrame() {
@@ -57,8 +57,8 @@ public class RegisterFrame extends JFrame {
         tfPhone.setName("tfPhone");
         pfPassword = UITheme.styledPasswordField(20);
         pfPassword.setName("pfPassword");
-        pfConfirm = UITheme.styledPasswordField(20);
-        pfConfirm.setName("pfConfirm");
+        pfConfirmPassword = UITheme.styledPasswordField(20);
+        pfConfirmPassword.setName("pfConfirmPassword");
 
         // ── Error label ───────────────────────────────────────────────
         lblError = new JLabel(" ");
@@ -104,7 +104,7 @@ public class RegisterFrame extends JFrame {
         card.add(Box.createVerticalStrut(12));
         card.add(UITheme.formRow("Password *", pfPassword));
         card.add(Box.createVerticalStrut(12));
-        card.add(UITheme.formRow("Confirm Password *", pfConfirm));
+        card.add(UITheme.formRow("Confirm Password *", pfConfirmPassword));
 
         card.add(Box.createVerticalStrut(18));
         card.add(lblError);
@@ -152,18 +152,18 @@ public class RegisterFrame extends JFrame {
         String email = tfEmail.getText().trim();
         String phone = tfPhone.getText().trim();
         String password = new String(pfPassword.getPassword());
-        String confirm = new String(pfConfirm.getPassword());
+        String confirmPassword = new String(pfConfirmPassword.getPassword());
 
         if (username.isEmpty() || name.isEmpty() || email.isEmpty() || password.isEmpty()) {
             lblError.setText("Please fill in all required (*) fields.");
             return;
         }
-        if (!password.equals(confirm)) {
-            lblError.setText("Passwords do not match.");
-            return;
-        }
         if (password.length() < 6) {
             lblError.setText("Password must be at least 6 characters.");
+            return;
+        }
+        if (!password.equals(confirmPassword)) {
+            lblError.setText("Passwords do not match.");
             return;
         }
         if (!InputValidator.isValidEmail(email)) {
