@@ -3,6 +3,7 @@ package ui.manager;
 import models.User;
 import services.UserService;
 import ui.UITheme;
+import utils.InputValidator;
 
 import javax.swing.*;
 import javax.swing.table.*;
@@ -182,12 +183,12 @@ public class ManageStaffPanel extends JPanel {
         form.add(Box.createVerticalStrut(8));
         form.add(UITheme.formRow("Full Name *", tfName));
         form.add(Box.createVerticalStrut(8));
-        form.add(UITheme.formRow("Email", tfEmail));
+        form.add(UITheme.formRow("Email *", tfEmail));
         form.add(Box.createVerticalStrut(8));
         form.add(UITheme.formRow("Phone", tfPhone));
         form.add(Box.createVerticalStrut(8));
         if (isTech) {
-        	form.add(UITheme.formRow("Specialization", tfSpecialization));
+        	form.add(UITheme.formRow("Specialization *", tfSpecialization));
         	form.add(Box.createVerticalStrut(8));
         }
         if (prefill == null) {
@@ -205,20 +206,58 @@ public class ManageStaffPanel extends JPanel {
             String password = new String(pfPassword.getPassword());
             String username = tfUsername.getText().trim();
             String name = tfName.getText().trim();
-            if (username.isEmpty() || name.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Username, Name, Password are required.");
+            String email = tfEmail.getText().trim();
+            String phone = tfPhone.getText().trim();
+            String specialization = tfSpecialization.getText().trim();
+            if (username.isEmpty() || name.isEmpty() || password.isEmpty() || email.isEmpty() || (isTech && specialization.isEmpty())) {
+                if (isTech) {
+                    JOptionPane.showMessageDialog(this, "Username, Name, Password, Email, Specialization are required.");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Username, Name, Password, Email are required.");
+                }
                 return;
             }
-            if (isTech) {
-                UserService.registerUser(username, password, name, tfEmail.getText().trim(), tfPhone.getText().trim(), role, tfSpecialization.getText().trim());
-            } else {
-                UserService.registerUser(username, password, name, tfEmail.getText().trim(), tfPhone.getText().trim(), role);
+            if (password.length() < 6) {
+                JOptionPane.showMessageDialog(this, "Password must be at least 6 characters.");
+                return;
             }
-        } else {
+            if (!InputValidator.isValidEmail(email)) {
+                JOptionPane.showMessageDialog(this, "Invalid email format.");
+                return;
+            }
+            if (!phone.isEmpty() && !InputValidator.isValidPhone(phone)) {
+                JOptionPane.showMessageDialog(this, "Phone number must contain digits only.");
+                return;
+            }
+
             try {
-                UserService.updateStaffProfile(prefill, tfName.getText().trim(), tfEmail.getText().trim(), tfPhone.getText().trim(), isTech ? tfSpecialization.getText().trim() : null);
+                if (isTech) {
+                    UserService.registerUser(username, password, name, email, phone, role, specialization);
+                } else {
+                    UserService.registerUser(username, password, name, email, phone, role);
+                }
             } catch (IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+                return;
+            }
+        } else {
+            String name = tfName.getText().trim();
+            String email = tfEmail.getText().trim();
+            String phone = tfPhone.getText().trim();
+            String specialization = isTech ? tfSpecialization.getText().trim() : null;
+            if (!InputValidator.isValidEmail(email)) {
+                JOptionPane.showMessageDialog(this, "Invalid email format.");
+                return;
+            }
+            if (!phone.isEmpty() && !InputValidator.isValidPhone(phone)) {
+                JOptionPane.showMessageDialog(this, "Phone number must contain digits only.");
+                return;
+            }
+            try {
+                UserService.updateStaffProfile(prefill, name, email, phone, specialization);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+                return;
             }
         }
     }
