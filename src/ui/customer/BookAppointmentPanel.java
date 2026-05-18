@@ -26,7 +26,7 @@ public class BookAppointmentPanel extends JPanel {
     private JSpinner spDate, spTime;
     private JTextArea taComments;
     private JRadioButton rbOnline, rbPhysical;
-    private JLabel lblPrice, lblError, lblSuccess;
+    private JLabel lblPrice, lblMessage;
 
     public BookAppointmentPanel(Customer customer) {
         this.customer = customer;
@@ -96,15 +96,10 @@ public class BookAppointmentPanel extends JPanel {
         bg.add(rbOnline); 
         bg.add(rbPhysical);
 
-        // Error / success labels
-        lblError = new JLabel(" "); 
-        lblError.setName("lblError");
-        lblError.setForeground(UITheme.ACCENT);    
-        lblError.setFont(UITheme.FONT_SMALL);
-        lblSuccess = new JLabel(" "); 
-        lblSuccess.setName("lblSuccess");
-        lblSuccess.setForeground(UITheme.SUCCESS); 
-        lblSuccess.setFont(UITheme.FONT_SMALL);
+        // Message label
+        lblMessage = new JLabel(" "); 
+        lblMessage.setName("lblMessage");
+        lblMessage.setFont(UITheme.FONT_SMALL);
 
         JButton btnBook = UITheme.accentButton("Confirm Booking");
         btnBook.setName("btnBook");
@@ -129,10 +124,7 @@ public class BookAppointmentPanel extends JPanel {
         gbc.gridy = row; 
         gbc.gridwidth = 2; 
         gbc.insets = new Insets(12, 0, 0, 0);
-        card.add(lblError, gbc); 
-        row++;
-        gbc.gridy = row; 
-        card.add(lblSuccess, gbc); 
+        card.add(lblMessage, gbc); 
         row++;
         gbc.gridy = row; 
         gbc.fill = GridBagConstraints.NONE; 
@@ -161,8 +153,7 @@ public class BookAppointmentPanel extends JPanel {
     }
 
     private void doBook() {
-        lblError.setText(" ");
-        lblSuccess.setText(" ");
+        lblMessage.setText(" ");
         String serviceType = (String) cbServiceType.getSelectedItem();
         String timeSlot = (String) spTime.getValue();
         String comments = taComments.getText().trim();
@@ -176,22 +167,32 @@ public class BookAppointmentPanel extends JPanel {
             java.time.LocalTime.of(Integer.parseInt(timeParts[0]), Integer.parseInt(timeParts[1])));
 
         if (dateTime.isBefore(LocalDateTime.now())) {
-            lblError.setText("Please select a future date and time.");
+            lblMessage.setForeground(UITheme.DANGER);
+            lblMessage.setText("Please select a future date and time.");
+            return;
+        }
+
+        if (comments.isEmpty()) {
+            lblMessage.setForeground(UITheme.DANGER);
+            lblMessage.setText("Please enter a comment describing your service needs.");
             return;
         }
 
         double price = PaymentService.getServicePrice(serviceType);
         if (price <= 0) {
-            lblError.setText("Service price is not set. Please contact the manager.");
+            lblMessage.setForeground(UITheme.DANGER);
+            lblMessage.setText("Service price is not set. Please contact the manager.");
             return;
         }
 
         try {
             AppointmentService.bookAppointment(customer.getUserId(), serviceType, dateTime, comments, payMethod);
-            lblSuccess.setText("Appointment booked! Status: Pending. Check 'My Appointments'.");
+            lblMessage.setForeground(UITheme.SUCCESS);
+            lblMessage.setText("Appointment booked! Status: Pending. Check 'My Appointments'.");
             taComments.setText("");
         } catch (Exception ex) {
-            lblError.setText("Error: " + ex.getMessage());
+            lblMessage.setForeground(UITheme.DANGER);
+            lblMessage.setText("Error: " + ex.getMessage());
         }
     }
 
