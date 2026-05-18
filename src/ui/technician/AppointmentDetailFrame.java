@@ -220,16 +220,19 @@ public class AppointmentDetailFrame extends JFrame {
     }
 
     private void doComplete() {
+        String feedback = taFeedback.getText().trim();
+        if (feedback.isEmpty()) {
+            lblMsg.setText("Please enter feedback before marking as completed.");
+            lblMsg.setForeground(UITheme.DANGER);
+            return;
+        }
+
         int ok = JOptionPane.showConfirmDialog(this,
                 "Mark appointment " + appointment.getAppointmentId() + " as Completed?",
                 "Confirm Completion", JOptionPane.YES_NO_OPTION);
         if (ok != JOptionPane.YES_OPTION) return;
 
-        // Save any feedback first
-        String feedback = taFeedback.getText().trim();
-        if (!feedback.isEmpty()) {
-            FeedbackService.submitTechnicianFeedback(appointment, feedback);
-        }
+        FeedbackService.submitTechnicianFeedback(appointment, feedback);
         AppointmentService.completeAppointment(appointment);
         JOptionPane.showMessageDialog(this, "Appointment marked as Completed.");
         dispose();
