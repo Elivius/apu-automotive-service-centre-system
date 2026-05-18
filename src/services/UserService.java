@@ -42,7 +42,10 @@ public class UserService {
                     throw new IllegalArgumentException("Username '" + username + "' is already taken.");
                 }
                 if (parts[4].equalsIgnoreCase(email)) {
-                    throw new IllegalArgumentException("Email '" + email + "' is already registered.");
+                    throw new IllegalArgumentException("Email '" + email + "' is already registered by another account.");
+                }
+                if (!phone.isEmpty() && parts[5].equals(phone)) {
+                    throw new IllegalArgumentException("Phone number '" + phone + "' is already registered by another account.");
                 }
             }
         }
@@ -96,11 +99,37 @@ public class UserService {
     }
 
     /**
+     * Validates that the given email and phone number are not already used by another user.
+     * Must be called BEFORE setting the new values on the user object.
+     *
+     * @param userId the current user's ID (to skip their own record)
+     * @param email  the new email to validate
+     * @param phone  the new phone to validate (ignored if empty)
+     */
+    private static void validateUniqueness(String userId, String email, String phone) {
+        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.USERS_FILE);
+        for (String line : lines) {
+            String[] parts = line.split(FileHandler.DELIMITER, -1);
+            if (parts.length >= 7 && !parts[0].equals(userId)) {
+                if (parts[4].equalsIgnoreCase(email)) {
+                    throw new IllegalArgumentException("Email '" + email + "' is already registered by another account.");
+                }
+                if (!phone.isEmpty() && parts[5].equals(phone)) {
+                    throw new IllegalArgumentException("Phone number '" + phone + "' is already registered by another account.");
+                }
+            }
+        }
+    }
+
+    /**
      * Updates a generic user profile (Customer, Generic Staff).
      * Used by self to update no matter STAFF, CUS, MANAGER, TECH
      * Used by Staff to update Customer details
      */
     public static void updateUserProfile(User user, String name, String email, String phone, String newPassword) {
+        // Validate BEFORE modifying the user object
+        validateUniqueness(user.getUserId(), email, phone);
+
         user.setName(name);
         user.setEmail(email);
         user.setPhone(phone);
@@ -116,6 +145,9 @@ public class UserService {
      * NO PASSWORD UPDATE ALLOWED
      */
     public static void updateStaffProfile(User user, String name, String email, String phone, String specialization) {
+        // Validate BEFORE modifying the user object
+        validateUniqueness(user.getUserId(), email, phone);
+
         user.setName(name);
         user.setEmail(email);
         user.setPhone(phone);
