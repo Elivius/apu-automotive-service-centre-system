@@ -216,6 +216,15 @@ public class ManageAppointmentsPanel extends JPanel {
         LocalDateTime dateTime = LocalDateTime.ofInstant(dateValue.toInstant(), java.time.ZoneId.systemDefault());
         String comments = taComments.getText().trim();
 
+        if (comments.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Comments are required. Please describe the service needs.");
+            return;
+        }
+        if (dateTime.isBefore(LocalDateTime.now())) {
+            JOptionPane.showMessageDialog(this, "Please select a future date and time.");
+            return;
+        }
+
         AppointmentService.bookAppointment(custId, serviceType, dateTime, comments, "Physical");
         refresh();
         JOptionPane.showMessageDialog(this, "Appointment created successfully.");

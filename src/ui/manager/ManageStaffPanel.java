@@ -169,6 +169,8 @@ public class ManageStaffPanel extends JPanel {
         tfSpecialization.setName("tfSpecialization");
         JPasswordField pfPassword = UITheme.styledPasswordField(20);
         pfPassword.setName("pfPassword");
+        JPasswordField pfConfirmPassword = UITheme.styledPasswordField(20);
+        pfConfirmPassword.setName("pfConfirmPassword");
 
         if (prefill != null) {
             tfUsername.setText(prefill.getUsername());
@@ -194,6 +196,8 @@ public class ManageStaffPanel extends JPanel {
         if (prefill == null) {
         	form.add(UITheme.formRow("Password *", pfPassword));
         	form.add(Box.createVerticalStrut(8));
+        	form.add(UITheme.formRow("Confirm Password *", pfConfirmPassword));
+        	form.add(Box.createVerticalStrut(8));
         }
 
         String title = (prefill == null ? "Add " : "Edit ") + role;
@@ -204,6 +208,7 @@ public class ManageStaffPanel extends JPanel {
 
         if (prefill == null) {
             String password = new String(pfPassword.getPassword());
+            String confirmPassword = new String(pfConfirmPassword.getPassword());
             String username = tfUsername.getText().trim();
             String name = tfName.getText().trim();
             String email = tfEmail.getText().trim();
@@ -219,6 +224,10 @@ public class ManageStaffPanel extends JPanel {
             }
             if (password.length() < 6) {
                 JOptionPane.showMessageDialog(this, "Password must be at least 6 characters.");
+                return;
+            }
+            if (!password.equals(confirmPassword)) {
+                JOptionPane.showMessageDialog(this, "Passwords do not match.");
                 return;
             }
             if (!InputValidator.isValidEmail(email)) {

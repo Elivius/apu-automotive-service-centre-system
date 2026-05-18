@@ -125,6 +125,8 @@ public class ManageCustomersPanel extends JPanel {
         tfPhone.setName("tfPhone");
         JPasswordField pfPassword = UITheme.styledPasswordField(20);
         pfPassword.setName("pfPassword");
+        JPasswordField pfConfirmPassword = UITheme.styledPasswordField(20);
+        pfConfirmPassword.setName("pfConfirmPassword");
 
         if (prefillUser != null) {
             tfUsername.setText(prefillUser.getUsername());
@@ -145,6 +147,8 @@ public class ManageCustomersPanel extends JPanel {
         if (prefillUser == null) {
             form.add(UITheme.formRow("Password *", pfPassword));
             form.add(Box.createVerticalStrut(8));
+            form.add(UITheme.formRow("Confirm Password *", pfConfirmPassword));
+            form.add(Box.createVerticalStrut(8));
         }
 
         String title = prefillUser == null ? "Add New Customer" : "Edit Customer: " + prefillUser.getName();
@@ -159,12 +163,18 @@ public class ManageCustomersPanel extends JPanel {
             String email = tfEmail.getText().trim();
             String phone = tfPhone.getText().trim();
             String password = new String(pfPassword.getPassword());
+            String confirmPassword = new String(pfConfirmPassword.getPassword());
+
             if (username.isEmpty() || name.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Username, Name, Email and Password are required.");
                 return;
             }
             if (password.length() < 6) {
                 JOptionPane.showMessageDialog(this, "Password must be at least 6 characters.");
+                return;
+            }
+            if (!password.equals(confirmPassword)) {
+                JOptionPane.showMessageDialog(this, "Passwords do not match.");
                 return;
             }
             if (!InputValidator.isValidEmail(email)) {
