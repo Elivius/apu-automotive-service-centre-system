@@ -178,7 +178,7 @@ public class MyAppointmentsPanel extends JPanel {
         String text = taAction.getText().trim();
         if (text.isEmpty()) {
             lblMsg.setText("Please enter some text.");
-            lblMsg.setForeground(UITheme.ACCENT);
+            lblMsg.setForeground(UITheme.DANGER);
             return;
         }
 
