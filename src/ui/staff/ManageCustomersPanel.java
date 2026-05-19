@@ -97,8 +97,11 @@ public class ManageCustomersPanel extends JPanel {
 
     private void filterTable() {
         String text = tfSearch.getText().trim();
-        if (text.isEmpty()) { sorter.setRowFilter(null); return; }
-        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 1)); // column 1 = Name
+        if (text.isEmpty()) {
+            sorter.setRowFilter(null);
+        } else {
+            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(text)));
+        }
     }
 
     private void refresh() {

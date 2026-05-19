@@ -19,7 +19,7 @@ import java.util.List;
 public class AuditLogPanel extends JPanel {
 
     private DefaultTableModel tableModel;
-    private TableRowSorter<DefaultTableModel> rowSorter;
+    private TableRowSorter<DefaultTableModel> sorter;
     private JTextField tfSearch;
 
     private static final String[] COLUMNS = {"Timestamp", "User ID", "Action", "Details"};
@@ -96,8 +96,8 @@ public class AuditLogPanel extends JPanel {
         table.getColumnModel().getColumn(3).setPreferredWidth(460); // Details
 
         // Sorting + filtering
-        rowSorter = new TableRowSorter<>(tableModel);
-        table.setRowSorter(rowSorter);
+        sorter = new TableRowSorter<>(tableModel);
+        table.setRowSorter(sorter);
 
         // Colour-code rows by action type for quick visual scanning
         table.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
@@ -153,9 +153,9 @@ public class AuditLogPanel extends JPanel {
     private void applyFilter() {
         String text = tfSearch.getText().trim();
         if (text.isEmpty()) {
-            rowSorter.setRowFilter(null);
+            sorter.setRowFilter(null);
         } else {
-            rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(text)));
         }
     }
 }
