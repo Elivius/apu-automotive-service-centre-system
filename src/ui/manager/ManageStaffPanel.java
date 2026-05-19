@@ -69,7 +69,11 @@ public class ManageStaffPanel extends JPanel {
         tfSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             void filter() { 
                 String text = tfSearch.getText().trim();
-                sorter.setRowFilter(text.isEmpty() ? null : RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(text))); 
+                if (text.isEmpty()) {
+                    sorter.setRowFilter(null);
+                } else {
+                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(text)));
+                }
             }
             public void insertUpdate(javax.swing.event.DocumentEvent e) { filter(); }
             public void removeUpdate(javax.swing.event.DocumentEvent e) { filter(); }
