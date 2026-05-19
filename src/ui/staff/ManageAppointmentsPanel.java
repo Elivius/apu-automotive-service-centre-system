@@ -7,12 +7,15 @@ import models.User;
 import services.AppointmentService;
 import services.UserService;
 import utils.DateUtils;
+import ui.PopupFieldFactory;
 import ui.UITheme;
 
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -186,26 +189,32 @@ public class ManageAppointmentsPanel extends JPanel {
 
         String[] custNames = customers.stream()
                 .map(customer -> customer.getUserId() + " — " + customer.getName()).toArray(String[]::new);
-        JComboBox<String> cbCustomer = new JComboBox<>(custNames);
-        cbCustomer.setBackground(UITheme.FIELD_BG);
-        cbCustomer.setForeground(UITheme.TEXT_PRIMARY);
-        JComboBox<String> cbService  = new JComboBox<>(new String[]{"Normal", "Major"});
-        cbService.setBackground(UITheme.FIELD_BG);
-        cbService.setForeground(UITheme.TEXT_PRIMARY);
+        String[] customerHolder = { custNames[0] };
+        JPanel customerField = PopupFieldFactory.createDropdownField(custNames, customerHolder, null);
 
-        SpinnerDateModel dateModel = new SpinnerDateModel();
-        JSpinner spDate = new JSpinner(dateModel);
-        spDate.setEditor(new JSpinner.DateEditor(spDate, "yyyy-MM-dd HH:mm"));
+        String[] serviceHolder = { "Normal" };
+        JPanel serviceField = PopupFieldFactory.createDropdownField(
+            new String[]{"Normal", "Major"}, serviceHolder, null);
+
+        // Calendar date picker
+        LocalDate[] dateHolder = { LocalDate.now() };
+        JPanel dateField = PopupFieldFactory.createDateField(LocalDate.now(), dateHolder);
+
+        // Time picker (scrollable popup)
+        String[] timeHolder = { "08:00" };
+        JPanel timeField = PopupFieldFactory.createTimeField("08:00", timeHolder);
 
         JTextArea taComments = new JTextArea(3, 20);
         taComments.setBackground(UITheme.FIELD_BG);
         taComments.setForeground(UITheme.TEXT_PRIMARY);
 
-        form.add(UITheme.formRow("Customer", cbCustomer));
+        form.add(UITheme.formRow("Customer", customerField));
         form.add(Box.createVerticalStrut(8));
-        form.add(UITheme.formRow("Service Type", cbService));
+        form.add(UITheme.formRow("Service Type", serviceField));
         form.add(Box.createVerticalStrut(8));
-        form.add(UITheme.formRow("Date & Time", spDate));
+        form.add(UITheme.formRow("Date", dateField));
+        form.add(Box.createVerticalStrut(8));
+        form.add(UITheme.formRow("Time", timeField));
         form.add(Box.createVerticalStrut(8));
         form.add(UITheme.formRow("Comments", new JScrollPane(taComments)));
 
@@ -213,10 +222,16 @@ public class ManageAppointmentsPanel extends JPanel {
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (res != JOptionPane.OK_OPTION) return;
 
-        String custId = custNames[cbCustomer.getSelectedIndex()].split(" — ")[0].trim();
-        String serviceType = (String) cbService.getSelectedItem();
-        java.util.Date dateValue = (java.util.Date) spDate.getValue();
-        LocalDateTime dateTime = LocalDateTime.ofInstant(dateValue.toInstant(), java.time.ZoneId.systemDefault());
+        String custId = customerHolder[0].split(" — ")[0].trim();
+        String serviceType = serviceHolder[0];
+
+        // Combine date + time slot into LocalDateTime
+        String timeSlot = timeHolder[0];
+        String[] timeParts = timeSlot.split(":");
+        LocalDateTime dateTime = LocalDateTime.of(
+            dateHolder[0],
+            LocalTime.of(Integer.parseInt(timeParts[0]), Integer.parseInt(timeParts[1])));
+
         String comments = taComments.getText().trim();
 
         if (comments.isEmpty()) {
