@@ -3,10 +3,11 @@ package ui.customer;
 import models.Customer;
 import services.AppointmentService;
 import services.PaymentService;
+import ui.PopupFieldFactory;
 import ui.UITheme;
 
 import java.util.List;
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -22,8 +23,9 @@ public class BookAppointmentPanel extends JPanel {
 
     private final Customer customer;
 
-    private JComboBox<String> cbServiceType;
-    private JSpinner spDate, spTime;
+    private final String[] serviceTypeHolder = { "Normal" };
+    private final LocalDate[] dateHolder = { LocalDate.now() };
+    private final String[] timeHolder = { "08:00" };
     private JTextArea taComments;
     private JRadioButton rbOnline, rbPhysical;
     private JLabel lblPrice, lblMessage;
@@ -49,13 +51,10 @@ public class BookAppointmentPanel extends JPanel {
         card.setBorder(BorderFactory.createEmptyBorder(28, 32, 28, 32));
         GridBagConstraints gbc = formGBC();
 
-        // Service type
-        cbServiceType = new JComboBox<>(new String[]{"Normal", "Major"});
-        cbServiceType.setName("cbServiceType");
-        cbServiceType.setBackground(UITheme.FIELD_BG);
-        cbServiceType.setForeground(UITheme.TEXT_PRIMARY);
-        cbServiceType.setFont(UITheme.FONT_BODY);
-        cbServiceType.addActionListener(e -> updatePrice());
+        // Service type (styled dropdown)
+        JPanel serviceTypeField = PopupFieldFactory.createDropdownField(
+            new String[]{"Normal", "Major"}, serviceTypeHolder, () -> updatePrice());
+        serviceTypeField.setName("serviceTypeField");
 
         // Price label
         lblPrice = new JLabel();
@@ -63,20 +62,13 @@ public class BookAppointmentPanel extends JPanel {
         lblPrice.setFont(UITheme.FONT_BODY);
         lblPrice.setForeground(UITheme.SUCCESS);
 
-        // Date spinner
-        SpinnerDateModel dateModel = new SpinnerDateModel();
-        spDate = new JSpinner(dateModel);
-        spDate.setName("spDate");
+        // Date picker (calendar popup)
+        JPanel dateField = PopupFieldFactory.createDateField(LocalDate.now(), dateHolder);
+        dateField.setName("dateField");
 
-        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spDate, "yyyy-MM-dd");
-        spDate.setEditor(dateEditor);
-        spDate.setFont(UITheme.FONT_BODY);
-
-        // Time spinner
-        SpinnerListModel timeModel = new SpinnerListModel(buildTimeSlots());
-        spTime = new JSpinner(timeModel);
-        spTime.setName("spTime");
-        spTime.setFont(UITheme.FONT_BODY);
+        // Time picker (scrollable popup)
+        JPanel timeField = PopupFieldFactory.createTimeField("08:00", timeHolder);
+        timeField.setName("timeField");
 
         // Comments
         taComments = new JTextArea(4, 20);
@@ -107,10 +99,10 @@ public class BookAppointmentPanel extends JPanel {
 
         // Layout rows
         int row = 0;
-        addFormRow(card, gbc, row++, "Service Type", cbServiceType);
+        addFormRow(card, gbc, row++, "Service Type", serviceTypeField);
         addFormRow(card, gbc, row++, "Service Price", lblPrice);
-        addFormRow(card, gbc, row++, "Date", spDate);
-        addFormRow(card, gbc, row++, "Time Slot", spTime);
+        addFormRow(card, gbc, row++, "Date", dateField);
+        addFormRow(card, gbc, row++, "Time Slot", timeField);
         addFormRow(card, gbc, row++, "Comments", commentsScroll);
 
         JPanel pmPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -141,7 +133,7 @@ public class BookAppointmentPanel extends JPanel {
     }
 
     private void updatePrice() {
-        String type = (String) cbServiceType.getSelectedItem();
+        String type = serviceTypeHolder[0];
         double price = PaymentService.getServicePrice(type);
         if (price <= 0) {
             lblPrice.setText("Price not set — contact manager");
@@ -154,16 +146,15 @@ public class BookAppointmentPanel extends JPanel {
 
     private void doBook() {
         lblMessage.setText(" ");
-        String serviceType = (String) cbServiceType.getSelectedItem();
-        String timeSlot = (String) spTime.getValue();
+        String serviceType = serviceTypeHolder[0];
+        String timeSlot = timeHolder[0];
         String comments = taComments.getText().trim();
         String payMethod = rbOnline.isSelected() ? "Online" : "Physical";
 
-        // Build LocalDateTime
-        Date dateVal = (Date) spDate.getValue();
+        // Build LocalDateTime from calendar picker date + time slot
         String[] timeParts = timeSlot.split(":");
         LocalDateTime dateTime = LocalDateTime.of(
-            dateVal.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate(),
+            dateHolder[0],
             java.time.LocalTime.of(Integer.parseInt(timeParts[0]), Integer.parseInt(timeParts[1])));
 
         if (dateTime.isBefore(LocalDateTime.now())) {
@@ -196,15 +187,7 @@ public class BookAppointmentPanel extends JPanel {
         }
     }
 
-    private String[] buildTimeSlots() {
-        String[] slots = new String[28];
-        int i = 0;
-        for (int h = 8; h < 22; h++) {
-            slots[i++] = String.format("%02d:00", h);
-            slots[i++] = String.format("%02d:30", h);
-        }
-        return slots;
-    }
+
 
     private void styleRadio(JRadioButton rb) {
         rb.setBackground(UITheme.BG_CARD);
