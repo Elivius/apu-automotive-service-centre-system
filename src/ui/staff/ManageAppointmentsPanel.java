@@ -100,12 +100,7 @@ public class ManageAppointmentsPanel extends JPanel {
     private void filterTable() {
         String text = tfSearch.getText().trim();
         if (text.isEmpty()) { sorter.setRowFilter(null); return; }
-        // Search across all visible columns
-        List<RowFilter<Object, Object>> filters = new ArrayList<>();
-        for (int i = 0; i < tableModel.getColumnCount(); i++) {
-            filters.add(RowFilter.regexFilter("(?i)" + text, i));
-        }
-        sorter.setRowFilter(RowFilter.orFilter(filters));
+        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(text)));
     }
 
     void refresh() {
