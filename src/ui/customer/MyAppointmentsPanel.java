@@ -67,7 +67,7 @@ public class MyAppointmentsPanel extends JPanel {
             }
         });
         JScrollPane sp = UITheme.styledTable(table);
-        sp.setPreferredSize(new Dimension(0, 320));
+        sp.setPreferredSize(new Dimension(0, 240));
 
         // ── Detail / action panel ────────────────────────────────────
         JPanel actionCard = UITheme.cardPanel();
@@ -87,7 +87,7 @@ public class MyAppointmentsPanel extends JPanel {
         lblMsg.setFont(UITheme.FONT_SMALL);
         lblMsg.setForeground(UITheme.SUCCESS);
 
-        btnSubmit = UITheme.accentButton("Submit");
+        btnSubmit = UITheme.accentButton("Save Comments");
         btnSubmit.setName("btnSubmit");
         btnSubmit.setEnabled(false);
         btnSubmit.addActionListener(e -> doSubmit());
@@ -107,7 +107,8 @@ public class MyAppointmentsPanel extends JPanel {
 
         // ── Split ─────────────────────────────────────────────────────
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, sp, actionCard);
-        split.setDividerLocation(320);
+        split.setDividerLocation(280);
+        split.setResizeWeight(0.5);
         split.setDividerSize(6);
         split.setBorder(null);
         split.setBackground(UITheme.BG_DARK);
