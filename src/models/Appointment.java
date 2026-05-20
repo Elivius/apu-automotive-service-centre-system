@@ -32,6 +32,7 @@ public class Appointment {
     private String comments;        // Customer's comments
     private String feedback;        // Technician's feedback
     private String serviceReview;   // Customer's service review
+    private int version = 1;        // Optimistic locking version
 
     // ───── Constructors ─────
     public Appointment() {
@@ -152,6 +153,14 @@ public class Appointment {
         this.serviceReview = serviceReview;
     }
 
+    public int getVersion() {
+        return this.version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
     // ═══════════════════════════════════════════
     //  FILE SERIALIZATION
     // ═══════════════════════════════════════════
@@ -170,7 +179,8 @@ public class Appointment {
                 this.endDateTime != null ? this.endDateTime.format(DateUtils.FORMATTER) : "",
                 safe(this.comments),
                 safe(this.feedback),
-                safe(this.serviceReview));
+                safe(this.serviceReview),
+                String.valueOf(this.version));
     }
 
     /**
@@ -194,6 +204,11 @@ public class Appointment {
             apt.setComments(unescape(parts[7]));
             apt.setFeedback(unescape(parts[8]));
             apt.setServiceReview(unescape(parts[9]));
+            if (parts.length >= 11) {
+                try {
+                    apt.setVersion(Integer.parseInt(parts[10]));
+                } catch (NumberFormatException ignored) {}
+            }
             return apt;
         }
         return null;

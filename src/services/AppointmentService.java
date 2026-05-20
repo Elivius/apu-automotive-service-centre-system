@@ -113,7 +113,11 @@ public class AppointmentService {
         // No collision — assign the technician and update status
         targetAppointment.setTechnicianId(technicianId);
         targetAppointment.setStatus(Appointment.STATUS_ASSIGNED);
-        FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, targetAppointment.getAppointmentId(), targetAppointment.toFileString());
+        
+        // Increment version for optimistic locking
+        int expectedVersion = targetAppointment.getVersion();
+        targetAppointment.setVersion(expectedVersion + 1);
+        FileHandler.getInstance().updateLineOptimistic(FileHandler.APPOINTMENTS_FILE, targetAppointment.getAppointmentId(), targetAppointment.toFileString(), expectedVersion, 10);
 
         // Push notifications to both the customer and the technician
         NotificationService.push(targetAppointment.getCustomerId(), "Your appointment " + targetAppointment.getAppointmentId() + " has been assigned to technician " + technicianId + ".");
@@ -130,7 +134,9 @@ public class AppointmentService {
      */
     public static void updateAppointment(Appointment appointment) {
         if (appointment != null && appointment.getAppointmentId() != null) {
-            FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
+            int expectedVersion = appointment.getVersion();
+            appointment.setVersion(expectedVersion + 1);
+            FileHandler.getInstance().updateLineOptimistic(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString(), expectedVersion, 10);
 
             // Notify both customer and technician about the update
             NotificationService.push(appointment.getCustomerId(), "Appointment " + appointment.getAppointmentId() + " has been updated.");
@@ -150,7 +156,9 @@ public class AppointmentService {
     public static void declineAppointment(Appointment appointment) {
         if (appointment != null && appointment.getAppointmentId() != null) {
             appointment.setStatus(Appointment.STATUS_DECLINED);
-            FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
+            int expectedVersion = appointment.getVersion();
+            appointment.setVersion(expectedVersion + 1);
+            FileHandler.getInstance().updateLineOptimistic(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString(), expectedVersion, 10);
             
             // Also decline the associated payment
             PaymentService.declinePaymentForAppointment(appointment.getAppointmentId());
@@ -168,7 +176,9 @@ public class AppointmentService {
     public static void completeAppointment(Appointment appointment) {
         if (appointment != null && appointment.getAppointmentId() != null) {
             appointment.setStatus(Appointment.STATUS_COMPLETED);
-            FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
+            int expectedVersion = appointment.getVersion();
+            appointment.setVersion(expectedVersion + 1);
+            FileHandler.getInstance().updateLineOptimistic(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString(), expectedVersion, 10);
 
             // Notify the customer
             NotificationService.push(appointment.getCustomerId(), "Your appointment " + appointment.getAppointmentId() + " has been completed.");

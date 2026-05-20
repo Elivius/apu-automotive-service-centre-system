@@ -1,5 +1,6 @@
 package ui.technician;
 
+import exceptions.ConcurrencyException;
 import models.Appointment;
 import models.Technician;
 import services.AppointmentService;
@@ -214,9 +215,15 @@ public class AppointmentDetailFrame extends JFrame {
             lblMsg.setForeground(UITheme.DANGER);
             return;
         }
-        FeedbackService.submitTechnicianFeedback(appointment, feedback);
-        lblMsg.setText("Feedback saved successfully!");
-        lblMsg.setForeground(UITheme.SUCCESS);
+        try {
+            FeedbackService.submitTechnicianFeedback(appointment, feedback);
+            lblMsg.setText("Feedback saved successfully!");
+            lblMsg.setForeground(UITheme.SUCCESS);
+        } catch (ConcurrencyException ex) {
+            JOptionPane.showMessageDialog(this,
+                "Error: " + ex.getMessage(),
+                "Concurrency Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void doComplete() {
@@ -232,9 +239,15 @@ public class AppointmentDetailFrame extends JFrame {
                 "Confirm Completion", JOptionPane.YES_NO_OPTION);
         if (ok != JOptionPane.YES_OPTION) return;
 
-        FeedbackService.submitTechnicianFeedback(appointment, feedback);
-        AppointmentService.completeAppointment(appointment);
-        JOptionPane.showMessageDialog(this, "Appointment marked as Completed.");
-        dispose();
+        try {
+            FeedbackService.submitTechnicianFeedback(appointment, feedback);
+            AppointmentService.completeAppointment(appointment);
+            JOptionPane.showMessageDialog(this, "Appointment marked as Completed.");
+            dispose();
+        } catch (ConcurrencyException ex) {
+            JOptionPane.showMessageDialog(this,
+                "Error: " + ex.getMessage(),
+                "Concurrency Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package ui.staff;
 
+import exceptions.ConcurrencyException;
 import exceptions.TechnicianUnavailableException;
 import models.Appointment;
 import models.CounterStaff;
@@ -155,8 +156,13 @@ public class ManageAppointmentsPanel extends JPanel {
             refresh();
         } catch (TechnicianUnavailableException ex) {
             JOptionPane.showMessageDialog(this,
-                "⚠ Conflict Detected!\n" + ex.getMessage(),
+                "Error: Conflict Detected!\n" + ex.getMessage(),
                 "Schedule Conflict", JOptionPane.WARNING_MESSAGE);
+        } catch (ConcurrencyException ex) {
+            JOptionPane.showMessageDialog(this,
+                "Error: " + ex.getMessage(),
+                "Concurrency Error", JOptionPane.ERROR_MESSAGE);
+            refresh();
         }
     }
 
@@ -175,8 +181,15 @@ public class ManageAppointmentsPanel extends JPanel {
                 "Decline appointment " + apt.getAppointmentId() + "?",
                 "Confirm Decline", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (ok == JOptionPane.YES_OPTION) {
-            AppointmentService.declineAppointment(apt);
-            refresh();
+            try {
+                AppointmentService.declineAppointment(apt);
+                refresh();
+            } catch (ConcurrencyException ex) {
+                JOptionPane.showMessageDialog(this,
+                    "Error: " + ex.getMessage(),
+                    "Concurrency Error", JOptionPane.ERROR_MESSAGE);
+                refresh();
+            }
         }
     }
 
