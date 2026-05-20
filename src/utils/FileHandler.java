@@ -46,7 +46,7 @@ public class FileHandler {
         // Format: userId:::username:::hashedPassword:::name:::email:::phone:::role:::specialization
         createFileIfNotExists(USERS_FILE);
         
-        // Format: appointmentId:::customerId:::technicianId:::serviceType:::status:::dateTime:::endDateTime:::comments:::feedback:::serviceReview
+        // Format: appointmentId:::customerId:::technicianId:::serviceType:::status:::dateTime:::endDateTime:::comments:::feedback:::serviceReview:::version
         createFileIfNotExists(APPOINTMENTS_FILE);
         
         // Format: paymentId:::appointmentId:::amount:::paymentMethod:::paymentStatus:::dateTime
@@ -87,7 +87,7 @@ public class FileHandler {
      * @param filePath the path to the file
      * @return a list of all lines in the file
      */
-    public List<String> readAllLines(String filePath) {
+    public synchronized List<String> readAllLines(String filePath) {
         List<String> lines = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -108,7 +108,7 @@ public class FileHandler {
      * @param filePath the path to the file
      * @param lines    the lines to write
      */
-    public void writeAllLines(String filePath, List<String> lines) {
+    public synchronized void writeAllLines(String filePath, List<String> lines) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (String line : lines) {
                 writer.write(line);
@@ -125,7 +125,7 @@ public class FileHandler {
      * @param filePath the path to the file
      * @param line     the line to append
      */
-    public void appendLine(String filePath, String line) {
+    public synchronized void appendLine(String filePath, String line) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
             writer.write(line);
             writer.newLine();
@@ -140,7 +140,7 @@ public class FileHandler {
      * @param filePath the path to the file
      * @param key      the key to match at the beginning of the line (e.g. userId)
      */
-    public void deleteLine(String filePath, String key) {
+    public synchronized void deleteLine(String filePath, String key) {
         List<String> lines = readAllLines(filePath);
         List<String> updatedLines = lines.stream()
                 .filter(line -> !line.startsWith(key + SEPARATOR))
@@ -156,7 +156,7 @@ public class FileHandler {
      * @param key      the key to match at the beginning of the line
      * @param newLine  the replacement line
      */
-    public void updateLine(String filePath, String key, String newLine) {
+    public synchronized void updateLine(String filePath, String key, String newLine) {
         List<String> lines = readAllLines(filePath);
         List<String> updatedLines = new ArrayList<>();
         for (String line : lines) {
@@ -176,7 +176,7 @@ public class FileHandler {
      * @param key      the key to search for
      * @return the matching line, or null if not found
      */
-    public String findLineByKey(String filePath, String key) {
+    public synchronized String findLineByKey(String filePath, String key) {
         List<String> lines = readAllLines(filePath);
         return lines.stream()
                 .filter(line -> line.startsWith(key + SEPARATOR))
@@ -191,7 +191,7 @@ public class FileHandler {
      * @param prefix   the prefix for the ID (e.g. "CUS", "APT", "PAY")
      * @return a new unique ID string
      */
-    public String generateNextId(String filePath, String prefix) {
+    public synchronized String generateNextId(String filePath, String prefix) {
         List<String> lines = readAllLines(filePath);
         int maxNum = 0;
         for (String line : lines) {
@@ -208,6 +208,49 @@ public class FileHandler {
             }
         }
         return prefix + String.format("%04d", maxNum + 1);
+    }
+
+    /**
+     * Atomically updates a line using optimistic locking.
+     * 
+     * @param filePath      the path to the file
+     * @param key           the key to match
+     * @param newLine       the replacement line (should have the incremented version)
+     * @param expectedVersion the version we expect to overwrite
+     * @param versionIndex  the index of the version field in the delimited array
+     * @return true if updated successfully
+     * @throws exceptions.ConcurrencyException if versions don't match
+     */
+    public synchronized boolean updateLineOptimistic(String filePath, String key, String newLine, int expectedVersion, int versionIndex) {
+        List<String> lines = readAllLines(filePath);
+        boolean foundAndUpdated = false;
+        
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            if (line.startsWith(key + SEPARATOR)) {
+                String[] parts = line.split(DELIMITER, -1);
+                int currentVersion = 1; // Default for old records
+                if (parts.length > versionIndex) {
+                    try {
+                        currentVersion = Integer.parseInt(parts[versionIndex]);
+                    } catch (NumberFormatException ignored) {}
+                }
+                
+                if (currentVersion == expectedVersion) {
+                    lines.set(i, newLine);
+                    foundAndUpdated = true;
+                } else {
+                    throw new exceptions.ConcurrencyException("Data has been modified by another user. Please refresh and try again.");
+                }
+                break;
+            }
+        }
+        
+        if (foundAndUpdated) {
+            writeAllLines(filePath, lines);
+            return true;
+        }
+        return false;
     }
 
     // ═══════════════════════════════════════════

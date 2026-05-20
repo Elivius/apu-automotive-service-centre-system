@@ -1,5 +1,6 @@
 package ui.customer;
 
+import exceptions.ConcurrencyException;
 import models.Appointment;
 import models.Customer;
 import services.AppointmentService;
@@ -183,15 +184,19 @@ public class MyAppointmentsPanel extends JPanel {
             return;
         }
 
-        if ("Completed".equals(apt.getStatus())) {
-            FeedbackService.submitServiceReview(apt, text);
-            lblMsg.setText("Review submitted!");
-        } else {
-            FeedbackService.submitCustomerComments(apt, text);
-            lblMsg.setText("Comments saved!");
-        } 
-        
-        lblMsg.setForeground(UITheme.SUCCESS);
+        try {
+            if ("Completed".equals(apt.getStatus())) {
+                FeedbackService.submitServiceReview(apt, text);
+                lblMsg.setText("Review submitted!");
+            } else {
+                FeedbackService.submitCustomerComments(apt, text);
+                lblMsg.setText("Comments saved!");
+            } 
+            lblMsg.setForeground(UITheme.SUCCESS);
+        } catch (ConcurrencyException ex) {
+            lblMsg.setText("Error: " + ex.getMessage());
+            lblMsg.setForeground(UITheme.DANGER);
+        }
 
         // Delay before refresh
         javax.swing.Timer timer = new javax.swing.Timer(3000, e -> refresh());
