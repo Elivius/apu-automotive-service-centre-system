@@ -191,16 +191,22 @@ public class Appointment {
             if (!parts[6].isEmpty()) {
                 apt.setEndDateTime(LocalDateTime.parse(parts[6], DateUtils.FORMATTER));
             }
-            apt.setComments(parts[7]);
-            apt.setFeedback(parts[8]);
-            apt.setServiceReview(parts[9]);
+            apt.setComments(unescape(parts[7]));
+            apt.setFeedback(unescape(parts[8]));
+            apt.setServiceReview(unescape(parts[9]));
             return apt;
         }
         return null;
     }
 
     private String safe(String value) {
-        return value == null ? "" : value;
+        if (value == null) return "";
+        // Prevent database corruption by escaping newlines and pipes
+        return value.replace("\r", "").replace("\n", "\\n").replace("|", "-");
+    }
+
+    private static String unescape(String value) {
+        return value == null ? "" : value.replace("\\n", "\n");
     }
 
     @Override
