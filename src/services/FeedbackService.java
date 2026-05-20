@@ -28,7 +28,9 @@ public class FeedbackService {
     public static void submitCustomerComments(Appointment appointment, String comments) {
         if (appointment != null && appointment.getAppointmentId() != null) {
             appointment.setComments(comments);
-            FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
+            int expectedVersion = appointment.getVersion();
+            appointment.setVersion(expectedVersion + 1);
+            FileHandler.getInstance().updateLineOptimistic(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString(), expectedVersion, 10);
             
             // Push a notification for the assigned technician and counter staff
             NotificationService.push(appointment.getTechnicianId(), "Customer added comments to appointment " + appointment.getAppointmentId());
@@ -47,7 +49,9 @@ public class FeedbackService {
     public static void submitTechnicianFeedback(Appointment appointment, String feedback) {
         if (appointment != null && appointment.getAppointmentId() != null) {
             appointment.setFeedback(feedback);
-            FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
+            int expectedVersion = appointment.getVersion();
+            appointment.setVersion(expectedVersion + 1);
+            FileHandler.getInstance().updateLineOptimistic(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString(), expectedVersion, 10);
             
             // Push a notification for the customer
             NotificationService.push(appointment.getCustomerId(), "Technician submitted feedback for appointment " + appointment.getAppointmentId());
@@ -65,7 +69,9 @@ public class FeedbackService {
     public static void submitServiceReview(Appointment appointment, String review) {
         if (appointment != null && appointment.getAppointmentId() != null) {
             appointment.setServiceReview(review);
-            FileHandler.getInstance().updateLine(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString());
+            int expectedVersion = appointment.getVersion();
+            appointment.setVersion(expectedVersion + 1);
+            FileHandler.getInstance().updateLineOptimistic(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString(), expectedVersion, 10);
             AuditLogger.log(appointment.getCustomerId(), "SUBMIT_REVIEW", appointment.getAppointmentId());
         }
     }
