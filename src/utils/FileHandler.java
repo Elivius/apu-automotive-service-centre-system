@@ -158,15 +158,13 @@ public class FileHandler {
      */
     public synchronized void updateLine(String filePath, String key, String newLine) {
         List<String> lines = readAllLines(filePath);
-        List<String> updatedLines = new ArrayList<>();
-        for (String line : lines) {
-            if (line.startsWith(key + SEPARATOR)) {
-                updatedLines.add(newLine);
-            } else {
-                updatedLines.add(line);
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).startsWith(key + SEPARATOR)) {
+                lines.set(i, newLine);
+                break;
             }
         }
-        writeAllLines(filePath, updatedLines);
+        writeAllLines(filePath, lines);
     }
 
     /**
