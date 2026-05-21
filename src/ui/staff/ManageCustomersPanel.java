@@ -472,11 +472,17 @@ public class ManageCustomersPanel extends JPanel {
                 "Confirm Payment", JOptionPane.YES_NO_OPTION);
             if (payOk != JOptionPane.YES_OPTION) return;
 
-            PaymentService.confirmPhysicalPayment(pendingPay);
-            String receiptPath = PaymentService.generateReceipt(pendingPay, apt);
-            JOptionPane.showMessageDialog(dialog,
-                "Payment confirmed!\nReceipt generated at:\n" + receiptPath,
-                "Payment Confirmed", JOptionPane.INFORMATION_MESSAGE);
+            try {
+                PaymentService.confirmPhysicalPayment(pendingPay);
+                String receiptPath = PaymentService.generateReceipt(pendingPay, apt);
+                JOptionPane.showMessageDialog(dialog,
+                    "Payment confirmed!\nReceipt generated at:\n" + receiptPath,
+                    "Payment Confirmed", JOptionPane.INFORMATION_MESSAGE);
+            } catch (ConcurrencyException ex) {
+                JOptionPane.showMessageDialog(dialog,
+                    "Error: " + ex.getMessage(),
+                    "Concurrency Error", JOptionPane.ERROR_MESSAGE);
+            }
             refreshDialogTable.run();
         });
 

@@ -10,6 +10,7 @@ import services.PaymentService;
 import services.UserService;
 import utils.DateUtils;
 import ui.UITheme;
+import exceptions.ConcurrencyException;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -195,14 +196,20 @@ public class CollectPaymentPanel extends JPanel {
                 "Confirm Payment", JOptionPane.YES_NO_OPTION);
         if (ok != JOptionPane.YES_OPTION) return;
 
-        PaymentService.confirmPhysicalPayment(payment);
-        String receiptPath = PaymentService.generateReceipt(payment, apt);
-        lblReceiptPath.setText("Receipt saved: " + receiptPath);
-        lblReceiptPath.setForeground(UITheme.SUCCESS);
+        try {
+            PaymentService.confirmPhysicalPayment(payment);
+            String receiptPath = PaymentService.generateReceipt(payment, apt);
+            lblReceiptPath.setText("Receipt saved: " + receiptPath);
+            lblReceiptPath.setForeground(UITheme.SUCCESS);
 
-        JOptionPane.showMessageDialog(this,
-                "Payment confirmed!\nReceipt generated at:\n" + receiptPath,
-                "Payment Confirmed", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Payment confirmed!\nReceipt generated at:\n" + receiptPath,
+                    "Payment Confirmed", JOptionPane.INFORMATION_MESSAGE);
+        } catch (ConcurrencyException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Error: " + ex.getMessage(),
+                    "Concurrency Error", JOptionPane.ERROR_MESSAGE);
+        }
         refresh();
     }
 }
