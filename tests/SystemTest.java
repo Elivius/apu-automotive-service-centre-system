@@ -37,13 +37,13 @@ public class SystemTest {
             // 3. TEST TECHNICIAN ASSIGNMENT & COLLISION
             System.out.println("[TEST 3] Assigning technician to appointment...");
             List<Appointment> apt = AppointmentService.getAllAppointmentsForCustomer("CUS0001");
-            AppointmentService.assignAppointment(apt.get(0), "TEC0001");
+            AppointmentService.assignAppointment(apt.get(0), "TEC0001", "STF0001");
             System.out.println("✅ Technician 'TEC0001' assigned successfully.");
 
             System.out.println("--- Testing Collision Detection ---");
             try {
                 // Try to book another appointment at the SAME TIME for the SAME TECHNICIAN
-                AppointmentService.assignAppointment(apt.get(1), "TEC0001"); 
+                AppointmentService.assignAppointment(apt.get(1), "TEC0001", "STF0001"); 
             } catch (Exception e) {
                 System.out.println("✅ Collision detection works! Error: " + e.getMessage() + "\n");
             }

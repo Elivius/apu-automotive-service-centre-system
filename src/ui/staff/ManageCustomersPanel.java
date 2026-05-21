@@ -410,7 +410,7 @@ public class ManageCustomersPanel extends JPanel {
 
             String techId = chosen.split(" — ")[0].trim();
             try {
-                AppointmentService.assignAppointment(apt, techId);
+                AppointmentService.assignAppointment(apt, techId, staff.getUserId());
                 JOptionPane.showMessageDialog(dialog, "Assigned to " + techId + " successfully.");
                 refreshDialogTable.run();
 
@@ -499,7 +499,7 @@ public class ManageCustomersPanel extends JPanel {
                     "Confirm Decline", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             if (ok == JOptionPane.YES_OPTION) {
                 try {
-                    AppointmentService.declineAppointment(apt);
+                    AppointmentService.declineAppointment(apt, staff.getUserId());
                     JOptionPane.showMessageDialog(dialog, "Appointment declined successfully.");
                     refreshDialogTable.run();
                 } catch (ConcurrencyException ex) {
