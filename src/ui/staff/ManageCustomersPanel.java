@@ -147,6 +147,13 @@ public class ManageCustomersPanel extends JPanel {
         for (User user : customers) {
             tableModel.addRow(new Object[]{user.getUserId(), user.getName(), user.getUsername(), user.getEmail(), user.getPhone()});
         }
+
+        if (tfSearch != null) {
+            tfSearch.setText("");
+        }
+        if (sorter != null) {
+            sorter.setRowFilter(null);
+        }
     }
 
     private void showCustomerForm(User prefillUser) {

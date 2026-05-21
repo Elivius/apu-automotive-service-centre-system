@@ -56,10 +56,7 @@ public class AuditLogPanel extends JPanel {
 
         JButton btnRefresh = UITheme.secondaryButton("↻ Refresh");
         btnRefresh.setName("btnAuditRefresh");
-        btnRefresh.addActionListener(e -> {
-            tableModel.setRowCount(0);
-            refresh();
-        });
+        btnRefresh.addActionListener(e -> refresh());
 
         controls.add(new JLabel("Search:") {{ setForeground(UITheme.TEXT_MUTED); setFont(UITheme.FONT_BODY); }});
         controls.add(tfSearch);
@@ -142,6 +139,13 @@ public class AuditLogPanel extends JPanel {
 
     /** Fetches the latest audit log entries from the utility layer and populates the table. */
     private void refresh() {
+        tableModel.setRowCount(0);
+        if (tfSearch != null) {
+            tfSearch.setText("");
+        }
+        if (sorter != null) {
+            sorter.setRowFilter(null);
+        }
         List<String[]> entries = AuditLogger.getAllLogEntriesReverse();
 
         for (String[] row : entries) {

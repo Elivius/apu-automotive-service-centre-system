@@ -155,6 +155,13 @@ public class CollectPaymentPanel extends JPanel {
             });
         }
         lblReceiptPath.setText(" ");
+
+        if (tfSearch != null) {
+            tfSearch.setText("");
+        }
+        if (sorter != null) {
+            sorter.setRowFilter(null);
+        }
     }
 
     private void doPaidPhysically() {

@@ -40,7 +40,7 @@ public class ManageAppointmentsPanel extends JPanel {
     private JTable table;
     private TableRowSorter<DefaultTableModel> sorter;
     private JTextField tfSearch;
-    private String[] statusFilterHolder = { "All Status" };
+    private final String[] statusFilterHolder = { "All Status" };
     private List<Appointment> appointments;
     private Map<String, Payment> paymentMap;
 
@@ -80,11 +80,13 @@ public class ManageAppointmentsPanel extends JPanel {
         btnRefresh.setName("btnRefresh");
         btnCreate.addActionListener(e -> showCreateDialog());
         btnRefresh.addActionListener(e -> refresh());
+
         right.add(new JLabel("🔍"));
         right.add(tfSearch);
         right.add(statusFilterField);
         right.add(btnCreate);
         right.add(btnRefresh);
+
         header.add(right, BorderLayout.EAST);
         add(header, BorderLayout.NORTH);
 
@@ -181,6 +183,14 @@ public class ManageAppointmentsPanel extends JPanel {
                 apt.getComments() != null ? apt.getComments() : "",
                 payStatus
             });
+        }
+
+        if (tfSearch != null) {
+            tfSearch.setText("");
+        }
+        statusFilterHolder[0] = "All Status";
+        if (sorter != null) {
+            sorter.setRowFilter(null);
         }
     }
 
