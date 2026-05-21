@@ -89,7 +89,7 @@ public class ManageAppointmentsPanel extends JPanel {
         add(header, BorderLayout.NORTH);
 
         // ── Table ─────────────────────────────────────────────────────
-        String[] cols = {"Appt ID", "Customer ID", "Customer Name", "Phone", "Technician", "Service", "Status", "Appointment Date", "Time End", "Comment", "Payment"};
+        String[] cols = {"Appt ID", "Customer ID", "Customer Name", "Phone", "Technician", "Service", "Status", "Appointment Date", "Time End", "Customer Comment", "Payment"};
         tableModel = new DefaultTableModel(cols, 0) { public boolean isCellEditable(int r, int c) { return false; } };
         table = new JTable(tableModel);
         table.setName("tblAppointments");

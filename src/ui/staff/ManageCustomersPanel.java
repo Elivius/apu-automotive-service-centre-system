@@ -312,7 +312,7 @@ public class ManageCustomersPanel extends JPanel {
         dialog.add(infoPanel, BorderLayout.NORTH);
 
         // ── Appointment table ─────────────────────────────────────────
-        String[] cols = {"Appt ID", "Service", "Status", "Technician", "Appointment Date", "Comment", "Payment"};
+        String[] cols = {"Appt ID", "Service", "Status", "Technician", "Appointment Date", "Customer Comment", "Payment"};
         DefaultTableModel dtm = new DefaultTableModel(cols, 0) { public boolean isCellEditable(int r, int c) { return false; } };
         JTable apptTable = new JTable(dtm);
         apptTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
