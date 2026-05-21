@@ -25,16 +25,14 @@ public class CustomerDashboard extends JFrame {
 
     private static final String PANEL_BOOK = "book";
     private static final String PANEL_APPTS = "appointments";
-    private static final String PANEL_HISTORY = "history";
     private static final String PANEL_PAYMENTS = "payments";
 
     // Active-state refs
     private final boolean[] activeAppts = {true};
     private final boolean[] activeBook = {false};
-    private final boolean[] activeHistory = {false};
     private final boolean[] activePayments = {false};
 
-    private JButton btnAppts, btnBook, btnHistory, btnPayments;
+    private JButton btnAppts, btnBook, btnPayments;
 
     public CustomerDashboard(Customer customer) {
         this.customer = customer;
@@ -55,7 +53,6 @@ public class CustomerDashboard extends JFrame {
         contentArea.setBackground(UITheme.BG_DARK);
         addNamedPanel(new MyAppointmentsPanel(customer), PANEL_APPTS);
         addNamedPanel(new BookAppointmentPanel(customer), PANEL_BOOK);
-        addNamedPanel(new ServiceHistoryPanel(customer), PANEL_HISTORY);
         addNamedPanel(new PaymentHistoryPanel(customer), PANEL_PAYMENTS);
 
         add(contentArea, BorderLayout.CENTER);
@@ -72,10 +69,9 @@ public class CustomerDashboard extends JFrame {
     private void switchTab(String name, java.util.function.Supplier<JPanel> supplier) {
         activeAppts[0] = PANEL_APPTS.equals(name);
         activeBook[0] = PANEL_BOOK.equals(name);
-        activeHistory[0] = PANEL_HISTORY.equals(name);
         activePayments[0] = PANEL_PAYMENTS.equals(name);
 
-        for (JButton b : new JButton[]{btnAppts, btnBook, btnHistory, btnPayments}) {
+        for (JButton b : new JButton[]{btnAppts, btnBook, btnPayments}) {
             if (b != null) b.repaint();
         }
 
@@ -233,17 +229,14 @@ public class CustomerDashboard extends JFrame {
 
         btnAppts = UITheme.sidebarButton("📋  My Appointments", () -> switchTab(PANEL_APPTS, () -> new MyAppointmentsPanel(customer)), activeAppts);
         btnBook = UITheme.sidebarButton("➕  Book Appointment", () -> switchTab(PANEL_BOOK, () -> new BookAppointmentPanel(customer)), activeBook);
-        btnHistory = UITheme.sidebarButton("🔧  Service History", () -> switchTab(PANEL_HISTORY, () -> new ServiceHistoryPanel(customer)), activeHistory);
         btnPayments = UITheme.sidebarButton("💳  Payment History", () -> switchTab(PANEL_PAYMENTS, () -> new PaymentHistoryPanel(customer)), activePayments);
 
         btnAppts.setName("btnMyAppointments");
         btnBook.setName("btnBookAppointment");
-        btnHistory.setName("btnServiceHistory");
         btnPayments.setName("btnPaymentHistory");
 
         sidebar.add(btnAppts);
         sidebar.add(btnBook);
-        sidebar.add(btnHistory);
         sidebar.add(btnPayments);
         sidebar.add(Box.createVerticalGlue());
 

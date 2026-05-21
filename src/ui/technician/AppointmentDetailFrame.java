@@ -103,7 +103,7 @@ public class AppointmentDetailFrame extends JFrame {
         card.add(Box.createVerticalStrut(8));
 
         JTextArea taComments = new JTextArea(3, 40);
-        taComments.setText(appointment.getComments() != null ? appointment.getComments() : "(none)");
+        taComments.setText(appointment.getComments() != null && !appointment.getComments().trim().isEmpty() ? appointment.getComments() : "(none)");
         taComments.setEditable(false);
         JScrollPane commScroll = UITheme.styledTextArea(taComments);
         commScroll.setAlignmentX(LEFT_ALIGNMENT);
