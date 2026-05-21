@@ -48,12 +48,59 @@ public class AllFeedbackPanel extends JPanel {
             public void changedUpdate(javax.swing.event.DocumentEvent e) { filterTable(); }
         });
 
+        JButton btnAiSentiment = UITheme.aiButton("Sentiment Analysis");
+        btnAiSentiment.setName("btnAiSentiment");
+        btnAiSentiment.addActionListener(e -> {
+            if (!services.GeminiConfig.isConfigured()) {
+                JOptionPane.showMessageDialog(this, 
+                    "AI service is not configured. Please set the API key in the settings first.", 
+                    "Kelwin AI Sentiment Analysis Not Configured", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            if (appointments == null || appointments.isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                    "No feedback or reviews are currently available for sentiment analysis.", 
+                    "Kelwin AI Sentiment Analysis", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            btnAiSentiment.setEnabled(false);
+            btnAiSentiment.setText("✨ Analyzing...");
+
+            SwingWorker<String, Void> worker = new SwingWorker<>() {
+                @Override
+                protected String doInBackground() throws Exception {
+                    return services.GeminiService.analyzeSentiment(appointments);
+                }
+
+                @Override
+                protected void done() {
+                    btnAiSentiment.setEnabled(true);
+                    btnAiSentiment.setText("Sentiment Analysis");
+                    try {
+                        String result = get();
+                        showSentimentDialog(result);
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(AllFeedbackPanel.this,
+                            "Error analyzing sentiment: " + ex.getMessage(),
+                            "Kelwin AI Sentiment Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            };
+            worker.execute();
+        });
+
         JButton btnRefresh = UITheme.secondaryButton("↻ Refresh");
         btnRefresh.setName("btnRefresh");
         btnRefresh.addActionListener(e -> refresh());
 
         right.add(new JLabel("🔍") {{ setForeground(UITheme.TEXT_MUTED); }});
         right.add(tfSearch);
+        right.add(btnAiSentiment);
         right.add(btnRefresh);
 
         header.add(right, BorderLayout.EAST);
@@ -161,5 +208,48 @@ public class AllFeedbackPanel extends JPanel {
         } else {
             sorter.setRowFilter(RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(text)));
         }
+    }
+
+    private void showSentimentDialog(String result) {
+        String htmlResult = services.GeminiService.markdownToHtml(result);
+
+        JEditorPane area = new JEditorPane();
+        area.setContentType("text/html");
+        area.setText(htmlResult);
+        area.setEditable(false);
+        area.setBackground(UITheme.FIELD_BG);
+        area.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+        area.setFont(UITheme.FONT_BODY);
+        area.setCaretPosition(0);
+        
+        JScrollPane scroll = new JScrollPane(area);
+        scroll.setPreferredSize(new Dimension(680, 450));
+        scroll.setBorder(BorderFactory.createLineBorder(UITheme.BORDER_CARD, 1));
+        
+        JPanel panel = new JPanel(new BorderLayout(0, 10));
+        panel.setOpaque(false);
+        panel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+        
+        JLabel title = new JLabel("✨ Kelwin AI Sentiment Analysis Report");
+        title.setFont(UITheme.FONT_HEADER);
+        title.setForeground(UITheme.SUCCESS);
+        panel.add(title, BorderLayout.NORTH);
+        panel.add(scroll, BorderLayout.CENTER);
+
+        JButton btnClose = UITheme.accentButton("Dismiss");
+        
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        footer.setOpaque(false);
+        footer.add(btnClose);
+        panel.add(footer, BorderLayout.SOUTH);
+
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Kelwin AI Sentiment Analysis", true);
+        dialog.getContentPane().setBackground(UITheme.BG_DARK);
+        dialog.getContentPane().add(panel);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+
+        btnClose.addActionListener(e -> dialog.dispose());
+        dialog.setVisible(true);
     }
 }

@@ -52,7 +52,7 @@ public class BookAppointmentPanel extends JPanel {
         GridBagConstraints gbc = formGBC();
 
         // Service type (styled dropdown)
-        JPanel serviceTypeField = PopupFieldFactory.createDropdownField(
+        final JPanel serviceTypeField = PopupFieldFactory.createDropdownField(
             new String[]{"Normal", "Major"}, serviceTypeHolder, () -> updatePrice());
         serviceTypeField.setName("serviceTypeField");
 
@@ -74,6 +74,63 @@ public class BookAppointmentPanel extends JPanel {
         taComments = new JTextArea(4, 20);
         taComments.setName("taComments");
         JScrollPane commentsScroll = UITheme.styledTextArea(taComments);
+
+        // Comments wrapper with AI Pre-Diagnosis button
+        JPanel commentsWrapper = new JPanel(new BorderLayout(0, 6));
+        commentsWrapper.setOpaque(false);
+        commentsWrapper.add(commentsScroll, BorderLayout.CENTER);
+
+        JButton btnAiDiagnose = UITheme.aiButton("Pre-Diagnosis");
+        btnAiDiagnose.setName("btnAiDiagnose");
+        btnAiDiagnose.addActionListener(e -> {
+            String comments = taComments.getText().trim();
+            if (comments.isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                    "Please describe your car's symptoms in the Comments box first.", 
+                    "Kelwin AI Pre-Diagnosis", 
+                    JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (!services.GeminiConfig.isConfigured()) {
+                JOptionPane.showMessageDialog(this, 
+                    "AI service is not configured. Please set the API key in the settings first.", 
+                    "Kelwin AI Pre-Diagnosis Not Configured", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            btnAiDiagnose.setEnabled(false);
+            btnAiDiagnose.setText("✨ Analyzing...");
+
+            SwingWorker<String, Void> worker = new SwingWorker<>() {
+                @Override
+                protected String doInBackground() throws Exception {
+                    return services.GeminiService.analyzeSymptoms(comments);
+                }
+
+                @Override
+                protected void done() {
+                    btnAiDiagnose.setEnabled(true);
+                    btnAiDiagnose.setText("Pre-Diagnosis");
+                    try {
+                        String result = get();
+                        showDiagnosisDialog(result, serviceTypeField);
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(BookAppointmentPanel.this,
+                            "Error performing diagnosis: " + ex.getMessage(),
+                            "Kelwin AI Diagnosis Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            };
+            worker.execute();
+        });
+
+        JPanel btnAiPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        btnAiPanel.setOpaque(false);
+        btnAiPanel.add(btnAiDiagnose);
+        commentsWrapper.add(btnAiPanel, BorderLayout.SOUTH);
 
         // Payment method
         rbOnline = new JRadioButton("Online (auto-confirm)");
@@ -103,7 +160,7 @@ public class BookAppointmentPanel extends JPanel {
         addFormRow(card, gbc, row++, "Service Price", lblPrice);
         addFormRow(card, gbc, row++, "Appointment Date", dateField);
         addFormRow(card, gbc, row++, "Time Slot", timeField);
-        addFormRow(card, gbc, row++, "Comments", commentsScroll);
+        addFormRow(card, gbc, row++, "Comments", commentsWrapper);
 
         JPanel pmPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         pmPanel.setOpaque(false);
@@ -187,6 +244,77 @@ public class BookAppointmentPanel extends JPanel {
         }
     }
 
+    private void showDiagnosisDialog(String result, JPanel serviceTypeField) {
+        String htmlResult = services.GeminiService.markdownToHtml(result);
+
+        JEditorPane area = new JEditorPane();
+        area.setContentType("text/html");
+        area.setText(htmlResult);
+        area.setEditable(false);
+        area.setBackground(UITheme.FIELD_BG);
+        area.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+        area.setFont(UITheme.FONT_BODY);
+        area.setCaretPosition(0);
+        
+        JScrollPane scroll = new JScrollPane(area);
+        scroll.setPreferredSize(new Dimension(680, 450));
+        scroll.setBorder(BorderFactory.createLineBorder(UITheme.BORDER_CARD, 1));
+        
+        JPanel panel = new JPanel(new BorderLayout(0, 10));
+        panel.setOpaque(false);
+        panel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+        
+        JLabel title = new JLabel("✨ Kelwin AI Pre-Diagnosis Report");
+        title.setFont(UITheme.FONT_HEADER);
+        title.setForeground(UITheme.SUCCESS);
+        panel.add(title, BorderLayout.NORTH);
+        panel.add(scroll, BorderLayout.CENTER);
+
+        JButton btnApplyNormal = UITheme.secondaryButton("Apply 'Normal' Service");
+        JButton btnApplyMajor = UITheme.secondaryButton("Apply 'Major' Service");
+        JButton btnClose = UITheme.accentButton("Dismiss");
+        
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        footer.setOpaque(false);
+        footer.add(btnApplyNormal);
+        footer.add(btnApplyMajor);
+        footer.add(btnClose);
+        
+        panel.add(footer, BorderLayout.SOUTH);
+
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Kelwin AI Pre-Diagnosis", true);
+        dialog.getContentPane().setBackground(UITheme.BG_DARK);
+        dialog.getContentPane().add(panel);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+
+        btnApplyNormal.addActionListener(e -> {
+            serviceTypeHolder[0] = "Normal";
+            try {
+                JTextField tf = (JTextField) serviceTypeField.getComponent(0);
+                tf.setText("Normal");
+            } catch (Exception ex) {}
+            dialog.dispose();
+            JOptionPane.showMessageDialog(this, "Service type set to Normal. Please verify pricing.");
+            updatePrice();
+        });
+
+        btnApplyMajor.addActionListener(e -> {
+            serviceTypeHolder[0] = "Major";
+            try {
+                JTextField tf = (JTextField) serviceTypeField.getComponent(0);
+                tf.setText("Major");
+            } catch (Exception ex) {}
+            dialog.dispose();
+            JOptionPane.showMessageDialog(this, "Service type set to Major. Please verify pricing.");
+            updatePrice();
+        });
+
+        btnClose.addActionListener(e -> dialog.dispose());
+
+        dialog.setVisible(true);
+    }
+
 
 
     private void styleRadio(JRadioButton rb) {
@@ -209,14 +337,17 @@ public class BookAppointmentPanel extends JPanel {
         gbc.gridy = row;
         gbc.weightx = 0;
         gbc.insets = new Insets(8, 0, 0, 16);
+        gbc.anchor = GridBagConstraints.NORTHWEST;
         JLabel lbl = new JLabel(label + ":");
         lbl.setFont(UITheme.FONT_BODY);
         lbl.setForeground(UITheme.TEXT_MUTED);
         lbl.setPreferredSize(new Dimension(130, 28));
         panel.add(lbl, gbc);
+        
         gbc.gridx = 1;
         gbc.weightx = 1;
         gbc.insets = new Insets(8, 0, 0, 0);
+        gbc.anchor = GridBagConstraints.WEST;
         panel.add(field, gbc);
     }
 }

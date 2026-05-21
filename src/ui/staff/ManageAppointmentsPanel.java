@@ -5,6 +5,7 @@ import exceptions.TechnicianUnavailableException;
 import models.Appointment;
 import models.CounterStaff;
 import models.Payment;
+import models.Technician;
 import models.User;
 import models.Customer;
 import services.AppointmentService;
@@ -43,6 +44,7 @@ public class ManageAppointmentsPanel extends JPanel {
     private final String[] statusFilterHolder = { "All Status" };
     private List<Appointment> appointments;
     private Map<String, Payment> paymentMap;
+    private JButton btnAiMatching;
 
     public ManageAppointmentsPanel(CounterStaff staff) {
         this.staff = staff;
@@ -104,11 +106,16 @@ public class ManageAppointmentsPanel extends JPanel {
         // ── Action bar ────────────────────────────────────────────────
         JButton btnAssign  = UITheme.accentButton("👷  Assign Technician");
         btnAssign.setName("btnAssign");
+        
+        btnAiMatching = UITheme.aiButton("Technician Matching");
+        btnAiMatching.setName("btnAiMatching");
+
         JButton btnCollect = UITheme.secondaryButton("💳  Collect Payment");
         btnCollect.setName("btnCollectPayment");
         JButton btnDecline = UITheme.dangerButton("✗  Decline");
         btnDecline.setName("btnDecline");
         btnAssign.addActionListener(e  -> showAssignDialog());
+        btnAiMatching.addActionListener(e -> doAiMatching());
         btnCollect.addActionListener(e -> doCollectPayment());
         btnDecline.addActionListener(e -> doDecline());
 
@@ -119,6 +126,7 @@ public class ManageAppointmentsPanel extends JPanel {
         JPanel leftActions = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         leftActions.setOpaque(false);
         leftActions.add(btnAssign);
+        leftActions.add(btnAiMatching);
         leftActions.add(btnCollect);
 
         JPanel rightActions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -406,5 +414,101 @@ public class ManageAppointmentsPanel extends JPanel {
         AppointmentService.bookAppointment(custId, serviceType, dateTime, comments, "Physical");
         refresh();
         JOptionPane.showMessageDialog(this, "Appointment created successfully.");
+    }
+
+    private void doAiMatching() {
+        int row = table.getSelectedRow();
+        if (row < 0) { 
+            JOptionPane.showMessageDialog(this, "Please select an appointment from the table first."); 
+            return; 
+        }
+        int modelRow = table.convertRowIndexToModel(row);
+        Appointment apt = appointments.get(modelRow);
+
+        if (!services.GeminiConfig.isConfigured()) {
+            JOptionPane.showMessageDialog(this, 
+                "AI service is not configured. Please set the API key in the settings first.", 
+                "Kelwin AI Matching Not Configured", 
+                JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        List<Technician> techs = UserService.getAllTechnicians();
+
+        btnAiMatching.setEnabled(false);
+        btnAiMatching.setText("✨ Matching...");
+
+        SwingWorker<String, Void> worker = new SwingWorker<>() {
+            @Override
+            protected String doInBackground() throws Exception {
+                return services.GeminiService.matchTechnician(apt.getComments(), techs);
+            }
+
+            @Override
+            protected void done() {
+                btnAiMatching.setEnabled(true);
+                btnAiMatching.setText("Technician Matching");
+                try {
+                    String result = get();
+                    showMatchingDialog(result, apt);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(ManageAppointmentsPanel.this,
+                        "Error performing matching: " + ex.getMessage(),
+                        "Kelwin AI Matching Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        };
+        worker.execute();
+    }
+
+    private void showMatchingDialog(String result, Appointment apt) {
+        String htmlResult = services.GeminiService.markdownToHtml(result);
+
+        JEditorPane area = new JEditorPane();
+        area.setContentType("text/html");
+        area.setText(htmlResult);
+        area.setEditable(false);
+        area.setBackground(UITheme.FIELD_BG);
+        area.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+        area.setFont(UITheme.FONT_BODY);
+        area.setCaretPosition(0);
+        
+        JScrollPane scroll = new JScrollPane(area);
+        scroll.setPreferredSize(new Dimension(680, 450));
+        scroll.setBorder(BorderFactory.createLineBorder(UITheme.BORDER_CARD, 1));
+        
+        JPanel panel = new JPanel(new BorderLayout(0, 10));
+        panel.setOpaque(false);
+        panel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+        
+        JLabel title = new JLabel("✨ Kelwin AI Technician Matching");
+        title.setFont(UITheme.FONT_HEADER);
+        title.setForeground(UITheme.SUCCESS);
+        panel.add(title, BorderLayout.NORTH);
+        panel.add(scroll, BorderLayout.CENTER);
+
+        JButton btnClose = UITheme.accentButton("Dismiss");
+        JButton btnAssignTech = UITheme.secondaryButton("Proceed to Assign");
+        
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        footer.setOpaque(false);
+        footer.add(btnClose);
+        footer.add(btnAssignTech);
+        
+        panel.add(footer, BorderLayout.SOUTH);
+
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Kelwin AI Technician Matching", true);
+        dialog.getContentPane().setBackground(UITheme.BG_DARK);
+        dialog.getContentPane().add(panel);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+
+        btnAssignTech.addActionListener(e -> {
+            dialog.dispose();
+            showAssignDialog();
+        });
+
+        btnClose.addActionListener(e -> dialog.dispose());
+        dialog.setVisible(true);
     }
 }

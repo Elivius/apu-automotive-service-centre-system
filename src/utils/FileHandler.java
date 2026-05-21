@@ -29,6 +29,9 @@ public class FileHandler {
     public static final String NOTIFICATION_READS_FILE = DATA_DIR + File.separator + "notification_reads.txt";
     public static final String AUDIT_LOG_FILE = DATA_DIR + File.separator + "audit_log.txt";
 
+    // GEMINI AI
+    public static final String GEMINI_API_KEY_FILE = DATA_DIR + File.separator + "gemini_api_key.txt";
+
     /** Delimiter for splitting lines (Regex-escaped) */
     public static final String DELIMITER = ":::";
     
@@ -65,6 +68,9 @@ public class FileHandler {
         
         // Format: timestamp:::userId:::action:::details
         createFileIfNotExists(AUDIT_LOG_FILE);
+
+        // Raw single string configuration file for Kelwin AI
+        createFileIfNotExists(GEMINI_API_KEY_FILE);
     }
 
     /**
