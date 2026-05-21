@@ -5,6 +5,7 @@ import models.Payment;
 import utils.DateUtils;
 import utils.FileHandler;
 import utils.AuditLogger;
+import exceptions.ConcurrencyException;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -51,8 +52,17 @@ public class PaymentService {
      *
      * @param paymentId the ID of the payment to confirm
      */
-    public static void confirmPhysicalPayment(Payment payment) {
+    public static void confirmPhysicalPayment(Payment payment) throws ConcurrencyException {
         if (payment != null && payment.getPaymentId() != null) {
+            // Re-fetch payment from database to ensure fresh state
+            Payment current = getPaymentById(payment.getPaymentId());
+            if (current == null) {
+                throw new ConcurrencyException("Payment record no longer exists.");
+            }
+            if (!"Pending".equals(current.getPaymentStatus())) {
+                throw new ConcurrencyException("Payment status has already changed to: " + current.getPaymentStatus());
+            }
+            
             payment.setPaymentStatus("Paid");
             FileHandler.getInstance().updateLine(FileHandler.PAYMENTS_FILE, payment.getPaymentId(), payment.toFileString());
             AuditLogger.log("SYSTEM", "CONFIRM_PAYMENT", payment.getPaymentId() + " | Appointment: " + payment.getAppointmentId());
