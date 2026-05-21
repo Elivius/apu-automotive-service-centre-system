@@ -312,7 +312,7 @@ public class ManageCustomersPanel extends JPanel {
         dialog.add(infoPanel, BorderLayout.NORTH);
 
         // ── Appointment table ─────────────────────────────────────────
-        String[] cols = {"Appt ID", "Service", "Status", "Technician", "Appointment Date", "Payment"};
+        String[] cols = {"Appt ID", "Service", "Status", "Technician", "Appointment Date", "Comment", "Payment"};
         DefaultTableModel dtm = new DefaultTableModel(cols, 0) { public boolean isCellEditable(int r, int c) { return false; } };
         JTable apptTable = new JTable(dtm);
         apptTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -329,7 +329,8 @@ public class ManageCustomersPanel extends JPanel {
         apptTable.getColumnModel().getColumn(2).setPreferredWidth(110); // Status
         apptTable.getColumnModel().getColumn(3).setPreferredWidth(140); // Technician
         apptTable.getColumnModel().getColumn(4).setPreferredWidth(190); // Appointment Date
-        apptTable.getColumnModel().getColumn(5).setPreferredWidth(130); // Payment
+        apptTable.getColumnModel().getColumn(5).setPreferredWidth(180); // Comment
+        apptTable.getColumnModel().getColumn(6).setPreferredWidth(130); // Payment
 
         // Helper: loads/refreshes the appointment data into the dialog table
         // We use a final array so the lambda can reference it
@@ -355,6 +356,7 @@ public class ManageCustomersPanel extends JPanel {
                     apt.getStatus(),
                     apt.getTechnicianId().isEmpty() ? "(unassigned)" : apt.getTechnicianId(),
                     apt.getDateTime() != null ? apt.getDateTime().format(DateUtils.FORMATTER) : "",
+                    apt.getComments() != null ? apt.getComments() : "",
                     payStatus
                 });
             }
