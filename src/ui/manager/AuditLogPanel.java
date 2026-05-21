@@ -72,19 +72,19 @@ public class AuditLogPanel extends JPanel {
 
         JTable table = new JTable(tableModel);
         table.setName("tblAuditLog");
-        table.setBackground(UITheme.BG_CARD);
-        table.setForeground(UITheme.TEXT_PRIMARY);
-        table.setFont(UITheme.FONT_BODY);
-        table.setRowHeight(28);
-        table.setGridColor(UITheme.FIELD_BORDER);
-        table.setSelectionBackground(new Color(0x1E4080));
-        table.setSelectionForeground(UITheme.TEXT_PRIMARY);
-        table.setShowGrid(true);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-        table.getTableHeader().setBackground(UITheme.BG_SIDEBAR);
-        table.getTableHeader().setForeground(UITheme.TEXT_MUTED);
-        table.getTableHeader().setFont(UITheme.FONT_BODY);
-        table.getTableHeader().setReorderingAllowed(false);
+
+        // Sorting + filtering
+        sorter = new TableRowSorter<>(tableModel);
+        table.setRowSorter(sorter);
+
+        // Apply centralized modern theme styling
+        JScrollPane scrollPane = UITheme.styledTable(table);
+        scrollPane.setName("scrollAuditLog");
+        // Maintain outer layout spacing while preserving theme border
+        scrollPane.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createEmptyBorder(0, 24, 24, 24),
+                scrollPane.getBorder()));
 
         // Column widths
         table.getColumnModel().getColumn(0).setPreferredWidth(140); // Timestamp
@@ -92,39 +92,45 @@ public class AuditLogPanel extends JPanel {
         table.getColumnModel().getColumn(2).setPreferredWidth(160); // Action
         table.getColumnModel().getColumn(3).setPreferredWidth(460); // Details
 
-        // Sorting + filtering
-        sorter = new TableRowSorter<>(tableModel);
-        table.setRowSorter(sorter);
-
-        // Colour-code rows by action type for quick visual scanning
+        // Colour-code rows/actions by log type with consistent theme colors for quick security scanning
         table.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable t, Object value,
                     boolean isSelected, boolean hasFocus, int row, int col) {
-                Component cell = super.getTableCellRendererComponent(t, value, isSelected, hasFocus, row, col);
+                super.getTableCellRendererComponent(t, value, isSelected, hasFocus, row, col);
+                setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+                setFont(UITheme.FONT_BODY);
+
                 if (!isSelected) {
+                    setBackground(row % 2 == 0 ? UITheme.BG_CARD : UITheme.TABLE_ALT_ROW);
                     String action = (String) t.getValueAt(row, 2);
                     if (action != null) {
                         if (action.startsWith("LOGIN_FAILED") || action.startsWith("DECLINE")) {
-                            cell.setBackground(new Color(0x3A1A1A)); // dark red tint
+                            setForeground(UITheme.DANGER);
+                            if (col == 2) {
+                                setFont(UITheme.FONT_BODY.deriveFont(Font.BOLD));
+                            }
                         } else if (action.startsWith("LOGIN_SUCCESS") || action.startsWith("REGISTER")) {
-                            cell.setBackground(new Color(0x1A3A1A)); // dark green tint
+                            setForeground(UITheme.SUCCESS);
+                            if (col == 2) {
+                                setFont(UITheme.FONT_BODY.deriveFont(Font.BOLD));
+                            }
                         } else {
-                            cell.setBackground(UITheme.BG_CARD);
+                            setForeground(UITheme.TEXT_PRIMARY);
                         }
-                        cell.setForeground(UITheme.TEXT_PRIMARY);
+                    } else {
+                        setForeground(UITheme.TEXT_PRIMARY);
+                    }
+                } else {
+                    String action = (String) t.getValueAt(row, 2);
+                    if (action != null && (action.startsWith("LOGIN_FAILED") || action.startsWith("DECLINE") ||
+                                          action.startsWith("LOGIN_SUCCESS") || action.startsWith("REGISTER"))) {
+                        setFont(UITheme.FONT_BODY.deriveFont(Font.BOLD));
                     }
                 }
-                return cell;
+                return this;
             }
         });
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setName("scrollAuditLog");
-        scrollPane.getViewport().setBackground(UITheme.BG_CARD);
-        scrollPane.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createEmptyBorder(0, 24, 24, 24),
-                BorderFactory.createLineBorder(UITheme.FIELD_BORDER)));
 
         add(scrollPane, BorderLayout.CENTER);
 
