@@ -69,7 +69,7 @@ public class NotificationPanel extends JPopupMenu {
         if (!notifications.isEmpty()) {
             JLabel lblMarkAll = new JLabel("Mark all as read");
             lblMarkAll.setName("lblMarkAllRead");
-            lblMarkAll.setFont(UITheme.FONT_SMALL);
+            lblMarkAll.setFont(UITheme.FONT_BODY);
             lblMarkAll.setForeground(UITheme.ACCENT);
             lblMarkAll.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             lblMarkAll.addMouseListener(new MouseAdapter() {
@@ -140,7 +140,7 @@ public class NotificationPanel extends JPopupMenu {
         JLabel lblCount = new JLabel(notifications.size() + " unread notification"
                 + (notifications.size() != 1 ? "s" : ""));
         lblCount.setName("lblNotificationCount");
-        lblCount.setFont(UITheme.FONT_SMALL);
+        lblCount.setFont(UITheme.FONT_BODY);
         lblCount.setForeground(UITheme.TEXT_MUTED);
         footer.add(lblCount, BorderLayout.WEST);
 

@@ -176,7 +176,7 @@ public class ReportsPanel extends JPanel {
                 g2.drawString(String.valueOf(values[i]), x + barW / 2 - 6, y - 4);
 
                 // Label at bottom
-                g2.setFont(UITheme.FONT_SMALL);
+                g2.setFont(UITheme.FONT_BODY);
                 g2.setColor(UITheme.TEXT_MUTED);
                 g2.drawString(labels[i], x, padT + chartH + 18);
             }
@@ -235,7 +235,7 @@ public class ReportsPanel extends JPanel {
                 g2.setColor(colours[i]);
                 g2.fillRoundRect(lx, ly, 14, 14, 4, 4);
                 g2.setColor(UITheme.TEXT_PRIMARY);
-                g2.setFont(UITheme.FONT_SMALL);
+                g2.setFont(UITheme.FONT_BODY);
                 g2.drawString(labels[i] + " (" + values[i] + ")", lx + 18, ly + 12);
             }
             g2.dispose();

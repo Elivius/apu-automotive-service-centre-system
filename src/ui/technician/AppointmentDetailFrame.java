@@ -131,7 +131,7 @@ public class AppointmentDetailFrame extends JFrame {
         // ── Status message ───────────────────────────────────────────
         card.add(Box.createVerticalStrut(14));
         lblMsg = new JLabel(" ");
-        lblMsg.setFont(UITheme.FONT_SMALL);
+        lblMsg.setFont(UITheme.FONT_BODY);
         lblMsg.setForeground(UITheme.SUCCESS);
         lblMsg.setAlignmentX(LEFT_ALIGNMENT);
         lblMsg.setMaximumSize(new Dimension(Integer.MAX_VALUE, 18));

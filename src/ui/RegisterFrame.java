@@ -63,7 +63,7 @@ public class RegisterFrame extends JFrame {
         // ── Error label ───────────────────────────────────────────────
         lblError = new JLabel(" ");
         lblError.setName("lblError");
-        lblError.setFont(UITheme.FONT_SMALL);
+        lblError.setFont(UITheme.FONT_BODY);
         lblError.setForeground(UITheme.DANGER);
         lblError.setAlignmentX(CENTER_ALIGNMENT);
 
@@ -77,7 +77,7 @@ public class RegisterFrame extends JFrame {
         // ── Back to Login link ────────────────────────────────────────
         JButton btnBack = new JButton("← Back to Login");
         btnBack.setName("btnBack");
-        btnBack.setFont(UITheme.FONT_SMALL);
+        btnBack.setFont(UITheme.FONT_BODY);
         btnBack.setForeground(UITheme.ACCENT_SECONDARY);
         btnBack.setBorderPainted(false);
         btnBack.setContentAreaFilled(false);

@@ -61,7 +61,7 @@ public class AuditLogPanel extends JPanel {
             refresh();
         });
 
-        controls.add(new JLabel("Search:") {{ setForeground(UITheme.TEXT_MUTED); setFont(UITheme.FONT_SMALL); }});
+        controls.add(new JLabel("Search:") {{ setForeground(UITheme.TEXT_MUTED); setFont(UITheme.FONT_BODY); }});
         controls.add(tfSearch);
         controls.add(btnRefresh);
         header.add(controls, BorderLayout.EAST);
@@ -86,7 +86,7 @@ public class AuditLogPanel extends JPanel {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         table.getTableHeader().setBackground(UITheme.BG_SIDEBAR);
         table.getTableHeader().setForeground(UITheme.TEXT_MUTED);
-        table.getTableHeader().setFont(UITheme.FONT_SMALL);
+        table.getTableHeader().setFont(UITheme.FONT_BODY);
         table.getTableHeader().setReorderingAllowed(false);
 
         // Column widths

@@ -91,7 +91,7 @@ public class BookAppointmentPanel extends JPanel {
         // Message label
         lblMessage = new JLabel(" "); 
         lblMessage.setName("lblMessage");
-        lblMessage.setFont(UITheme.FONT_SMALL);
+        lblMessage.setFont(UITheme.FONT_BODY);
 
         JButton btnBook = UITheme.accentButton("Confirm Booking");
         btnBook.setName("btnBook");
