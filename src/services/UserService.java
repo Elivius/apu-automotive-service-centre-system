@@ -10,6 +10,7 @@ import utils.PasswordHasher;
 import utils.AuditLogger;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -242,6 +243,27 @@ public class UserService {
                 .map(UserService::parseUser)
                 .filter(user -> user instanceof Customer)
                 .map(user -> (Customer) user)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves all registered Customers as a Map keyed by Customer ID.
+     * Useful for O(1) in-memory customer resolution.
+     */
+    public static Map<String, Customer> getAllCustomersMap() {
+        return getAllCustomers().stream()
+                .collect(Collectors.toMap(Customer::getUserId, customer -> customer));
+    }
+
+    /**
+     * Retrieves all registered Technicians from the system.
+     */
+    public static List<Technician> getAllTechnicians() {
+        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.USERS_FILE);
+        return lines.stream()
+                .map(UserService::parseUser)
+                .filter(user -> user instanceof Technician)
+                .map(user -> (Technician) user)
                 .collect(Collectors.toList());
     }
 

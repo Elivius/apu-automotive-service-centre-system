@@ -7,6 +7,7 @@ import utils.AuditLogger;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -228,6 +229,15 @@ public class AppointmentService {
                 .map(Appointment::fromFileString)
                 .filter(apt -> apt != null)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves all appointments as a Map keyed by Appointment ID.
+     * Useful for O(1) in-memory appointment resolution.
+     */
+    public static Map<String, Appointment> getAllAppointmentsMap() {
+        return getAllAppointments().stream()
+                .collect(Collectors.toMap(Appointment::getAppointmentId, apt -> apt));
     }
 
     /**

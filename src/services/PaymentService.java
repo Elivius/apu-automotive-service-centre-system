@@ -10,8 +10,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -68,6 +68,24 @@ public class PaymentService {
                 .map(Payment::fromFileString)
                 .filter(payment -> payment != null && Payment.METHOD_PHYSICAL.equals(payment.getPaymentMethod()) && Payment.STATUS_PENDING.equals(payment.getPaymentStatus()))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves all payments as a map keyed by Appointment ID.
+     * Used by the UI layer to quickly look up payment statuses without exposing file logic.
+     *
+     * @return Map of Appointment ID -> Payment
+     */
+    public static Map<String, Payment> getAllPaymentsMapByAppointment() {
+        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.PAYMENTS_FILE);
+        return lines.stream()
+                .map(Payment::fromFileString)
+                .filter(payment -> payment != null)
+                .collect(Collectors.toMap(
+                        Payment::getAppointmentId,             // Key mapper (Appointment ID)
+                        payment -> payment,                    // Value mapper (Payment object)
+                        (existing, replacement) -> replacement // Merge function: handles duplicate keys gracefully by keeping the latest
+                ));
     }
 
     /**
