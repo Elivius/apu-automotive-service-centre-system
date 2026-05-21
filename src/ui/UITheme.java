@@ -467,4 +467,96 @@ public class UITheme {
         lbl.setOpaque(false);
         return lbl;
     }
+
+    // ─── Custom Vector Icons ───────────────────────────────────────────
+
+    public static Icon commentsIcon(Color color) {
+        return new Icon() {
+            @Override
+            public void paintIcon(Component c, Graphics g, int x, int y) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(color);
+                
+                int w = 18, h = 13;
+                g2.fillRoundRect(x, y + 2, w, h, 4, 4);
+                
+                int[] px = {x + 3, x + 6, x + 6};
+                int[] py = {y + h + 5, y + h + 2, y + h + 1};
+                g2.fillPolygon(px, py, 3);
+                
+                g2.setColor(BG_DARK);
+                g2.fillRect(x + 3, y + 5, 12, 2);
+                g2.fillRect(x + 3, y + 9, 8, 2);
+                
+                g2.dispose();
+            }
+            @Override public int getIconWidth() { return 20; }
+            @Override public int getIconHeight() { return 20; }
+        };
+    }
+
+    public static Icon diagnosticsIcon(Color color) {
+        return new Icon() {
+            @Override
+            public void paintIcon(Component c, Graphics g, int x, int y) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(color);
+                g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                
+                java.awt.geom.Path2D.Double shield = new java.awt.geom.Path2D.Double();
+                shield.moveTo(x + 3, y + 2);
+                shield.lineTo(x + 15, y + 2);
+                shield.quadTo(x + 15, y + 10, x + 9, y + 17);
+                shield.quadTo(x + 3, y + 10, x + 3, y + 2);
+                shield.closePath();
+                g2.draw(shield);
+                
+                g2.drawLine(x + 6, y + 9, x + 8, y + 11);
+                g2.drawLine(x + 8, y + 11, x + 12, y + 7);
+                
+                g2.dispose();
+            }
+            @Override public int getIconWidth() { return 20; }
+            @Override public int getIconHeight() { return 20; }
+        };
+    }
+
+    public static Icon reviewIcon(Color color) {
+        return new Icon() {
+            @Override
+            public void paintIcon(Component c, Graphics g, int x, int y) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(color);
+                
+                int cx = x + 9;
+                int cy = y + 9;
+                int outerRadius = 8;
+                int innerRadius = 3;
+                
+                java.awt.geom.Path2D.Double star = new java.awt.geom.Path2D.Double();
+                double angle = Math.PI / 2.0;
+                double nextAngle = Math.PI / 5.0;
+                for (int i = 0; i < 10; i++) {
+                    double r = (i % 2 == 0) ? outerRadius : innerRadius;
+                    double px = cx + Math.cos(angle) * r;
+                    double py = cy - Math.sin(angle) * r;
+                    if (i == 0) {
+                        star.moveTo(px, py);
+                    } else {
+                        star.lineTo(px, py);
+                    }
+                    angle += nextAngle;
+                }
+                star.closePath();
+                g2.fill(star);
+                
+                g2.dispose();
+            }
+            @Override public int getIconWidth() { return 20; }
+            @Override public int getIconHeight() { return 20; }
+        };
+    }
 }

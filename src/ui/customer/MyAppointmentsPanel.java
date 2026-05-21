@@ -5,7 +5,6 @@ import models.Appointment;
 import models.Customer;
 import services.AppointmentService;
 import services.FeedbackService;
-import services.UserService;
 import utils.DateUtils;
 import ui.UITheme;
 
@@ -15,21 +14,29 @@ import java.awt.*;
 import java.util.List;
 
 /**
- * Shows the customer's own appointments.
+ * Shows the customer's own appointments and service history in a unified hub.
  * Allows:
- *  - Adding/editing comments on Pending/Assigned appointments.
- *  - Writing a service review on Completed appointments.
+ *  - Checking active appointments (Pending/Assigned) and updating comments.
+ *  - Reading technician feedback & diagnosis for completed appointments.
+ *  - Submitting/editing service reviews on completed appointments.
  */
 public class MyAppointmentsPanel extends JPanel {
-
 
     private final Customer customer;
     private JTable table;
     private DefaultTableModel tableModel;
-    private JTextArea taAction;
-    private JButton btnSubmit;
-    private JLabel lblActionTitle, lblActionHint, lblMsg;
     private List<Appointment> appointments;
+
+    // UI elements for detail card
+    private JLabel lblActionTitle, lblActionHint, lblMsg, lblEmpty;
+    private JButton btnSubmit;
+    private JPanel detailCardContainer;
+    private CardLayout detailCardLayout;
+    
+    // Components inside card container
+    private JTextArea taComments;  // Active comments area
+    private JTextArea taFeedback;  // Completed read-only technician diagnostics
+    private JTextArea taReview;    // Completed editable customer service review
 
     public MyAppointmentsPanel(Customer customer) {
         this.customer = customer;
@@ -52,7 +59,7 @@ public class MyAppointmentsPanel extends JPanel {
         add(header, BorderLayout.NORTH);
 
         // ── Table ─────────────────────────────────────────────────────
-        String[] cols = {"ID", "Service", "Date & Time", "Technician", "Status", "Comments"};
+        String[] cols = {"Appt ID", "Service", "Appointment Date & Time", "Technician", "Status", "Comments"};
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -72,20 +79,94 @@ public class MyAppointmentsPanel extends JPanel {
 
         // ── Detail / action panel ────────────────────────────────────
         JPanel actionCard = UITheme.cardPanel();
-        actionCard.setLayout(new BorderLayout(0, 8));
+        actionCard.setLayout(new BorderLayout(0, 12));
         actionCard.setBorder(BorderFactory.createEmptyBorder(16, 20, 16, 20));
 
         lblActionTitle = UITheme.headerLabel("Select an appointment above");
         lblActionTitle.setName("lblActionTitle");
         lblActionHint  = UITheme.mutedLabel("");
+        lblActionHint.setFont(UITheme.FONT_BODY);
         lblActionHint.setName("lblActionHint");
-        taAction = new JTextArea(4, 30);
-        taAction.setName("taAction");
-        JScrollPane aScroll = UITheme.styledTextArea(taAction);
 
+        JPanel top = new JPanel(new BorderLayout(0, 4));
+        top.setOpaque(false);
+        top.add(lblActionTitle, BorderLayout.NORTH);
+        top.add(lblActionHint,  BorderLayout.SOUTH);
+        actionCard.add(top,     BorderLayout.NORTH);
+
+        // Card Container for dynamic status-specific views
+        detailCardLayout = new CardLayout();
+        detailCardContainer = new JPanel(detailCardLayout);
+        detailCardContainer.setOpaque(false);
+
+        // 1. Empty/Declined Panel
+        JPanel emptyPanel = new JPanel(new GridBagLayout());
+        emptyPanel.setOpaque(false);
+        lblEmpty = UITheme.mutedLabel("Select an appointment to view details, feedback, or leave comments.");
+        lblEmpty.setFont(UITheme.FONT_BODY);
+        lblEmpty.setName("lblEmpty");
+        emptyPanel.add(lblEmpty);
+
+        // 2. Active Panel (Pending/Assigned)
+        JPanel activePanel = new JPanel(new BorderLayout(0, 8));
+        activePanel.setOpaque(false);
+        JLabel lblCommentsHeader = UITheme.mutedLabel("Provide Comments for your Technician:");
+        lblCommentsHeader.setFont(UITheme.FONT_BODY);
+        lblCommentsHeader.setIcon(UITheme.commentsIcon(UITheme.TEXT_MUTED));
+        lblCommentsHeader.setIconTextGap(8);
+        activePanel.add(lblCommentsHeader, BorderLayout.NORTH);
+        taComments = new JTextArea(4, 30);
+        taComments.setName("taComments");
+        taComments.setLineWrap(true);
+        taComments.setWrapStyleWord(true);
+        activePanel.add(UITheme.styledTextArea(taComments), BorderLayout.CENTER);
+
+        // 3. Completed Panel (Diagnostics + Review Split)
+        JPanel completedPanel = new JPanel(new GridLayout(1, 2, 16, 0));
+        completedPanel.setOpaque(false);
+
+        // Left: Feedback (Read-Only)
+        JPanel feedbackPanel = new JPanel(new BorderLayout(0, 6));
+        feedbackPanel.setOpaque(false);
+        JLabel lblFeedbackHeader = UITheme.mutedLabel("Technician Diagnosis & Feedback");
+        lblFeedbackHeader.setFont(UITheme.FONT_BODY);
+        lblFeedbackHeader.setIcon(UITheme.diagnosticsIcon(UITheme.TEXT_MUTED));
+        lblFeedbackHeader.setIconTextGap(8);
+        feedbackPanel.add(lblFeedbackHeader, BorderLayout.NORTH);
+        taFeedback = new JTextArea(4, 20);
+        taFeedback.setName("taFeedback");
+        taFeedback.setEditable(false);
+        taFeedback.setLineWrap(true);
+        taFeedback.setWrapStyleWord(true);
+        feedbackPanel.add(UITheme.styledTextArea(taFeedback), BorderLayout.CENTER);
+
+        // Right: Review (Editable)
+        JPanel reviewPanel = new JPanel(new BorderLayout(0, 6));
+        reviewPanel.setOpaque(false);
+        JLabel lblReviewHeader = UITheme.mutedLabel("My Service Review");
+        lblReviewHeader.setFont(UITheme.FONT_BODY);
+        lblReviewHeader.setIcon(UITheme.reviewIcon(UITheme.TEXT_MUTED));
+        lblReviewHeader.setIconTextGap(8);
+        reviewPanel.add(lblReviewHeader, BorderLayout.NORTH);
+        taReview = new JTextArea(4, 20);
+        taReview.setName("taReview");
+        taReview.setLineWrap(true);
+        taReview.setWrapStyleWord(true);
+        reviewPanel.add(UITheme.styledTextArea(taReview), BorderLayout.CENTER);
+
+        completedPanel.add(feedbackPanel);
+        completedPanel.add(reviewPanel);
+
+        detailCardContainer.add(emptyPanel, "empty");
+        detailCardContainer.add(activePanel, "active");
+        detailCardContainer.add(completedPanel, "completed");
+
+        actionCard.add(detailCardContainer, BorderLayout.CENTER);
+
+        // Button Row at bottom
         lblMsg = new JLabel(" ");
         lblMsg.setName("lblMsg");
-        lblMsg.setFont(UITheme.FONT_SMALL);
+        lblMsg.setFont(UITheme.FONT_BODY);
         lblMsg.setForeground(UITheme.SUCCESS);
 
         btnSubmit = UITheme.accentButton("Save Comments");
@@ -93,22 +174,15 @@ public class MyAppointmentsPanel extends JPanel {
         btnSubmit.setEnabled(false);
         btnSubmit.addActionListener(e -> doSubmit());
 
-        JPanel top = new JPanel(new BorderLayout(0, 4));
-        top.setOpaque(false);
-        top.add(lblActionTitle, BorderLayout.NORTH);
-        top.add(lblActionHint,  BorderLayout.SOUTH);
-
-        actionCard.add(top,     BorderLayout.NORTH);
-        actionCard.add(aScroll, BorderLayout.CENTER);
-        JPanel btnRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel btnRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         btnRow.setOpaque(false);
         btnRow.add(btnSubmit);
         btnRow.add(lblMsg);
-        actionCard.add(btnRow,  BorderLayout.SOUTH);
+        actionCard.add(btnRow, BorderLayout.SOUTH);
 
-        // ── Split ─────────────────────────────────────────────────────
+        // ── Split Pane ────────────────────────────────────────────────
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, sp, actionCard);
-        split.setDividerLocation(280);
+        split.setDividerLocation(260);
         split.setResizeWeight(0.5);
         split.setDividerSize(6);
         split.setBorder(null);
@@ -133,8 +207,8 @@ public class MyAppointmentsPanel extends JPanel {
         }
         lblActionTitle.setText("Select an appointment above");
         lblActionHint.setText("");
-        taAction.setText("");
-        taAction.setEnabled(false);
+        lblEmpty.setText("Select an appointment to view details, feedback, or leave comments.");
+        detailCardLayout.show(detailCardContainer, "empty");
         btnSubmit.setEnabled(false);
         lblMsg.setText(" ");
     }
@@ -142,31 +216,46 @@ public class MyAppointmentsPanel extends JPanel {
     private void onSelect() {
         int row = table.getSelectedRow();
         if (row < 0 || row >= appointments.size()) {
-            return; // Prevent IndexOutOfBoundsException (User didn't select any row)
+            detailCardLayout.show(detailCardContainer, "empty");
+            lblActionTitle.setText("Select an appointment above");
+            lblActionHint.setText("");
+            btnSubmit.setEnabled(false);
+            return;
         }
         Appointment apt = appointments.get(row);
         String status = apt.getStatus();
         lblMsg.setText(" ");
 
         if ("Completed".equals(status)) {
-            lblActionTitle.setText("Write a Service Review");
-            lblActionHint.setText("Rate your experience for appointment " + apt.getAppointmentId());
-            taAction.setText(apt.getServiceReview() != null ? apt.getServiceReview() : "");
-            taAction.setEnabled(true);
+            lblActionTitle.setText("Service Completed & Feedback Available");
+            lblActionHint.setText("Review your technician's diagnostics and rate your experience below.");
+            taFeedback.setText(apt.getFeedback() != null && !apt.getFeedback().isEmpty() ? apt.getFeedback() : "(No diagnostics written by technician yet)");
+            taReview.setText(apt.getServiceReview() != null ? apt.getServiceReview() : "");
+            
+            detailCardLayout.show(detailCardContainer, "completed");
             btnSubmit.setText("Submit Review");
             btnSubmit.setEnabled(true);
         } else if ("Pending".equals(status) || "Assigned".equals(status)) {
-            lblActionTitle.setText("Add / Edit Comments");
-            lblActionHint.setText("Help the technician understand your situation");
-            taAction.setText(apt.getComments() != null ? apt.getComments() : "");
-            taAction.setEnabled(true);
+            lblActionTitle.setText("Add / Edit Appointment Comments");
+            lblActionHint.setText("Help the technician prepare for your vehicle's service.");
+            taComments.setText(apt.getComments() != null ? apt.getComments() : "");
+            
+            detailCardLayout.show(detailCardContainer, "active");
             btnSubmit.setText("Save Comments");
             btnSubmit.setEnabled(true);
+        } else if ("Declined".equals(status)) {
+            lblActionTitle.setText("Appointment Declined");
+            lblActionHint.setText("This appointment was declined by the service center.");
+            lblEmpty.setText("No actions available for declined appointments.");
+            
+            detailCardLayout.show(detailCardContainer, "empty");
+            btnSubmit.setEnabled(false);
         } else {
-            lblActionTitle.setText("Appointment: " + apt.getAppointmentId() + " — " + status);
-            lblActionHint.setText("No actions available for this status.");
-            taAction.setText("");
-            taAction.setEnabled(false);
+            lblActionTitle.setText("Appointment ID: " + apt.getAppointmentId());
+            lblActionHint.setText("Status: " + status);
+            lblEmpty.setText("No actions available for " + status + " status.");
+            
+            detailCardLayout.show(detailCardContainer, "empty");
             btnSubmit.setEnabled(false);
         }
     }
@@ -177,9 +266,19 @@ public class MyAppointmentsPanel extends JPanel {
             return;
         }
         Appointment apt = appointments.get(row);
-        String text = taAction.getText().trim();
+        String text;
+        if ("Completed".equals(apt.getStatus())) {
+            text = taReview.getText().trim();
+        } else {
+            text = taComments.getText().trim();
+        }
+
         if (text.isEmpty()) {
-            lblMsg.setText("Please enter some text.");
+            if ("Completed".equals(apt.getStatus())) {
+                lblMsg.setText("Please enter review text.");
+            } else {
+                lblMsg.setText("Please enter comment text.");
+            }
             lblMsg.setForeground(UITheme.DANGER);
             return;
         }
@@ -187,10 +286,10 @@ public class MyAppointmentsPanel extends JPanel {
         try {
             if ("Completed".equals(apt.getStatus())) {
                 FeedbackService.submitServiceReview(apt, text);
-                lblMsg.setText("Review submitted!");
+                lblMsg.setText("Review submitted successfully!");
             } else {
                 FeedbackService.submitCustomerComments(apt, text);
-                lblMsg.setText("Comments saved!");
+                lblMsg.setText("Comments saved successfully!");
             } 
             lblMsg.setForeground(UITheme.SUCCESS);
         } catch (ConcurrencyException ex) {
@@ -198,8 +297,8 @@ public class MyAppointmentsPanel extends JPanel {
             lblMsg.setForeground(UITheme.DANGER);
         }
 
-        // Delay before refresh
-        javax.swing.Timer timer = new javax.swing.Timer(3000, e -> refresh());
+        // pep refresh (1.5 seconds)
+        javax.swing.Timer timer = new javax.swing.Timer(1500, e -> refresh());
         timer.setRepeats(false);
         timer.start();
     }
