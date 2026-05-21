@@ -323,33 +323,24 @@ public class MyAppointmentsPanel extends JPanel {
         }
 
         if (text.isEmpty()) {
-            if ("Completed".equals(apt.getStatus())) {
-                lblMsg.setText("Please enter review text.");
-            } else {
-                lblMsg.setText("Please enter comment text.");
-            }
-            lblMsg.setForeground(UITheme.DANGER);
+            String errorMsg = "Completed".equals(apt.getStatus()) ? "Please enter review text." : "Please enter comment text.";
+            JOptionPane.showMessageDialog(this, errorMsg, "Validation Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         try {
             if ("Completed".equals(apt.getStatus())) {
                 FeedbackService.submitServiceReview(apt, text);
-                lblMsg.setText("Review submitted successfully!");
+                JOptionPane.showMessageDialog(this, "Review submitted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 FeedbackService.submitCustomerComments(apt, text);
-                lblMsg.setText("Comments saved successfully!");
+                JOptionPane.showMessageDialog(this, "Comments saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             } 
-            lblMsg.setForeground(UITheme.SUCCESS);
+            refresh();
         } catch (ConcurrencyException ex) {
-            lblMsg.setText("Error: " + ex.getMessage());
-            lblMsg.setForeground(UITheme.DANGER);
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Concurrency Error", JOptionPane.ERROR_MESSAGE);
+            refresh();
         }
-
-        // pep refresh (1.5 seconds)
-        javax.swing.Timer timer = new javax.swing.Timer(1500, e -> refresh());
-        timer.setRepeats(false);
-        timer.start();
     }
 
     private void filterTable() {
