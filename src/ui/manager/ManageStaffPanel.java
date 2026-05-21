@@ -107,6 +107,12 @@ public class ManageStaffPanel extends JPanel {
                     model.addRow(new Object[]{user.getUserId(), user.getName(), user.getUsername(), user.getEmail(), user.getPhone()});
                 }
             }
+            if (tfSearch != null) {
+                tfSearch.setText("");
+            }
+            if (sorter != null) {
+                sorter.setRowFilter(null);
+            }
         };
         loadData.run();
 

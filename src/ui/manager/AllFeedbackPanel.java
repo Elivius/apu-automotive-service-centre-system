@@ -7,7 +7,7 @@ import utils.DateUtils;
 import ui.UITheme;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.*;
 import java.awt.*;
 import java.util.List;
 
@@ -21,6 +21,9 @@ public class AllFeedbackPanel extends JPanel {
     private JTextArea taDetail;
     private List<Appointment> appointments;
 
+    private TableRowSorter<DefaultTableModel> sorter;
+    private JTextField tfSearch;
+
     public AllFeedbackPanel() {
         setBackground(UITheme.BG_DARK);
         setLayout(new BorderLayout(0, 12));
@@ -29,18 +32,36 @@ public class AllFeedbackPanel extends JPanel {
     }
 
     private void buildUI() {
-        JPanel header = new JPanel(new BorderLayout());
+        JPanel header = new JPanel(new BorderLayout(12, 0));
         header.setOpaque(false);
         header.add(UITheme.titleLabel("All Feedback & Reviews"), BorderLayout.WEST);
+
+        JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        right.setOpaque(false);
+
+        tfSearch = UITheme.styledTextField(16);
+        tfSearch.setToolTipText("Search feedback…");
+        tfSearch.putClientProperty("JTextField.placeholderText", "Search feedback…");
+        tfSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e)  { filterTable(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e)  { filterTable(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { filterTable(); }
+        });
 
         JButton btnRefresh = UITheme.secondaryButton("↻ Refresh");
         btnRefresh.setName("btnRefresh");
         btnRefresh.addActionListener(e -> refresh());
-        header.add(btnRefresh, BorderLayout.EAST);
+
+        right.add(new JLabel("🔍") {{ setForeground(UITheme.TEXT_MUTED); }});
+        right.add(tfSearch);
+        right.add(btnRefresh);
+
+        header.add(right, BorderLayout.EAST);
         add(header, BorderLayout.NORTH);
 
         String[] cols = {"Appt ID", "Customer ID", "Appointment Date", "Customer Comment", "Tech Feedback", "Service Review"};
         tableModel = new DefaultTableModel(cols, 0) {
+            @Override
             public boolean isCellEditable(int r, int c) {
                 return false;
             }
@@ -51,6 +72,9 @@ public class AllFeedbackPanel extends JPanel {
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) onSelect();
         });
+
+        sorter = new TableRowSorter<>(tableModel);
+        table.setRowSorter(sorter);
 
         // Widen columns
         table.getColumnModel().getColumn(0).setPreferredWidth(80);
@@ -96,12 +120,25 @@ public class AllFeedbackPanel extends JPanel {
             });
         }
         taDetail.setText("");
+        if (tfSearch != null) {
+            tfSearch.setText("");
+        }
+        if (sorter != null) {
+            sorter.setRowFilter(null);
+        }
     }
 
     private void onSelect() {
         int row = table.getSelectedRow();
-        if (row < 0 || row >= appointments.size()) return;
-        Appointment apt = appointments.get(row);
+        if (row < 0) {
+            taDetail.setText("");
+            return;
+        }
+        int modelRow = table.convertRowIndexToModel(row);
+        if (modelRow < 0 || modelRow >= appointments.size()) {
+            return;
+        }
+        Appointment apt = appointments.get(modelRow);
         StringBuilder sb = new StringBuilder();
         sb.append("Appointment ID : ").append(apt.getAppointmentId()).append("\n");
         sb.append("Customer ID    : ").append(apt.getCustomerId()).append("\n");
@@ -115,5 +152,14 @@ public class AllFeedbackPanel extends JPanel {
         sb.append("─── Customer Service Review ────────────\n");
         sb.append(apt.getServiceReview() != null && !apt.getServiceReview().isEmpty() ? apt.getServiceReview() : "(none)");
         taDetail.setText(sb.toString());
+    }
+
+    private void filterTable() {
+        String text = tfSearch.getText().trim();
+        if (text.isEmpty()) {
+            sorter.setRowFilter(null);
+        } else {
+            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(text)));
+        }
     }
 }
