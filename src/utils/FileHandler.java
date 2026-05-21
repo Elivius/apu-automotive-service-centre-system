@@ -4,6 +4,8 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 /**
@@ -183,25 +185,45 @@ public class FileHandler {
     }
 
     /**
-     * Generates the next unique ID by reading the file and incrementing the max ID.
+     * Generates the next unique sequential ID by scanning all data files to prevent recycling.
+     * Scans through all database files (users, appointments, payments, notifications, audit logs, etc.)
+     * to find the absolute maximum numeric suffix ever used for a given prefix (e.g., CUS0003).
+     * This prevents reusing ID numbers from deleted records, preserving the historical data integrity.
      *
      * @param filePath the path to the file
      * @param prefix   the prefix for the ID (e.g. "CUS", "APT", "PAY")
      * @return a new unique ID string
      */
     public synchronized String generateNextId(String filePath, String prefix) {
-        List<String> lines = readAllLines(filePath);
+        Set<String> filesToScan = new HashSet<>();
+        filesToScan.add(filePath);
+        filesToScan.add(USERS_FILE);
+        filesToScan.add(APPOINTMENTS_FILE);
+        filesToScan.add(PAYMENTS_FILE);
+        filesToScan.add(NOTIFICATIONS_FILE);
+        filesToScan.add(NOTIFICATION_READS_FILE);
+        filesToScan.add(AUDIT_LOG_FILE);
+
         int maxNum = 0;
-        for (String line : lines) {
-            String[] parts = line.split(DELIMITER);
-            if (parts.length > 0 && parts[0].startsWith(prefix)) {
-                try {
-                    int num = Integer.parseInt(parts[0].substring(prefix.length()));
-                    if (num > maxNum) {
-                        maxNum = num;
+        for (String file : filesToScan) {
+            File f = new File(file);
+            if (!f.exists()) {
+                continue;
+            }
+            List<String> lines = readAllLines(file);
+            for (String line : lines) {
+                String[] parts = line.split(DELIMITER);
+                for (String part : parts) {
+                    if (part.startsWith(prefix)) {
+                        try {
+                            int num = Integer.parseInt(part.substring(prefix.length()));
+                            if (num > maxNum) {
+                                maxNum = num;
+                            }
+                        } catch (NumberFormatException e) {
+                            // Skip lines with invalid IDs
+                        }
                     }
-                } catch (NumberFormatException e) {
-                    // Skip lines with invalid IDs
                 }
             }
         }
