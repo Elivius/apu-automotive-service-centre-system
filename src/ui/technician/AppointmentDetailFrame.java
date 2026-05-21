@@ -31,7 +31,7 @@ public class AppointmentDetailFrame extends JFrame {
         this.onClose = onClose;
         setTitle("Appointment Details — " + appointment.getAppointmentId());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setSize(600, 600);
+        setSize(750, 700);
         setLocationRelativeTo(null);
         setResizable(true);
         getContentPane().setBackground(UITheme.BG_DARK);
