@@ -74,9 +74,10 @@ public class AppointmentService {
      *
      * @param targetAppointment the appointment to assign
      * @param technicianId      the technician to assign
+     * @param staffId           the staff member performing the assignment
      * @throws TechnicianUnavailableException if the technician has a time conflict
      */
-    public static void assignAppointment(Appointment targetAppointment, String technicianId) throws TechnicianUnavailableException {
+    public static void assignAppointment(Appointment targetAppointment, String technicianId, String staffId) throws TechnicianUnavailableException {
         if (targetAppointment == null) {
             System.err.println("Appointment cannot be null.");
             return;
@@ -124,7 +125,7 @@ public class AppointmentService {
         NotificationService.push(targetAppointment.getCustomerId(), "Your appointment " + targetAppointment.getAppointmentId() + " has been assigned to technician " + technicianId + ".");
         NotificationService.push(technicianId, "You have been assigned to appointment " + targetAppointment.getAppointmentId() + ".");
 
-        AuditLogger.log(technicianId, "ASSIGN_APPOINTMENT", targetAppointment.getAppointmentId() + " | Customer: " + targetAppointment.getCustomerId() + " | Technician: " + technicianId);
+        AuditLogger.log(staffId, "ASSIGN_APPOINTMENT", targetAppointment.getAppointmentId() + " | Customer: " + targetAppointment.getCustomerId() + " | Technician: " + technicianId);
     }
 
     /**
@@ -153,8 +154,9 @@ public class AppointmentService {
      * Pushes a notification to the customer about the cancellation.
      * 
      * @param appointment the appointment to decline
+     * @param staffId     the staff member declining the appointment
      */
-    public static void declineAppointment(Appointment appointment) {
+    public static void declineAppointment(Appointment appointment, String staffId) {
         if (appointment != null && appointment.getAppointmentId() != null) {
             appointment.setStatus(Appointment.STATUS_DECLINED);
             int expectedVersion = appointment.getVersion();
@@ -165,7 +167,7 @@ public class AppointmentService {
             PaymentService.declinePaymentForAppointment(appointment.getAppointmentId());
 
             NotificationService.push(appointment.getCustomerId(), "Your appointment " + appointment.getAppointmentId() + " has been declined.");
-            AuditLogger.log(appointment.getCustomerId(), "DECLINE_APPOINTMENT", appointment.getAppointmentId());
+            AuditLogger.log(staffId, "DECLINE_APPOINTMENT", appointment.getAppointmentId());
         }
     }
     
