@@ -123,7 +123,7 @@ public class PopupFieldFactory {
                     super.paintComponent(g);
                 }
             };
-            btnToday.setFont(UITheme.FONT_SMALL);
+            btnToday.setFont(UITheme.FONT_BODY);
             btnToday.setForeground(UITheme.ACCENT_SECONDARY);
             btnToday.setOpaque(false);
             btnToday.setContentAreaFilled(false);

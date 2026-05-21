@@ -83,7 +83,7 @@ public class EditProfileFrame extends JFrame {
 
         lblError = new JLabel(" ");
         lblError.setName("lblError");
-        lblError.setFont(UITheme.FONT_SMALL);
+        lblError.setFont(UITheme.FONT_BODY);
         lblError.setForeground(UITheme.DANGER);
         lblError.setAlignmentX(CENTER_ALIGNMENT);
 

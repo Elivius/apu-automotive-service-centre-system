@@ -57,7 +57,7 @@ public class LoginFrame extends JFrame {
         // ── Error label ──────────────────────────────────────────────
         lblError = new JLabel(" ");
         lblError.setName("lblError");
-        lblError.setFont(UITheme.FONT_SMALL);
+        lblError.setFont(UITheme.FONT_BODY);
         lblError.setForeground(UITheme.DANGER);
         lblError.setAlignmentX(CENTER_ALIGNMENT);
 
@@ -72,7 +72,7 @@ public class LoginFrame extends JFrame {
         // ── Register link ─────────────────────────────────────────────
         JButton btnRegister = new JButton("New customer? Register here");
         btnRegister.setName("btnRegister");
-        btnRegister.setFont(UITheme.FONT_SMALL);
+        btnRegister.setFont(UITheme.FONT_BODY);
         btnRegister.setForeground(UITheme.ACCENT_SECONDARY);
         btnRegister.setBorderPainted(false);
         btnRegister.setContentAreaFilled(false);
