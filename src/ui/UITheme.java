@@ -312,16 +312,51 @@ public class UITheme {
         table.setSelectionForeground(Color.WHITE);
         table.setFillsViewportHeight(true);
 
-        // Alternating row renderer (Zebra stripping)
+        // Alternating row renderer (Zebra stripping) + Status color highlights
         table.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable t, Object value,
                     boolean isSelected, boolean hasFocus, int row, int col) {
                 super.getTableCellRendererComponent(t, value, isSelected, hasFocus, row, col);
                 setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+                
+                // Reset font to default FONT_BODY
+                setFont(FONT_BODY);
+
                 if (!isSelected) {
                     setBackground(row % 2 == 0 ? BG_CARD : TABLE_ALT_ROW);
                     setForeground(TEXT_PRIMARY);
+                    
+                    if (value instanceof String) {
+                        String str = (String) value;
+                        if ("Completed".equalsIgnoreCase(str)) {
+                            setForeground(SUCCESS);
+                            setFont(FONT_BODY.deriveFont(Font.BOLD));
+                        } else if ("Declined".equalsIgnoreCase(str) || "Decline".equalsIgnoreCase(str)) {
+                            setForeground(DANGER);
+                            setFont(FONT_BODY.deriveFont(Font.BOLD));
+                        } else if ("Assigned".equalsIgnoreCase(str)) {
+                            setForeground(ACCENT_SECONDARY);
+                            setFont(FONT_BODY.deriveFont(Font.BOLD));
+                        } else if ("Pending".equalsIgnoreCase(str)) {
+                            setForeground(WARNING);
+                            setFont(FONT_BODY.deriveFont(Font.BOLD));
+                        } else if ("Paid".equalsIgnoreCase(str)) {
+                            setForeground(SUCCESS);
+                            setFont(FONT_BODY.deriveFont(Font.BOLD));
+                        } else if ("Unpaid".equalsIgnoreCase(str)) {
+                            setForeground(WARNING);
+                            setFont(FONT_BODY.deriveFont(Font.BOLD));
+                        }
+                    }
+                } else {
+                    if (value instanceof String) {
+                        String str = (String) value;
+                        if ("Completed".equalsIgnoreCase(str) || "Declined".equalsIgnoreCase(str) || "Decline".equalsIgnoreCase(str) ||
+                            "Assigned".equalsIgnoreCase(str) || "Pending".equalsIgnoreCase(str) || "Paid".equalsIgnoreCase(str) || "Unpaid".equalsIgnoreCase(str)) {
+                            setFont(FONT_BODY.deriveFont(Font.BOLD));
+                        }
+                    }
                 }
                 return this;
             }

@@ -219,6 +219,7 @@ public class MyAppointmentsPanel extends JPanel {
             detailCardLayout.show(detailCardContainer, "empty");
             lblActionTitle.setText("Select an appointment above");
             lblActionHint.setText("");
+            lblEmpty.setText("Select an appointment to view details, feedback, or leave comments.");
             btnSubmit.setEnabled(false);
             return;
         }
