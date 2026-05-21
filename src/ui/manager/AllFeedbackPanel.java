@@ -39,7 +39,7 @@ public class AllFeedbackPanel extends JPanel {
         header.add(btnRefresh, BorderLayout.EAST);
         add(header, BorderLayout.NORTH);
 
-        String[] cols = {"Appt ID", "Customer ID", "Date", "Customer Comment", "Tech Feedback", "Service Review"};
+        String[] cols = {"Appt ID", "Customer ID", "Appointment Date", "Customer Comment", "Tech Feedback", "Service Review"};
         tableModel = new DefaultTableModel(cols, 0) {
             public boolean isCellEditable(int r, int c) {
                 return false;

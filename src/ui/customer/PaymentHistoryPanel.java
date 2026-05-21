@@ -39,7 +39,7 @@ public class PaymentHistoryPanel extends JPanel {
         header.add(btnRefresh, BorderLayout.EAST);
         add(header, BorderLayout.NORTH);
 
-        String[] cols = {"Payment ID", "Appointment ID", "Amount (RM)", "Method", "Status", "Date"};
+        String[] cols = {"Payment ID", "Appointment ID", "Amount (RM)", "Method", "Status", "Payment Date"};
         tableModel = new DefaultTableModel(cols, 0) {
             public boolean isCellEditable(int r, int c) {
                 return false;
@@ -49,6 +49,14 @@ public class PaymentHistoryPanel extends JPanel {
         table.setName("tablePayments");
 
         JScrollPane sp = UITheme.styledTable(table);
+
+        // Adjust column preferred widths for visual excellence and prevention of header/text truncation
+        table.getColumnModel().getColumn(0).setPreferredWidth(110); // Payment ID
+        table.getColumnModel().getColumn(1).setPreferredWidth(130); // Appointment ID
+        table.getColumnModel().getColumn(2).setPreferredWidth(120); // Amount (RM)
+        table.getColumnModel().getColumn(3).setPreferredWidth(110); // Method
+        table.getColumnModel().getColumn(4).setPreferredWidth(100); // Status
+        table.getColumnModel().getColumn(5).setPreferredWidth(170); // Payment Date
         add(sp, BorderLayout.CENTER);
 
         // Summary label

@@ -101,7 +101,7 @@ public class BookAppointmentPanel extends JPanel {
         int row = 0;
         addFormRow(card, gbc, row++, "Service Type", serviceTypeField);
         addFormRow(card, gbc, row++, "Service Price", lblPrice);
-        addFormRow(card, gbc, row++, "Date", dateField);
+        addFormRow(card, gbc, row++, "Appointment Date", dateField);
         addFormRow(card, gbc, row++, "Time Slot", timeField);
         addFormRow(card, gbc, row++, "Comments", commentsScroll);
 
