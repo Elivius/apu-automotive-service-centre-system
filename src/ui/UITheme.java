@@ -215,8 +215,8 @@ public class UITheme {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                Color c1 = getModel().isRollover() ? new Color(0x34D399) : SUCCESS;
-                Color c2 = getModel().isRollover() ? new Color(0x059669) : new Color(0x047857);
+                Color c1 = getModel().isRollover() ? new Color(0x7DD3FC) : ACCENT_SECONDARY;
+                Color c2 = getModel().isRollover() ? new Color(0x0284C7) : new Color(0x0369A1);
                 GradientPaint gp = new GradientPaint(0, 0, c1, 0, getHeight(), c2);
                 g2.setPaint(gp);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);

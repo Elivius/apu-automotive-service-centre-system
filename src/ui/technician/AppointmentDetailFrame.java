@@ -24,6 +24,8 @@ public class AppointmentDetailFrame extends JFrame {
 
     private JTextArea taFeedback;
     private JLabel lblStatus, lblMsg;
+    private JButton btnAiGuide;
+    private JButton btnPolish;
 
     public AppointmentDetailFrame(Technician technician, Appointment appointment, Runnable onClose) {
         this.technician = technician;
@@ -111,40 +113,10 @@ public class AppointmentDetailFrame extends JFrame {
         card.add(commScroll);
 
         // ✨ AI Diagnostic Guide
-        JButton btnAiGuide = UITheme.aiButton("Diagnostic Guide");
+        btnAiGuide = UITheme.aiButton("Diagnostic Guide");
         btnAiGuide.setName("btnAiGuide");
         btnAiGuide.setAlignmentX(LEFT_ALIGNMENT);
-        btnAiGuide.addActionListener(e -> {
-            if (!services.GeminiConfig.isConfigured()) {
-                JOptionPane.showMessageDialog(this, 
-                    "AI service is not configured. Please set the API key in the settings first.", 
-                    "Kelwin AI Diagnostic Guide Not Configured", 
-                    JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-            btnAiGuide.setEnabled(false);
-            btnAiGuide.setText("✨ Generating...");
-            
-            SwingWorker<String, Void> worker = new SwingWorker<>() {
-                @Override protected String doInBackground() throws Exception {
-                    return services.GeminiService.generateDiagnosticChecklist(
-                        appointment.getServiceType(), appointment.getComments());
-                }
-                @Override protected void done() {
-                    btnAiGuide.setEnabled(true);
-                    btnAiGuide.setText("✨ Kelwin AI Diagnostic Guide");
-                    try {
-                        String result = get();
-                        showChecklistDialog(result);
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(AppointmentDetailFrame.this,
-                            "Error generating checklist: " + ex.getMessage(),
-                            "Kelwin AI Diagnostic Guide Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            };
-            worker.execute();
-        });
+        btnAiGuide.addActionListener(e -> doAiGuide());
 
         JPanel guideWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         guideWrapper.setOpaque(false);
@@ -193,46 +165,9 @@ public class AppointmentDetailFrame extends JFrame {
             btnSaveFb.addActionListener(e -> doSaveFeedback());
             btnRow.add(btnSaveFb);
 
-            JButton btnPolish = UITheme.aiButton("Polish Feedback");
+            btnPolish = UITheme.aiButton("Polish Feedback");
             btnPolish.setName("btnPolish");
-            btnPolish.addActionListener(e -> {
-                String rawFeedback = taFeedback.getText().trim();
-                if (rawFeedback.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, 
-                        "Please write some raw feedback in the text area first.", 
-                        "Kelwin AI Polish Feedback", 
-                        JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                if (!services.GeminiConfig.isConfigured()) {
-                    JOptionPane.showMessageDialog(this, 
-                        "AI service is not configured. Please set the API key in the settings first.", 
-                        "Kelwin AI Polish Feedback Not Configured", 
-                        JOptionPane.INFORMATION_MESSAGE);
-                    return;
-                }
-                btnPolish.setEnabled(false);
-                btnPolish.setText("✨ Polishing...");
-                
-                SwingWorker<String, Void> worker = new SwingWorker<>() {
-                    @Override protected String doInBackground() throws Exception {
-                        return services.GeminiService.polishFeedback(rawFeedback);
-                    }
-                    @Override protected void done() {
-                        btnPolish.setEnabled(true);
-                        btnPolish.setText("✨ Kelwin AI Polish Feedback");
-                        try {
-                            String result = get();
-                            showPolishConfirmationDialog(rawFeedback, result);
-                        } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(AppointmentDetailFrame.this,
-                                "Error polishing feedback: " + ex.getMessage(),
-                                "Kelwin AI Polish Feedback Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    }
-                };
-                worker.execute();
-            });
+            btnPolish.addActionListener(e -> doAiPolish());
             btnRow.add(btnPolish);
 
             JButton btnComplete = UITheme.accentButton("✔  Mark as Completed");
@@ -363,7 +298,7 @@ public class AppointmentDetailFrame extends JFrame {
         panel.add(title, BorderLayout.NORTH);
         panel.add(scroll, BorderLayout.CENTER);
 
-        JButton btnClose = UITheme.accentButton("Dismiss");
+        JButton btnClose = UITheme.dangerButton("Dismiss");
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         footer.setOpaque(false);
         footer.add(btnClose);
@@ -447,5 +382,76 @@ public class AppointmentDetailFrame extends JFrame {
         btnReject.addActionListener(e -> dialog.dispose());
 
         dialog.setVisible(true);
+    }
+
+    private void doAiGuide() {
+        if (!services.GeminiConfig.isConfigured()) {
+            JOptionPane.showMessageDialog(this, 
+                "AI service is not configured. Please set the API key in the settings first.", 
+                "Kelwin AI Diagnostic Guide Not Configured", 
+                JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        btnAiGuide.setEnabled(false);
+        btnAiGuide.setText("✨ Generating...");
+        
+        SwingWorker<String, Void> worker = new SwingWorker<>() {
+            @Override protected String doInBackground() throws Exception {
+                return services.GeminiService.generateDiagnosticChecklist(
+                    appointment.getServiceType(), appointment.getComments());
+            }
+            @Override protected void done() {
+                btnAiGuide.setEnabled(true);
+                btnAiGuide.setText("✨ Kelwin AI Diagnostic Guide");
+                try {
+                    String result = get();
+                    showChecklistDialog(result);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(AppointmentDetailFrame.this,
+                        "Error generating checklist: " + ex.getMessage(),
+                        "Kelwin AI Diagnostic Guide Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        };
+        worker.execute();
+    }
+
+    private void doAiPolish() {
+        String rawFeedback = taFeedback.getText().trim();
+        if (rawFeedback.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Please write some raw feedback in the text area first.", 
+                "Kelwin AI Polish Feedback", 
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (!services.GeminiConfig.isConfigured()) {
+            JOptionPane.showMessageDialog(this, 
+                "AI service is not configured. Please set the API key in the settings first.", 
+                "Kelwin AI Polish Feedback Not Configured", 
+                JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        btnPolish.setEnabled(false);
+        btnPolish.setText("✨ Polishing...");
+        
+        SwingWorker<String, Void> worker = new SwingWorker<>() {
+            @Override protected String doInBackground() throws Exception {
+                return services.GeminiService.polishFeedback(rawFeedback);
+            }
+            @Override protected void done() {
+                btnPolish.setEnabled(true);
+                btnPolish.setText("✨ Kelwin AI Polish Feedback");
+                try {
+                    String result = get();
+                    showPolishConfirmationDialog(rawFeedback, result);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(AppointmentDetailFrame.this,
+                        "Error polishing feedback: " + ex.getMessage(),
+                        "Kelwin AI Polish Feedback Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        };
+        worker.execute();
     }
 }
