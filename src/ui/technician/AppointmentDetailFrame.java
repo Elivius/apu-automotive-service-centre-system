@@ -112,19 +112,21 @@ public class AppointmentDetailFrame extends JFrame {
         commScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
         card.add(commScroll);
 
-        // ✨ AI Diagnostic Guide
-        btnAiGuide = UITheme.aiButton("Diagnostic Guide");
-        btnAiGuide.setName("btnAiGuide");
-        btnAiGuide.setAlignmentX(LEFT_ALIGNMENT);
-        btnAiGuide.addActionListener(e -> doAiGuide());
+        if (!isCompleted && !isDeclined) {
+            // ✨ AI Diagnostic Guide
+            btnAiGuide = UITheme.aiButton("Diagnostic Guide");
+            btnAiGuide.setName("btnAiGuide");
+            btnAiGuide.setAlignmentX(LEFT_ALIGNMENT);
+            btnAiGuide.addActionListener(e -> doAiGuide());
 
-        JPanel guideWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        guideWrapper.setOpaque(false);
-        guideWrapper.setAlignmentX(LEFT_ALIGNMENT);
-        guideWrapper.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
-        guideWrapper.add(btnAiGuide);
-        card.add(Box.createVerticalStrut(6));
-        card.add(guideWrapper);
+            JPanel guideWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+            guideWrapper.setOpaque(false);
+            guideWrapper.setAlignmentX(LEFT_ALIGNMENT);
+            guideWrapper.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+            guideWrapper.add(btnAiGuide);
+            card.add(Box.createVerticalStrut(6));
+            card.add(guideWrapper);
+        }
 
         // ── Technician Feedback (editable) ───────────────────────────
 

@@ -425,6 +425,14 @@ public class ManageAppointmentsPanel extends JPanel {
         int modelRow = table.convertRowIndexToModel(row);
         Appointment apt = appointments.get(modelRow);
 
+        if (apt.getStatus().equalsIgnoreCase("Completed") || apt.getStatus().equalsIgnoreCase("Declined")) {
+            JOptionPane.showMessageDialog(this, 
+                "Cannot perform AI Technician Matching on an appointment that is already " + apt.getStatus() + ".", 
+                "Kelwin AI Matching", 
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         if (!services.GeminiConfig.isConfigured()) {
             JOptionPane.showMessageDialog(this, 
                 "AI service is not configured. Please set the API key in the settings first.", 
