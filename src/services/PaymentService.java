@@ -275,6 +275,33 @@ public class PaymentService {
                 payment.setPaymentStatus(Payment.STATUS_DECLINED);
                 FileHandler.getInstance().updateLine(FileHandler.PAYMENTS_FILE, payment.getPaymentId(), payment.toFileString());
                 AuditLogger.log("SYSTEM", "DECLINE_PAYMENT", payment.getPaymentId() + " | Appointment: " + appointmentId);
+            }
+        }
+    }
+
+    /**
+     * Updates the payment amount and status when an appointment's service type is changed.
+     * If the payment was already "Paid", it reverts to "Pending" and "Physical" so the 
+     * Counter Staff can settle the difference (either collect extra or refund).
+     *
+     * @param appointmentId the appointment ID
+     * @param newAmount     the new service price
+     */
+    public static void updatePaymentForServiceChange(String appointmentId, double newAmount) {
+        List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.PAYMENTS_FILE);
+        for (String line : lines) {
+            Payment payment = Payment.fromFileString(line);
+            if (payment != null && appointmentId.equals(payment.getAppointmentId())) {
+                if (payment.getAmount() != newAmount) {
+                    payment.setAmount(newAmount);
+                    if ("Paid".equals(payment.getPaymentStatus())) {
+                        payment.setPaymentStatus(Payment.STATUS_PENDING);
+                        payment.setPaymentMethod(Payment.METHOD_PHYSICAL);
+                        AuditLogger.log("SYSTEM", "PAYMENT_REVERTED_TO_PENDING", payment.getPaymentId() + " | Reason: Service Changed | New Amount: RM" + String.format("%.2f", newAmount));
+                    }
+                    FileHandler.getInstance().updateLine(FileHandler.PAYMENTS_FILE, payment.getPaymentId(), payment.toFileString());
+                    AuditLogger.log("SYSTEM", "UPDATE_PAYMENT_AMOUNT", payment.getPaymentId() + " | Appointment: " + appointmentId + " | New Amount: RM" + String.format("%.2f", newAmount));
+                }
                 break;
             }
         }
