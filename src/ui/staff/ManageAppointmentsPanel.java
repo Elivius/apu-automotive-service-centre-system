@@ -21,8 +21,10 @@ import java.awt.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.stream.Collectors;
@@ -166,6 +168,7 @@ public class ManageAppointmentsPanel extends JPanel {
     void refresh() {
         tableModel.setRowCount(0);
         appointments = AppointmentService.getAllAppointments();
+        Collections.reverse(appointments);
 
         // Build a lookup map: customerId -> User for fast name/phone resolution
         Map<String, Customer> customerMap = UserService.getAllCustomersMap();

@@ -11,6 +11,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -149,6 +150,7 @@ public class PaymentHistoryPanel extends JPanel {
     void refresh() {
         tableModel.setRowCount(0);
         payments = PaymentService.getPaymentHistory(customer.getUserId());
+        Collections.reverse(payments);
         for (Payment payment : payments) {
             tableModel.addRow(new Object[]{
                 payment.getPaymentId(),

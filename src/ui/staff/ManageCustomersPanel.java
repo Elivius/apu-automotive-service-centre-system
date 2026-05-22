@@ -17,10 +17,12 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 import java.awt.*;
-import java.util.List;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -347,6 +349,7 @@ public class ManageCustomersPanel extends JPanel {
         Runnable refreshDialogTable = () -> {
             dtm.setRowCount(0);
             custApptsRef[0] = AppointmentService.getAllAppointmentsForCustomer(customer.getUserId());
+            Collections.reverse(custApptsRef[0]);
             List<Payment> custPayments = PaymentService.getPaymentHistory(customer.getUserId());
 
             paymentMapRef[0] = new HashMap<>();
@@ -388,7 +391,8 @@ public class ManageCustomersPanel extends JPanel {
                 JOptionPane.showMessageDialog(dialog, "Please select an appointment.");
                 return;
             }
-            Appointment apt = custApptsRef[0].get(selRow);
+            int apptModelRow = apptTable.convertRowIndexToModel(selRow);
+            Appointment apt = custApptsRef[0].get(apptModelRow);
 
             if ("Completed".equals(apt.getStatus()) || "Declined".equals(apt.getStatus())) {
                 JOptionPane.showMessageDialog(dialog, "Cannot assign a " + apt.getStatus() + " appointment.");
@@ -449,7 +453,8 @@ public class ManageCustomersPanel extends JPanel {
         btnCollect.addActionListener(e -> {
             int selRow = apptTable.getSelectedRow();
             if (selRow < 0) { JOptionPane.showMessageDialog(dialog, "Please select an appointment."); return; }
-            Appointment apt = custApptsRef[0].get(selRow);
+            int apptModelRow = apptTable.convertRowIndexToModel(selRow);
+            Appointment apt = custApptsRef[0].get(apptModelRow);
 
             if (apt.getTechnicianId() == null || apt.getTechnicianId().isEmpty()) {
                 JOptionPane.showMessageDialog(dialog,
@@ -493,7 +498,8 @@ public class ManageCustomersPanel extends JPanel {
                 JOptionPane.showMessageDialog(dialog, "Please select an appointment.");
                 return;
             }
-            Appointment apt = custApptsRef[0].get(selRow);
+            int apptModelRow = apptTable.convertRowIndexToModel(selRow);
+            Appointment apt = custApptsRef[0].get(apptModelRow);
 
             if ("Completed".equals(apt.getStatus()) || "Declined".equals(apt.getStatus())) {
                 JOptionPane.showMessageDialog(dialog, "Cannot decline an appointment that is already " + apt.getStatus() + ".");

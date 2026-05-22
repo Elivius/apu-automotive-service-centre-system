@@ -13,6 +13,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -226,6 +227,7 @@ public class MyAppointmentsPanel extends JPanel {
     void refresh() {
         tableModel.setRowCount(0);
         appointments = AppointmentService.getAllAppointmentsForCustomer(customer.getUserId());
+        Collections.reverse(appointments);
         for (Appointment apt : appointments) {
             tableModel.addRow(new Object[]{
                 apt.getAppointmentId(),
