@@ -10,6 +10,7 @@ import services.AppointmentService;
 import services.PaymentService;
 import services.UserService;
 import ui.UITheme;
+import ui.PopupFieldFactory;
 import utils.DateUtils;
 import utils.InputValidator;
 
@@ -381,8 +382,60 @@ public class ManageCustomersPanel extends JPanel {
         actions.setBorder(BorderFactory.createEmptyBorder(0, 8, 8, 8));
 
         JButton btnAssign  = UITheme.accentButton("\uD83D\uDC77  Assign Technician");
+        JButton btnEditService = UITheme.warningButton("✏️  Edit Service");
         JButton btnCollect = UITheme.secondaryButton("\uD83D\uDCB3  Collect Payment");
         JButton btnDecline = UITheme.dangerButton("\u2717  Decline");
+
+        // ── Edit Service action ───────────────────────────────────────
+        btnEditService.addActionListener(e -> {
+            int selRow = apptTable.getSelectedRow();
+            if (selRow < 0) {
+                JOptionPane.showMessageDialog(dialog, "Please select an appointment from the table first.");
+                return;
+            }
+            int apptModelRow = apptTable.convertRowIndexToModel(selRow);
+            Appointment apt = custApptsRef[0].get(apptModelRow);
+
+            if ("Completed".equals(apt.getStatus()) || "Declined".equals(apt.getStatus())) {
+                JOptionPane.showMessageDialog(dialog, "Cannot modify a " + apt.getStatus() + " appointment.");
+                return;
+            }
+
+            String[] serviceHolder = { apt.getServiceType() };
+            JPanel serviceField = PopupFieldFactory.createDropdownField(
+                new String[]{"Normal", "Major"}, serviceHolder, null);
+
+            JLabel prompt = new JLabel("Select new service type for Appointment " + apt.getAppointmentId() + ":");
+            prompt.setFont(UITheme.FONT_BODY);
+            prompt.setForeground(UITheme.TEXT_PRIMARY);
+            prompt.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 0));
+
+            JPanel form = new JPanel();
+            form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
+            form.setBackground(UITheme.BG_CARD);
+            form.add(prompt);
+            form.add(serviceField);
+
+            int res = JOptionPane.showConfirmDialog(dialog, form, "Edit Service Type",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+            if (res == JOptionPane.OK_OPTION) {
+                String selected = serviceHolder[0];
+                if (!selected.equals(apt.getServiceType())) {
+                    try {
+                        apt.setServiceType(selected);
+                        AppointmentService.updateAppointment(apt);
+                        JOptionPane.showMessageDialog(dialog, "Service type updated to " + selected + ".");
+                        refreshDialogTable.run();
+                    } catch (ConcurrencyException ex) {
+                        JOptionPane.showMessageDialog(this,
+                            "Error: " + ex.getMessage(),
+                            "Concurrency Error", JOptionPane.ERROR_MESSAGE);
+                        refreshDialogTable.run();
+                    }
+                }
+            }
+        });
 
         // ── Assign Technician action ──────────────────────────────────
         btnAssign.addActionListener(e -> {
@@ -407,10 +460,26 @@ public class ManageCustomersPanel extends JPanel {
 
             String[] techNames = technicians.stream()
                     .map(tech -> tech.getUserId() + " — " + tech.getName()).toArray(String[]::new);
-            String chosen = (String) JOptionPane.showInputDialog(dialog,
-                    "Select a technician for appointment " + apt.getAppointmentId() + ":",
-                    "Assign Technician", JOptionPane.PLAIN_MESSAGE, null, techNames, techNames[0]);
-            if (chosen == null) return;
+                    
+            String[] techHolder = { techNames[0] };
+            JPanel techField = PopupFieldFactory.createDropdownField(techNames, techHolder, null);
+
+            JLabel prompt = new JLabel("Select a technician for appointment " + apt.getAppointmentId() + ":");
+            prompt.setFont(UITheme.FONT_BODY);
+            prompt.setForeground(UITheme.TEXT_PRIMARY);
+            prompt.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 0));
+
+            JPanel form = new JPanel();
+            form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
+            form.setBackground(UITheme.BG_CARD);
+            form.add(prompt);
+            form.add(techField);
+
+            int res = JOptionPane.showConfirmDialog(dialog, form, "Assign Technician",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (res != JOptionPane.OK_OPTION) return;
+
+            String chosen = techHolder[0];
 
             String techId = chosen.split(" — ")[0].trim();
             try {
@@ -530,6 +599,7 @@ public class ManageCustomersPanel extends JPanel {
         JPanel leftActions = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         leftActions.setOpaque(false);
         leftActions.add(btnAssign);
+        leftActions.add(btnEditService);
         leftActions.add(btnCollect);
 
         JPanel rightActions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));

@@ -108,6 +108,9 @@ public class ManageAppointmentsPanel extends JPanel {
         JButton btnAssign  = UITheme.accentButton("👷  Assign Technician");
         btnAssign.setName("btnAssign");
         
+        JButton btnEditService = UITheme.warningButton("✏️  Edit Service");
+        btnEditService.setName("btnEditService");
+        
         btnAiMatching = UITheme.aiButton("Technician Matching");
         btnAiMatching.setName("btnAiMatching");
 
@@ -116,6 +119,7 @@ public class ManageAppointmentsPanel extends JPanel {
         JButton btnDecline = UITheme.dangerButton("✗  Decline");
         btnDecline.setName("btnDecline");
         btnAssign.addActionListener(e  -> showAssignDialog());
+        btnEditService.addActionListener(e -> doEditService());
         btnAiMatching.addActionListener(e -> doAiMatching());
         btnCollect.addActionListener(e -> doCollectPayment());
         btnDecline.addActionListener(e -> doDecline());
@@ -127,6 +131,7 @@ public class ManageAppointmentsPanel extends JPanel {
         JPanel leftActions = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         leftActions.setOpaque(false);
         leftActions.add(btnAssign);
+        leftActions.add(btnEditService);
         leftActions.add(btnAiMatching);
         leftActions.add(btnCollect);
 
@@ -224,10 +229,26 @@ public class ManageAppointmentsPanel extends JPanel {
 
         String[] techNames = technicians.stream()
                 .map(tech -> tech.getUserId() + " — " + tech.getName()).toArray(String[]::new);
-        String chosen = (String) JOptionPane.showInputDialog(this,
-                "Select a technician for appointment " + apt.getAppointmentId() + ":",
-                "Assign Technician", JOptionPane.PLAIN_MESSAGE, null, techNames, techNames[0]);
-        if (chosen == null) return;
+                
+        String[] techHolder = { techNames[0] };
+        JPanel techField = PopupFieldFactory.createDropdownField(techNames, techHolder, null);
+
+        JLabel prompt = new JLabel("Select a technician for appointment " + apt.getAppointmentId() + ":");
+        prompt.setFont(UITheme.FONT_BODY);
+        prompt.setForeground(UITheme.TEXT_PRIMARY);
+        prompt.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 0));
+
+        JPanel form = new JPanel();
+        form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
+        form.setBackground(UITheme.BG_CARD);
+        form.add(prompt);
+        form.add(techField);
+
+        int res = JOptionPane.showConfirmDialog(this, form, "Assign Technician",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (res != JOptionPane.OK_OPTION) return;
+
+        String chosen = techHolder[0];
 
         String techId = chosen.split(" — ")[0].trim();
         try {
@@ -416,6 +437,56 @@ public class ManageAppointmentsPanel extends JPanel {
         AppointmentService.bookAppointment(custId, serviceType, dateTime, comments, "Physical");
         refresh();
         JOptionPane.showMessageDialog(this, "Appointment created successfully.");
+    }
+
+    private void doEditService() {
+        int row = table.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, "Please select an appointment from the table first.");
+            return;
+        }
+        int modelRow = table.convertRowIndexToModel(row);
+        Appointment apt = appointments.get(modelRow);
+
+        if ("Completed".equals(apt.getStatus()) || "Declined".equals(apt.getStatus())) {
+            JOptionPane.showMessageDialog(this, "Cannot modify a " + apt.getStatus() + " appointment.");
+            return;
+        }
+
+        String[] serviceHolder = { apt.getServiceType() };
+        JPanel serviceField = PopupFieldFactory.createDropdownField(
+            new String[]{"Normal", "Major"}, serviceHolder, null);
+
+        JLabel prompt = new JLabel("Select new service type for Appointment " + apt.getAppointmentId() + ":");
+        prompt.setFont(UITheme.FONT_BODY);
+        prompt.setForeground(UITheme.TEXT_PRIMARY);
+        prompt.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 0));
+
+        JPanel form = new JPanel();
+        form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
+        form.setBackground(UITheme.BG_CARD);
+        form.add(prompt);
+        form.add(serviceField);
+
+        int res = JOptionPane.showConfirmDialog(this, form, "Edit Service Type",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (res == JOptionPane.OK_OPTION) {
+            String selected = serviceHolder[0];
+            if (!selected.equals(apt.getServiceType())) {
+                try {
+                    apt.setServiceType(selected);
+                    AppointmentService.updateAppointment(apt);
+                    JOptionPane.showMessageDialog(this, "Service type updated to " + selected + ".");
+                    refresh();
+                } catch (ConcurrencyException ex) {
+                    JOptionPane.showMessageDialog(this,
+                        "Error: " + ex.getMessage(),
+                        "Concurrency Error", JOptionPane.ERROR_MESSAGE);
+                    refresh();
+                }
+            }
+        }
     }
 
     private void doAiMatching() {
