@@ -23,6 +23,7 @@ public class AllFeedbackPanel extends JPanel {
 
     private TableRowSorter<DefaultTableModel> sorter;
     private JTextField tfSearch;
+    private JButton btnAiSentiment;
 
     public AllFeedbackPanel() {
         setBackground(UITheme.BG_DARK);
@@ -48,51 +49,9 @@ public class AllFeedbackPanel extends JPanel {
             public void changedUpdate(javax.swing.event.DocumentEvent e) { filterTable(); }
         });
 
-        JButton btnAiSentiment = UITheme.aiButton("Sentiment Analysis");
+        btnAiSentiment = UITheme.aiButton("Sentiment Analysis");
         btnAiSentiment.setName("btnAiSentiment");
-        btnAiSentiment.addActionListener(e -> {
-            if (!services.GeminiConfig.isConfigured()) {
-                JOptionPane.showMessageDialog(this, 
-                    "AI service is not configured. Please set the API key in the settings first.", 
-                    "Kelwin AI Sentiment Analysis Not Configured", 
-                    JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-
-            if (appointments == null || appointments.isEmpty()) {
-                JOptionPane.showMessageDialog(this, 
-                    "No feedback or reviews are currently available for sentiment analysis.", 
-                    "Kelwin AI Sentiment Analysis", 
-                    JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-
-            btnAiSentiment.setEnabled(false);
-            btnAiSentiment.setText("✨ Analyzing...");
-
-            SwingWorker<String, Void> worker = new SwingWorker<>() {
-                @Override
-                protected String doInBackground() throws Exception {
-                    return services.GeminiService.analyzeSentiment(appointments);
-                }
-
-                @Override
-                protected void done() {
-                    btnAiSentiment.setEnabled(true);
-                    btnAiSentiment.setText("✨ Kelwin AI Sentiment Analysis");
-                    try {
-                        String result = get();
-                        showSentimentDialog(result);
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(AllFeedbackPanel.this,
-                            "Error analyzing sentiment: " + ex.getMessage(),
-                            "Kelwin AI Sentiment Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            };
-            worker.execute();
-        });
+        btnAiSentiment.addActionListener(e -> doAiSentiment());
 
         JButton btnRefresh = UITheme.secondaryButton("↻ Refresh");
         btnRefresh.setName("btnRefresh");
@@ -251,5 +210,49 @@ public class AllFeedbackPanel extends JPanel {
 
         btnClose.addActionListener(e -> dialog.dispose());
         dialog.setVisible(true);
+    }
+
+    private void doAiSentiment() {
+        if (!services.GeminiConfig.isConfigured()) {
+            JOptionPane.showMessageDialog(this, 
+                "AI service is not configured. Please set the API key in the settings first.", 
+                "Kelwin AI Sentiment Analysis Not Configured", 
+                JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        if (appointments == null || appointments.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "No feedback or reviews are currently available for sentiment analysis.", 
+                "Kelwin AI Sentiment Analysis", 
+                JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        btnAiSentiment.setEnabled(false);
+        btnAiSentiment.setText("✨ Analyzing...");
+
+        SwingWorker<String, Void> worker = new SwingWorker<>() {
+            @Override
+            protected String doInBackground() throws Exception {
+                return services.GeminiService.analyzeSentiment(appointments);
+            }
+
+            @Override
+            protected void done() {
+                btnAiSentiment.setEnabled(true);
+                btnAiSentiment.setText("✨ Kelwin AI Sentiment Analysis");
+                try {
+                    String result = get();
+                    showSentimentDialog(result);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(AllFeedbackPanel.this,
+                        "Error analyzing sentiment: " + ex.getMessage(),
+                        "Kelwin AI Sentiment Error",
+                        JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        };
+        worker.execute();
     }
 }
