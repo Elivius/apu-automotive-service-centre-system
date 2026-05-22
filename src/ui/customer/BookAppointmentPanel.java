@@ -270,9 +270,9 @@ public class BookAppointmentPanel extends JPanel {
         panel.add(title, BorderLayout.NORTH);
         panel.add(scroll, BorderLayout.CENTER);
 
-        JButton btnApplyNormal = UITheme.secondaryButton("Apply 'Normal' Service");
-        JButton btnApplyMajor = UITheme.secondaryButton("Apply 'Major' Service");
-        JButton btnClose = UITheme.accentButton("Dismiss");
+        JButton btnApplyNormal = UITheme.accentButton("Apply 'Normal' Service");
+        JButton btnApplyMajor = UITheme.accentButton("Apply 'Major' Service");
+        JButton btnClose = UITheme.dangerButton("Dismiss");
         
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         footer.setOpaque(false);

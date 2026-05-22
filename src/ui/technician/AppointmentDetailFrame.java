@@ -363,7 +363,7 @@ public class AppointmentDetailFrame extends JFrame {
         panel.add(title, BorderLayout.NORTH);
         panel.add(scroll, BorderLayout.CENTER);
 
-        JButton btnClose = UITheme.accentButton("Dismiss");
+        JButton btnClose = UITheme.dangerButton("Dismiss");
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         footer.setOpaque(false);
         footer.add(btnClose);

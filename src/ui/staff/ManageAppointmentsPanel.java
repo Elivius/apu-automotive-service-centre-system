@@ -487,13 +487,13 @@ public class ManageAppointmentsPanel extends JPanel {
         panel.add(title, BorderLayout.NORTH);
         panel.add(scroll, BorderLayout.CENTER);
 
-        JButton btnClose = UITheme.accentButton("Dismiss");
-        JButton btnAssignTech = UITheme.secondaryButton("Proceed to Assign");
+        JButton btnAssignTech = UITheme.accentButton("Proceed to Assign");
+        JButton btnClose = UITheme.dangerButton("Dismiss");
         
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         footer.setOpaque(false);
-        footer.add(btnClose);
         footer.add(btnAssignTech);
+        footer.add(btnClose);
         
         panel.add(footer, BorderLayout.SOUTH);
 
