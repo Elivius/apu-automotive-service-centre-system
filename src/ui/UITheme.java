@@ -210,6 +210,33 @@ public class UITheme {
         return btn;
     }
 
+    public static JButton aiButton(String text) {
+        JButton btn = new JButton("✨ Kelwin AI " + text) {
+            @Override protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                Color c1 = getModel().isRollover() ? new Color(0x34D399) : SUCCESS;
+                Color c2 = getModel().isRollover() ? new Color(0x059669) : new Color(0x047857);
+                GradientPaint gp = new GradientPaint(0, 0, c1, 0, getHeight(), c2);
+                g2.setPaint(gp);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+            {
+                setFont(FONT_BUTTON);
+                setForeground(Color.WHITE);
+                setOpaque(false);
+                setContentAreaFilled(false);
+                setBorderPainted(false);
+                setFocusPainted(false);
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                setPreferredSize(new Dimension(getPreferredSize().width + 28, 40));
+            }
+        };
+        return btn;
+    }
+
     // ─── Field Factories ───────────────────────────────────────────────
 
     /** A styled JTextField with focus glow effect. */
