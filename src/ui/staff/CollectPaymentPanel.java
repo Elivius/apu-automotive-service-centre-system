@@ -16,6 +16,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.*;
 import java.awt.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -128,6 +129,7 @@ public class CollectPaymentPanel extends JPanel {
     void refresh() {
         tableModel.setRowCount(0);
         pendingPayments = PaymentService.getPendingPhysicalPayments();
+        Collections.reverse(pendingPayments);
 
         // Build customer lookup map for name/phone resolution
         Map<String, Customer> customerMap = UserService.getAllCustomersMap();

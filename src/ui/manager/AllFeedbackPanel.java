@@ -9,6 +9,7 @@ import ui.UITheme;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -116,6 +117,7 @@ public class AllFeedbackPanel extends JPanel {
     void refresh() {
         tableModel.setRowCount(0);
         appointments = FeedbackService.getAllFeedback();
+        Collections.reverse(appointments);
         for (Appointment apt : appointments) {
             tableModel.addRow(new Object[]{
                 apt.getAppointmentId(), apt.getCustomerId(),
