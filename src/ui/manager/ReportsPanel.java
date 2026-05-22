@@ -49,6 +49,35 @@ public class ReportsPanel extends JPanel {
         long major = all.stream().filter(apt -> "Major".equals(apt.getServiceType())).count();
         long total = all.size();
 
+        // ── Compute Earnings Data ──────────────────────────────────────
+        Map<String, models.Payment> allPayments = services.PaymentService.getAllPaymentsMapByAppointment();
+        
+        long onlineCount = allPayments.values().stream()
+                .filter(p -> "Paid".equals(p.getPaymentStatus()))
+                .filter(p -> "Online".equals(p.getPaymentMethod()))
+                .count();
+        long physicalCount = allPayments.values().stream()
+                .filter(p -> "Paid".equals(p.getPaymentStatus()))
+                .filter(p -> "Physical".equals(p.getPaymentMethod()))
+                .count();
+
+        java.time.YearMonth currentMonth = java.time.YearMonth.now();
+        String[] monthLabels = new String[6];
+        double[] monthEarnings = new double[6];
+        
+        for (int i = 5; i >= 0; i--) {
+            java.time.YearMonth ym = currentMonth.minusMonths(i);
+            monthLabels[5 - i] = ym.format(java.time.format.DateTimeFormatter.ofPattern("MMM yy"));
+            
+            double totalForMonth = allPayments.values().stream()
+                .filter(p -> "Paid".equals(p.getPaymentStatus()))
+                .filter(p -> p.getDateTime() != null && java.time.YearMonth.from(p.getDateTime()).equals(ym))
+                .mapToDouble(models.Payment::getAmount)
+                .sum();
+                
+            monthEarnings[5 - i] = totalForMonth;
+        }
+
         // ── Bar chart panel ──────────────────────────────────────────
         JPanel chartCard = UITheme.cardPanel();
         chartCard.setLayout(new BorderLayout());
@@ -89,12 +118,45 @@ public class ReportsPanel extends JPanel {
         center.setOpaque(false);
         center.add(summaryRow, BorderLayout.NORTH);
 
-        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chartCard, pieCard);
-        split.setDividerLocation(600);
-        split.setDividerSize(6);
-        split.setBorder(null);
-        split.setBackground(UITheme.BG_DARK);
-        center.add(split, BorderLayout.CENTER);
+        JPanel split = new JPanel(new GridLayout(1, 2, 16, 0));
+        split.setOpaque(false);
+        split.add(chartCard);
+        split.add(pieCard);
+
+        // ── Line Chart Panel ─────────────────────────────────────────
+        JPanel lineCard = UITheme.cardPanel();
+        lineCard.setLayout(new BorderLayout());
+        lineCard.setBorder(BorderFactory.createEmptyBorder(20, 24, 20, 24));
+        LineChartPanel lineChart = new LineChartPanel(
+            monthLabels, monthEarnings, UITheme.ACCENT, "Monthly Revenue (RM)"
+        );
+        lineChart.setName("lineChart");
+        lineCard.add(lineChart, BorderLayout.CENTER);
+
+        // ── Payment Method Pie ───────────────────────────────────────
+        JPanel paymentPieCard = UITheme.cardPanel();
+        paymentPieCard.setLayout(new BorderLayout());
+        paymentPieCard.setBorder(BorderFactory.createEmptyBorder(20, 24, 20, 24));
+        PiePanel paymentPie = new PiePanel(
+            new String[]{"Online", "Physical"},
+            new long[]{onlineCount, physicalCount},
+            new Color[]{UITheme.ACCENT_SECONDARY, UITheme.WARNING}
+        );
+        paymentPieCard.add(UITheme.headerLabel("Payment Methods"), BorderLayout.NORTH);
+        paymentPieCard.add(paymentPie, BorderLayout.CENTER);
+        paymentPieCard.setPreferredSize(new Dimension(300, 0));
+
+        JPanel bottomRow = new JPanel(new BorderLayout(16, 0));
+        bottomRow.setOpaque(false);
+        bottomRow.add(lineCard, BorderLayout.CENTER);
+        bottomRow.add(paymentPieCard, BorderLayout.EAST);
+
+        JPanel chartsContainer = new JPanel(new GridLayout(2, 1, 0, 16));
+        chartsContainer.setOpaque(false);
+        chartsContainer.add(split);
+        chartsContainer.add(bottomRow);
+
+        center.add(chartsContainer, BorderLayout.CENTER);
 
         add(center, BorderLayout.CENTER);
     }
@@ -238,6 +300,136 @@ public class ReportsPanel extends JPanel {
                 g2.setFont(UITheme.FONT_BODY);
                 g2.drawString(labels[i] + " (" + values[i] + ")", lx + 18, ly + 12);
             }
+            g2.dispose();
+        }
+    }
+
+    static class LineChartPanel extends JPanel {
+        private final String[] labels;
+        private final double[] values;
+        private final Color color;
+        private final String title;
+
+        LineChartPanel(String[] labels, double[] values, Color color, String title) {
+            this.labels = labels;
+            this.values = values;
+            this.color = color;
+            this.title = title;
+            setOpaque(false);
+            setPreferredSize(new Dimension(0, 320));
+        }
+
+        @Override protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            int w = getWidth(), h = getHeight();
+            int padL = 60, padR = 30, padT = 50, padB = 40;
+            int chartW = w - padL - padR;
+            int chartH = h - padT - padB;
+
+            // Title
+            g2.setColor(UITheme.TEXT_PRIMARY);
+            g2.setFont(UITheme.FONT_HEADER);
+            g2.drawString(title, padL, padT - 20);
+
+            double max = -Double.MAX_VALUE;
+            double min = Double.MAX_VALUE;
+            for (double val : values) {
+                if (val > max) max = val;
+                if (val < min) min = val;
+            }
+            if (max == -Double.MAX_VALUE) { max = 1; min = 0; }
+            if (max == min) {
+                if (max == 0) max = 1;
+                else {
+                    min = Math.max(0, max * 0.8);
+                    max = max * 1.2;
+                }
+            }
+
+            double range = max - min;
+            double paddedMin = Math.max(0, min - range * 0.2);
+            double paddedMax = max + range * 0.2;
+
+            int numGrids = 4;
+            
+            // Calculate a clean round step for the Y-axis
+            double rawStep = (paddedMax - paddedMin) / numGrids;
+            if (rawStep == 0) rawStep = 1;
+            
+            double mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
+            double magFrac = rawStep / mag;
+            
+            double cleanStep;
+            if (magFrac <= 1) cleanStep = 1 * mag;
+            else if (magFrac <= 1.5) cleanStep = 2 * mag; // better fit for tight ranges
+            else if (magFrac <= 2) cleanStep = 2 * mag;
+            else if (magFrac <= 5) cleanStep = 5 * mag;
+            else cleanStep = 10 * mag;
+            
+            double finalMin = Math.floor(paddedMin / cleanStep) * cleanStep;
+            double finalMax = finalMin + cleanStep * numGrids;
+
+            // Draw Y-axis grid lines
+            g2.setFont(UITheme.FONT_BODY);
+            for (int i = 0; i <= numGrids; i++) {
+                int y = padT + chartH - (i * chartH / numGrids);
+                double gridVal = finalMin + (i * cleanStep);
+                
+                g2.setColor(UITheme.FIELD_BORDER);
+                g2.drawLine(padL, y, padL + chartW, y);
+                
+                g2.setColor(UITheme.TEXT_MUTED);
+                g2.drawString(String.format("RM%.0f", gridVal), 5, y + 4);
+            }
+
+            if (labels.length == 0) { g2.dispose(); return; }
+
+            int[] xPoints = new int[labels.length];
+            int[] yPoints = new int[labels.length];
+            double graphRange = finalMax - finalMin;
+
+            for (int i = 0; i < labels.length; i++) {
+                xPoints[i] = padL + (i * chartW / Math.max(1, labels.length - 1));
+                yPoints[i] = padT + chartH - (int) (chartH * (values[i] - finalMin) / graphRange);
+                
+                // Draw X-axis labels
+                g2.setColor(UITheme.TEXT_MUTED);
+                g2.drawString(labels[i], xPoints[i] - 20, padT + chartH + 25);
+            }
+
+            // Draw shaded area under line
+            Polygon poly = new Polygon(xPoints, yPoints, labels.length);
+            poly.addPoint(xPoints[labels.length - 1], padT + chartH);
+            poly.addPoint(xPoints[0], padT + chartH);
+            
+            GradientPaint gp = new GradientPaint(0, padT, new Color(color.getRed(), color.getGreen(), color.getBlue(), 100), 
+                                                 0, padT + chartH, new Color(color.getRed(), color.getGreen(), color.getBlue(), 10));
+            g2.setPaint(gp);
+            g2.fillPolygon(poly);
+
+            // Draw line
+            g2.setColor(color);
+            g2.setStroke(new BasicStroke(3f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            for (int i = 0; i < labels.length - 1; i++) {
+                g2.drawLine(xPoints[i], yPoints[i], xPoints[i+1], yPoints[i+1]);
+            }
+
+            // Draw points
+            for (int i = 0; i < labels.length; i++) {
+                g2.setColor(UITheme.BG_CARD);
+                g2.fillOval(xPoints[i] - 5, yPoints[i] - 5, 10, 10);
+                g2.setColor(color);
+                g2.setStroke(new BasicStroke(2f));
+                g2.drawOval(xPoints[i] - 5, yPoints[i] - 5, 10, 10);
+                
+                // Draw value
+                g2.setColor(UITheme.TEXT_PRIMARY);
+                g2.drawString(String.format("%.0f", values[i]), xPoints[i] - 15, yPoints[i] - 15);
+            }
+
             g2.dispose();
         }
     }
