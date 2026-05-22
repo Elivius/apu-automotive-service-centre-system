@@ -193,7 +193,7 @@ public class ManageStaffPanel extends JPanel {
             if (isTech) tfSpecialization.setText(((models.Technician)prefill).getSpecialization());
         }
 
-        form.add(UITheme.formRow("Username *", tfUsername));
+        form.add(UITheme.formRow("Username (View Only)", tfUsername));
         form.add(Box.createVerticalStrut(8));
         form.add(UITheme.formRow("Full Name *", tfName));
         form.add(Box.createVerticalStrut(8));
