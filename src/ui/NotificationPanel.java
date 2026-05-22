@@ -10,6 +10,7 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * A dropdown notification panel that appears when the bell icon is clicked.
@@ -22,6 +23,9 @@ public class NotificationPanel extends JPopupMenu {
 
     private static final int PANEL_WIDTH = 380;
     private static final int MAX_VISIBLE_HEIGHT = 420;
+    
+    private static final Color NOTIF_BG = new Color(0x282A4A);
+    private static final Color NOTIF_HOVER = new Color(0x353860);
 
     private final User user;
     private final Runnable onDismissCallback;
@@ -29,7 +33,7 @@ public class NotificationPanel extends JPopupMenu {
     private NotificationPanel(User user, Runnable onDismissCallback) {
         this.user = user;
         this.onDismissCallback = onDismissCallback;
-        setBackground(UITheme.BG_CARD);
+        setBackground(NOTIF_BG);
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(UITheme.FIELD_BORDER, 1),
                 BorderFactory.createEmptyBorder(0, 0, 0, 0)));
@@ -54,6 +58,7 @@ public class NotificationPanel extends JPopupMenu {
         setLayout(new BorderLayout());
 
         List<Notification> notifications = NotificationService.getNotificationsForUser(user.getUserId(), user.getRole());
+        Collections.reverse(notifications);
 
         // ── Header ────────────────────────────────────────────────────────
         JPanel header = new JPanel(new BorderLayout());
@@ -100,7 +105,7 @@ public class NotificationPanel extends JPopupMenu {
         // ── Notification List ─────────────────────────────────────────────
         if (notifications.isEmpty()) {
             JPanel emptyPanel = new JPanel(new GridBagLayout());
-            emptyPanel.setBackground(UITheme.BG_CARD);
+            emptyPanel.setBackground(NOTIF_BG);
             emptyPanel.setPreferredSize(new Dimension(PANEL_WIDTH, 100));
 
             JLabel lblEmpty = new JLabel("No new notifications");
@@ -113,7 +118,7 @@ public class NotificationPanel extends JPopupMenu {
         } else {
             JPanel listPanel = new JPanel();
             listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
-            listPanel.setBackground(UITheme.BG_CARD);
+            listPanel.setBackground(NOTIF_BG);
 
             for (Notification notification : notifications) {
                 listPanel.add(createNotificationRow(notification));
@@ -121,7 +126,7 @@ public class NotificationPanel extends JPopupMenu {
 
             JScrollPane scrollPane = new JScrollPane(listPanel);
             scrollPane.setBorder(BorderFactory.createEmptyBorder());
-            scrollPane.getViewport().setBackground(UITheme.BG_CARD);
+            scrollPane.getViewport().setBackground(NOTIF_BG);
             scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
             scrollPane.getVerticalScrollBar().setUnitIncrement(12);
 
@@ -163,7 +168,7 @@ public class NotificationPanel extends JPopupMenu {
                 g.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
             }
         };
-        row.setBackground(UITheme.BG_CARD);
+        row.setBackground(NOTIF_BG);
         row.setBorder(BorderFactory.createEmptyBorder(10, 14, 10, 10));
         row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 76));
 
@@ -241,12 +246,12 @@ public class NotificationPanel extends JPopupMenu {
         row.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                row.setBackground(UITheme.TABLE_ALT_ROW);
+                row.setBackground(NOTIF_HOVER);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                row.setBackground(UITheme.BG_CARD);
+                row.setBackground(NOTIF_BG);
             }
         });
 
