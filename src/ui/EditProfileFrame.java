@@ -31,7 +31,7 @@ public class EditProfileFrame extends JFrame {
         this.onProfileUpdate = onProfileUpdate;
         setTitle("Edit Profile — " + user.getName());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setSize(520, 680);
+        setSize(600, 760);
         setMinimumSize(new Dimension(480, 500));
         setLocationRelativeTo(null);
         setResizable(true);
