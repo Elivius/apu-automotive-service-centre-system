@@ -424,8 +424,14 @@ public class ManageCustomersPanel extends JPanel {
                 if (!selected.equals(apt.getServiceType())) {
                     try {
                         apt.setServiceType(selected);
+                        apt.calculateEndDateTime(); // Ensure duration updates (1hr <-> 3hr)
                         AppointmentService.updateAppointment(apt);
-                        JOptionPane.showMessageDialog(dialog, "Service type updated to " + selected + ".");
+                        
+                        // Update associated payment price based on new service type
+                        double newPrice = PaymentService.getServicePrice(selected);
+                        PaymentService.updatePaymentForServiceChange(apt.getAppointmentId(), newPrice);
+                        
+                        JOptionPane.showMessageDialog(this, "Service type updated to " + selected + ".\nThe payment amount has been updated accordingly.");
                         refreshDialogTable.run();
                     } catch (ConcurrencyException ex) {
                         JOptionPane.showMessageDialog(this,
