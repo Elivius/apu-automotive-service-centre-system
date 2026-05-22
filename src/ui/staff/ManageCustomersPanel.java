@@ -185,7 +185,7 @@ public class ManageCustomersPanel extends JPanel {
             tfPhone.setText(prefillUser.getPhone() != null ? prefillUser.getPhone() : "");
         }
 
-        form.add(UITheme.formRow("Username *", tfUsername));
+        form.add(UITheme.formRow("Username (View Only)", tfUsername));
         form.add(Box.createVerticalStrut(8));
         form.add(UITheme.formRow("Full Name *", tfName));
         form.add(Box.createVerticalStrut(8));
