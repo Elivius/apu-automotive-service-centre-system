@@ -39,6 +39,7 @@ public class CustomerDashboard extends JFrame {
         setTitle("APU-ASC — Customer Portal");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1100, 720);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setMinimumSize(new Dimension(900, 580));
         getContentPane().setBackground(UITheme.BG_DARK);

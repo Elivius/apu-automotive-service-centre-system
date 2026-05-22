@@ -32,6 +32,7 @@ public class TechnicianDashboard extends JFrame {
         setTitle("APU-ASC — Technician Portal");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1100, 720);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setMinimumSize(new Dimension(900, 580));
         getContentPane().setBackground(UITheme.BG_DARK);

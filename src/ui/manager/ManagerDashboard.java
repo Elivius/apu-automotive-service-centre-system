@@ -43,6 +43,7 @@ public class ManagerDashboard extends JFrame {
         setTitle("APU-ASC — Manager Portal");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1200, 760);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setMinimumSize(new Dimension(1000, 620));
         getContentPane().setBackground(UITheme.BG_DARK);
