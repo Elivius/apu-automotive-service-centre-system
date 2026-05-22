@@ -37,6 +37,7 @@ public class StaffDashboard extends JFrame {
         setTitle("APU-ASC — Counter Staff Portal");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1200, 740);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setMinimumSize(new Dimension(1000, 600));
         getContentPane().setBackground(UITheme.BG_DARK);
