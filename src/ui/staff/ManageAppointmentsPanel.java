@@ -447,7 +447,7 @@ public class ManageAppointmentsPanel extends JPanel {
             @Override
             protected void done() {
                 btnAiMatching.setEnabled(true);
-                btnAiMatching.setText("Technician Matching");
+                btnAiMatching.setText("✨ Kelwin AI Technician Matching");
                 try {
                     String result = get();
                     showMatchingDialog(result, apt);

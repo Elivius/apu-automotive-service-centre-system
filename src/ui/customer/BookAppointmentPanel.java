@@ -112,7 +112,7 @@ public class BookAppointmentPanel extends JPanel {
                 @Override
                 protected void done() {
                     btnAiDiagnose.setEnabled(true);
-                    btnAiDiagnose.setText("Pre-Diagnosis");
+                    btnAiDiagnose.setText("✨ Kelwin AI Pre-Diagnosis");
                     try {
                         String result = get();
                         showDiagnosisDialog(result, serviceTypeField);
@@ -291,8 +291,9 @@ public class BookAppointmentPanel extends JPanel {
         btnApplyNormal.addActionListener(e -> {
             serviceTypeHolder[0] = "Normal";
             try {
-                JTextField tf = (JTextField) serviceTypeField.getComponent(0);
-                tf.setText("Normal");
+                if (serviceTypeField.getComponent(0) instanceof JTextField) {
+                    ((JTextField) serviceTypeField.getComponent(0)).setText("Normal");
+                }
             } catch (Exception ex) {}
             dialog.dispose();
             JOptionPane.showMessageDialog(this, "Service type set to Normal. Please verify pricing.");
@@ -302,8 +303,9 @@ public class BookAppointmentPanel extends JPanel {
         btnApplyMajor.addActionListener(e -> {
             serviceTypeHolder[0] = "Major";
             try {
-                JTextField tf = (JTextField) serviceTypeField.getComponent(0);
-                tf.setText("Major");
+                if (serviceTypeField.getComponent(0) instanceof JTextField) {
+                    ((JTextField) serviceTypeField.getComponent(0)).setText("Major");
+                }
             } catch (Exception ex) {}
             dialog.dispose();
             JOptionPane.showMessageDialog(this, "Service type set to Major. Please verify pricing.");

@@ -211,14 +211,7 @@ public class UITheme {
     }
 
     public static JButton aiButton(String text) {
-        JButton btn = new JButton(text) {
-            @Override
-            public void setText(String newText) {
-                if (newText != null && !newText.endsWith("...") && !newText.startsWith("✨ Kelwin AI ")) {
-                    newText = "✨ Kelwin AI " + newText;
-                }
-                super.setText(newText);
-            }
+        JButton btn = new JButton("✨ Kelwin AI " + text) {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

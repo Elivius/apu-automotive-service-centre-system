@@ -132,7 +132,7 @@ public class AppointmentDetailFrame extends JFrame {
                 }
                 @Override protected void done() {
                     btnAiGuide.setEnabled(true);
-                    btnAiGuide.setText("Diagnostic Guide");
+                    btnAiGuide.setText("✨ Kelwin AI Diagnostic Guide");
                     try {
                         String result = get();
                         showChecklistDialog(result);
@@ -220,7 +220,7 @@ public class AppointmentDetailFrame extends JFrame {
                     }
                     @Override protected void done() {
                         btnPolish.setEnabled(true);
-                        btnPolish.setText("Polish Feedback");
+                        btnPolish.setText("✨ Kelwin AI Polish Feedback");
                         try {
                             String result = get();
                             showPolishConfirmationDialog(rawFeedback, result);

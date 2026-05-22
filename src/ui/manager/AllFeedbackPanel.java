@@ -79,7 +79,7 @@ public class AllFeedbackPanel extends JPanel {
                 @Override
                 protected void done() {
                     btnAiSentiment.setEnabled(true);
-                    btnAiSentiment.setText("Sentiment Analysis");
+                    btnAiSentiment.setText("✨ Kelwin AI Sentiment Analysis");
                     try {
                         String result = get();
                         showSentimentDialog(result);
