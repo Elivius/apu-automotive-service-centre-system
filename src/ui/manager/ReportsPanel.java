@@ -2,7 +2,11 @@ package ui.manager;
 
 import models.Appointment;
 import services.AppointmentService;
+import services.PaymentService;
 import ui.UITheme;
+
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -50,7 +54,7 @@ public class ReportsPanel extends JPanel {
         long total = all.size();
 
         // ── Compute Earnings Data ──────────────────────────────────────
-        Map<String, models.Payment> allPayments = services.PaymentService.getAllPaymentsMapByAppointment();
+        Map<String, models.Payment> allPayments = PaymentService.getAllPaymentsMapByAppointment();
         
         long onlineCount = allPayments.values().stream()
                 .filter(p -> "Paid".equals(p.getPaymentStatus()))
@@ -61,17 +65,17 @@ public class ReportsPanel extends JPanel {
                 .filter(p -> "Physical".equals(p.getPaymentMethod()))
                 .count();
 
-        java.time.YearMonth currentMonth = java.time.YearMonth.now();
+        YearMonth currentMonth = YearMonth.now();
         String[] monthLabels = new String[6];
         double[] monthEarnings = new double[6];
         
         for (int i = 5; i >= 0; i--) {
-            java.time.YearMonth ym = currentMonth.minusMonths(i);
-            monthLabels[5 - i] = ym.format(java.time.format.DateTimeFormatter.ofPattern("MMM yy"));
+            YearMonth ym = currentMonth.minusMonths(i);
+            monthLabels[5 - i] = ym.format(DateTimeFormatter.ofPattern("MMM yy"));
             
             double totalForMonth = allPayments.values().stream()
                 .filter(p -> "Paid".equals(p.getPaymentStatus()))
-                .filter(p -> p.getDateTime() != null && java.time.YearMonth.from(p.getDateTime()).equals(ym))
+                .filter(p -> p.getDateTime() != null && YearMonth.from(p.getDateTime()).equals(ym))
                 .mapToDouble(models.Payment::getAmount)
                 .sum();
                 
