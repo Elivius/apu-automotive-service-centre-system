@@ -4,6 +4,7 @@ import models.Appointment;
 import services.FeedbackService;
 import utils.StringUtils;
 import utils.DateUtils;
+import utils.ExportUtils;
 import ui.UITheme;
 
 import javax.swing.*;
@@ -199,8 +200,24 @@ public class AllFeedbackPanel extends JPanel {
 
         JButton btnClose = UITheme.dangerButton("Dismiss");
         
-        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        JButton btnExport = UITheme.accentButton("📄 Export HTML");
+        btnExport.addActionListener(e -> {
+            String cleanHtml = htmlResult
+                .replace("<html><body", "<div")
+                .replace("</body></html>", "</div>")
+                .replace("#EAEAEA", "#333333");
+                
+            String fullHtml = "<html><head><style>body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; line-height: 1.6; background: #fff; }</style></head><body>"
+                            + "<h1 style='color: #333333;'>✨ Kelwin AI Sentiment Analysis Report</h1>"
+                            + "<hr/>"
+                            + cleanHtml
+                            + "</body></html>";
+            ExportUtils.exportStringToFile(panel, "Sentiment_Report.html", fullHtml);
+        });
+        
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         footer.setOpaque(false);
+        footer.add(btnExport);
         footer.add(btnClose);
         panel.add(footer, BorderLayout.SOUTH);
 
