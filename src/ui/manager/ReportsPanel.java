@@ -4,6 +4,7 @@ import models.Appointment;
 import services.AppointmentService;
 import services.PaymentService;
 import ui.UITheme;
+import utils.ExportUtils;
 
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -30,15 +31,7 @@ public class ReportsPanel extends JPanel {
     }
 
     private void buildUI() {
-        JPanel header = new JPanel(new BorderLayout());
-        header.setOpaque(false);
-        header.add(UITheme.titleLabel("Analyse Reports"), BorderLayout.WEST);
 
-        JButton btnRefresh = UITheme.secondaryButton("↻ Refresh");
-        btnRefresh.setName("btnRefresh");
-        btnRefresh.addActionListener(e -> { removeAll(); buildUI(); revalidate(); repaint(); });
-        header.add(btnRefresh, BorderLayout.EAST);
-        add(header, BorderLayout.NORTH);
 
         List<Appointment> all = AppointmentService.getAllAppointments();
 
@@ -81,6 +74,52 @@ public class ReportsPanel extends JPanel {
                 
             monthEarnings[5 - i] = totalForMonth;
         }
+
+        // ── Header Panel ─────────────────────────────────────────────
+        JPanel header = new JPanel(new BorderLayout());
+        header.setOpaque(false);
+        header.add(UITheme.titleLabel("Analyse Reports"), BorderLayout.WEST);
+
+        JButton btnExport = UITheme.accentButton("📊 Export CSV");
+        btnExport.addActionListener(e -> {
+            StringBuilder csv = new StringBuilder();
+            csv.append("APU Automotive Service Centre - Management Report\n\n");
+            
+            csv.append("--- APPOINTMENT SUMMARY ---\n");
+            csv.append("Total Appointments,").append(total).append("\n");
+            csv.append("Pending,").append(pending).append("\n");
+            csv.append("Assigned,").append(assigned).append("\n");
+            csv.append("Completed,").append(completed).append("\n");
+            csv.append("Declined,").append(declined).append("\n\n");
+            
+            csv.append("--- SERVICE BREAKDOWN ---\n");
+            csv.append("Normal Service,").append(normal).append("\n");
+            csv.append("Major Service,").append(major).append("\n\n");
+            
+            csv.append("--- PAYMENT METHODS ---\n");
+            csv.append("Online,").append(onlineCount).append("\n");
+            csv.append("Physical,").append(physicalCount).append("\n\n");
+            
+            csv.append("--- MONTHLY REVENUE (Last 6 Months) ---\n");
+            csv.append("Month,Revenue (RM)\n");
+            for (int i = 0; i < monthLabels.length; i++) {
+                csv.append(monthLabels[i]).append(",").append(monthEarnings[i]).append("\n");
+            }
+            
+            ExportUtils.exportStringToFile(this, "Management_Report.csv", csv.toString());
+        });
+
+        JButton btnRefresh = UITheme.secondaryButton("↻ Refresh");
+        btnRefresh.setName("btnRefresh");
+        btnRefresh.addActionListener(e -> { removeAll(); buildUI(); revalidate(); repaint(); });
+        
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        actions.setOpaque(false);
+        actions.add(btnExport);
+        actions.add(btnRefresh);
+
+        header.add(actions, BorderLayout.EAST);
+        add(header, BorderLayout.NORTH);
 
         // ── Bar chart panel ──────────────────────────────────────────
         JPanel chartCard = UITheme.cardPanel();
