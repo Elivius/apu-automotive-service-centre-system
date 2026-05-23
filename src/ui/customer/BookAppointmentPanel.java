@@ -324,7 +324,7 @@ public class BookAppointmentPanel extends JPanel {
 
         if (!services.GeminiConfig.isConfigured()) {
             JOptionPane.showMessageDialog(this, 
-                "AI service is not configured. Please set the API key in the settings first.", 
+                "AI service is not configured. Please set the API key in the data/gemini_api_key.txt first.", 
                 "Kelwin AI Pre-Diagnosis Not Configured", 
                 JOptionPane.INFORMATION_MESSAGE);
             return;
