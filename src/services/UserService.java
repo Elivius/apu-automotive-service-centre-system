@@ -208,10 +208,10 @@ public class UserService {
     public static User getUserByName(String name) {
         List<String> lines = FileHandler.getInstance().readAllLines(FileHandler.USERS_FILE);
         
-        // We use AuthService.parseUser to correctly build the subclass (Manager, Customer, etc.)
+        // Use AuthService.parseUser to correctly build the subclass (Manager, Customer, etc.)
         for (String line : lines) {
             User obj = parseUser(line);
-            if (obj != null && obj.search(name)) { // Uses the overloaded String search!
+            if (obj != null && obj.search(name)) { // Uses the overloaded String search
                 return obj;
             }
         }
@@ -227,7 +227,7 @@ public class UserService {
         
         for (String line : lines) {
             User obj = parseUser(line);
-            if (obj != null && obj.search(numericId)) { // Uses the overloaded int search!
+            if (obj != null && obj.search(numericId)) { // Uses the overloaded int search
                 return obj;
             }
         }
