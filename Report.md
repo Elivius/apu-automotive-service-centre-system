@@ -2,6 +2,71 @@
 
 ---
 
+## Introduction
+
+The APU Automotive Service Centre (APU-ASC) system is a Java-based desktop application designed to digitise and streamline the end-to-end operations of an automotive service centre. The system replaces manual, paper-based workflows with a centralised platform that manages the full service lifecycle — from appointment booking and technician assignment, through payment processing and receipt generation, to feedback collection and management reporting.
+
+### System Purpose
+
+The core business problem is coordination: a service centre must manage interactions between four distinct user roles, each with different responsibilities and access levels. Without a unified system, appointment schedules conflict, payment records are lost, and customer feedback never reaches management. The APU-ASC system solves this by providing a single application where all four roles operate on a shared data layer with role-based access control.
+
+### User Roles and Access Rights
+
+The system supports **four types of end users**, each with a dedicated dashboard and tailored functionalities:
+
+| Role | Key Responsibilities |
+|------|---------------------|
+| **Manager** | Create/Read/Update/Delete managers, counter staff, and technicians; set service prices (Normal / Major); view all feedback, comments, and service reviews; analyse reports with visual charts |
+| **Counter Staff** | Edit personal profile; full CRUD on customer records; create and assign new appointments (with collision-aware scheduling); collect payments and generate receipts |
+| **Technician** | Edit personal profile; check comments and details of assigned appointments; update appointment status to "Completed"; provide post-service feedback |
+| **Customer** | Edit personal profile; access individual service and payment histories; access feedback on individual appointments; provide pre-service comments and post-service reviews |
+
+### Technology Stack
+
+| Component | Technology |
+|-----------|-----------|
+| **Language** | Java (JDK 11+) |
+| **GUI Framework** | Java Swing (`javax.swing`, `java.awt`) |
+| **Data Persistence** | Flat-file `.txt` storage with pipe-delimited (`:::`) format |
+| **Security** | SHA-256 password hashing (`java.security.MessageDigest`) |
+| **AI Integration** | Google Gemini REST API via `java.net.http.HttpClient` |
+| **Date/Time** | `java.time.LocalDateTime` with `DateTimeFormatter` |
+
+### Architecture Overview
+
+The codebase follows a clean **three-tier layered architecture** that separates concerns across distinct packages:
+
+```
+src/
+├── Main.java                    ← Application entry point (EDT launch)
+├── models/                      ← Domain entities (User, Appointment, Payment, etc.)
+├── services/                    ← Business logic layer (AppointmentService, PaymentService, etc.)
+├── ui/                          ← Presentation layer (Java Swing dashboards and panels)
+│   ├── customer/                   ├── 4 customer screens
+│   ├── staff/                      ├── 4 counter staff screens
+│   ├── technician/                 ├── 3 technician screens
+│   └── manager/                    └── 6 manager screens
+├── utils/                       ← Cross-cutting utilities (FileHandler, AuditLogger, etc.)
+└── exceptions/                  ← Custom exception classes
+```
+
+- **Models** define the data structure and validation rules for each entity
+- **Services** contain all business logic, completely decoupled from the UI
+- **UI** handles only presentation and user interaction, delegating all logic to services
+- **Utils** provide shared infrastructure (file I/O, logging, hashing, validation)
+
+### Data Strategy
+
+All data is persisted in `.txt` files within the `data/` directory using a pipe-delimited (`:::`) format. The system deliberately avoids database tools (MySQL, Oracle, SQLite) as per the assignment specification. Instead, data integrity is enforced through:
+
+- A **Singleton `FileHandler`** with `synchronized` methods for thread-safe I/O
+- **Optimistic Locking** with version fields to prevent the "Lost Update" problem
+- **Normalized data design** with cross-file relational joins using `HashMap` lookups
+
+The following sections document the Object-Oriented concepts applied, the additional features implemented beyond the specification, and the system's limitations with a concluding assessment.
+
+---
+
 ## Section 1: Description and Justification of Object-Oriented Concepts
 
 This section documents the Object-Oriented (OO) programming concepts that have been systematically incorporated into the APU-ASC system. Each concept is described, justified with its purpose in the solution, and supported with direct implementation evidence from the source code.
