@@ -27,7 +27,7 @@ public class AppointmentService {
      * @param customerId     the customer's ID
      * @param serviceType    "Normal" or "Major"
      * @param dateTime       the requested date and time
-     * @param comments       optional comments from the customer
+     * @param comments       comments from the customer
      * @param paymentMethod  "Online" or "Physical"
      * @return the generated Appointment ID
      */
