@@ -861,10 +861,42 @@ Centralising all visual styles in a single class ensures pixel-perfect consisten
 
 ---
 
-### 2.14 CSV Report Export
+### 2.14 File Export Utility (CSV, HTML, TXT)
 
 **What it does:**
-The Manager's Reports panel includes an "Export CSV" button that generates a comprehensive management report containing appointment summaries, service breakdowns, payment method analysis, and monthly revenue data — exportable as a `.csv` file through a native file save dialog.
+The system provides a generic, reusable export utility that allows any tabular data or generated report to be saved directly to the user's local disk through a native `JFileChooser` dialog. The Manager's Reports panel, for example, uses this to export comprehensive management reports containing appointment summaries and revenue data as `.csv` or `.html` files.
+
+**Why it matters:**
+Rather than hardcoding export logic into every panel, the `ExportUtils` class centralizes this functionality. It handles file selection, write streams, and success/error dialogs, making it easy to export any generated string (HTML, CSV, or raw text) anywhere in the application.
+
+**Code Evidence — `ExportUtils.java`:**
+
+```java
+public class ExportUtils {
+    /**
+     * Prompts the user to save a string of content (HTML, CSV, TXT) to a file.
+     */
+    public static void exportStringToFile(Component parent, String defaultFileName, String content) {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save Export As...");
+        fileChooser.setSelectedFile(new File(defaultFileName));
+        
+        int userSelection = fileChooser.showSaveDialog(parent);
+        
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            try (FileWriter fw = new FileWriter(fileToSave)) {
+                fw.write(content);
+                JOptionPane.showMessageDialog(parent, 
+                    "Export successful!\nSaved to: " + fileToSave.getAbsolutePath(), 
+                    "Export Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException e) {
+                // handles IO exception
+            }
+        }
+    }
+}
+```
 
 ---
 
