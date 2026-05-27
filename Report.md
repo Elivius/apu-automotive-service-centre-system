@@ -806,6 +806,34 @@ The Counter Staff's `ManageAppointmentsPanel` implements a real-time search bar 
 **Why it matters:**
 When managing hundreds of appointments, instant filtering dramatically improves operational efficiency — staff can locate any record in under a second.
 
+**Code Evidence — `ManageAppointmentsPanel.java` (Real-time filtering logic):**
+
+```java
+private void filterTable() {
+    String text = tfSearch.getText().trim();
+    String status = statusFilterHolder[0];
+
+    List<RowFilter<DefaultTableModel, Object>> filters = new ArrayList<>();
+
+    // Text search filter (searches across ALL columns including name/phone/ID)
+    if (!text.isEmpty()) {
+        filters.add(RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(text)));
+    }
+
+    // Status dropdown filter (column index 6 = "Status")
+    if (status != null && !"All Status".equals(status)) {
+        filters.add(RowFilter.regexFilter("^" + java.util.regex.Pattern.quote(status) + "$", 6));
+    }
+
+    // Apply combined filters instantly
+    if (filters.isEmpty()) {
+        sorter.setRowFilter(null);
+    } else {
+        sorter.setRowFilter(RowFilter.andFilter(filters));
+    }
+}
+```
+
 ---
 
 ### 2.12 Gemini AI Integration ("Kelwin AI")
