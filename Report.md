@@ -343,54 +343,45 @@ loggedInUser.displayDashboard();      // Polymorphism: correct dashboard launche
 #### 1.5.2 Polymorphism — Method Overloading
 
 **Description:**
-Method Overloading allows multiple methods with the same name but different parameter signatures to coexist within the same class. The compiler selects the correct version based on the argument type provided.
+Method Overloading allows multiple methods with the same name but different parameter signatures to coexist within the same class. The compiler selects the correct version based on the number or type of arguments provided.
 
 **Justification:**
-The `User` class provides two `search()` methods — one accepting a `String` (name) and another accepting an `int` (numeric ID). This allows the system to search for users flexibly using either parameter type, improving usability for both staff-facing search forms and programmatic lookups.
+The `UserService` class provides two overloaded `registerUser()` methods — one with 6 parameters (for non-technician roles) and one with 7 parameters (adding a `specialization` field for technicians). This allows calling code to use a simpler signature when the extra parameter is irrelevant, while the full signature is available when needed. The shorter method delegates to the longer one with a default empty value, keeping the business logic in a single place.
 
-**Implementation Evidence — `User.java` overloaded `search()` methods:**
+**Implementation Evidence — `UserService.java` overloaded `registerUser()` methods:**
 
 ```java
 /**
- * Searches for a user by name (String).
+ * Overloaded method for non-technician roles (Customer, Manager, CounterStaff).
+ * Automatically sets specialization to an empty string.
  */
-public boolean search(String name) {
-    return this.name != null && this.name.equalsIgnoreCase(name);
+public static void registerUser(String username, String plainPassword,
+        String name, String email, String phone, String role) {
+    registerUser(username, plainPassword, name, email, phone, role, "");
 }
 
 /**
- * Searches for a user by ID number (int).
- * Extracts the numeric part from userId and compares.
+ * Registers a new user into the system (Customer, Manager, Technician, etc.).
+ * Handles password hashing securely before saving.
  */
-public boolean search(int id) {
-    if (this.userId == null) return false;
-    try {
-        String numericPart = this.userId.replaceAll("[^0-9]", "");
-        return Integer.parseInt(numericPart) == id;
-    } catch (NumberFormatException e) {
-        return false;
-    }
+public static void registerUser(String username, String plainPassword,
+        String name, String email, String phone, String role, String specialization) {
+    // Validates uniqueness, generates ID, creates User object, hashes password, saves to file
+    // ... (full implementation handles all registration logic)
 }
 ```
 
-**Both overloaded methods used in `UserService.java`:**
+**Both overloaded methods actively used across the UI layer:**
 
 ```java
-// Search by name — uses search(String)
-public static User getUserByName(String name) {
-    for (String line : lines) {
-        User obj = parseUser(line);
-        if (obj != null && obj.search(name)) { ... }   // search(String)
-    }
-}
+// RegisterFrame.java & ManageCustomersPanel.java — uses 6-param overload (no specialization needed)
+UserService.registerUser(username, password, name, email, phone, "Customer");
 
-// Search by numeric ID — uses search(int)
-public static User getUserById(int numericId) {
-    for (String line : lines) {
-        User obj = parseUser(line);
-        if (obj != null && obj.search(numericId)) { ... } // search(int)
-    }
-}
+// ManageStaffPanel.java — uses 7-param overload for Technicians (specialization required)
+UserService.registerUser(username, password, name, email, phone, role, specialization);
+
+// ManageStaffPanel.java — uses 6-param overload for Manager/CounterStaff
+UserService.registerUser(username, password, name, email, phone, role);
 ```
 
 **Additional overloading — `NotificationService.java`:**
@@ -509,7 +500,7 @@ FileHandler.getInstance().readAllLines(FileHandler.PAYMENTS_FILE);
 | 3 | **Inheritance** | `Customer`, `Technician`, `CounterStaff`, `Manager` extend `User` | `super(...)` constructor calls, `Technician` adds `specialization` |
 | 4 | **Abstraction** | `User` is `abstract` with `abstract displayDashboard()` | Cannot instantiate `new User()` directly |
 | 5 | **Polymorphism (Overriding)** | `displayDashboard()` overridden in all 4 subclasses | `loggedInUser.displayDashboard()` routes to correct UI |
-| 6 | **Polymorphism (Overloading)** | `User.search(String)` / `User.search(int)`, `NotificationService.push(...)` | Two `search()` signatures, two `push()` signatures |
+| 6 | **Polymorphism (Overloading)** | `UserService.registerUser()` (6-param / 7-param), `NotificationService.push(...)` | Two `registerUser()` signatures, two `push()` signatures |
 | 7 | **Aggregation** | `Appointment` holds `customerId` and `technicianId` | Foreign-key references resolved in services |
 | 8 | **Singleton Pattern** | `FileHandler` — private constructor + `getInstance()` | All services call `FileHandler.getInstance()` |
 
