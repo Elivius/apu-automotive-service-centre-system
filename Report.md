@@ -548,12 +548,11 @@ for (Appointment existingAppointment : allExistingAppointments) {
 ### 2.2 Custom Exception Handling
 
 **What it does:**
-The system defines three domain-specific custom exceptions that extend Java's standard exception hierarchy:
+The system defines two domain-specific custom exceptions that extend Java's standard exception hierarchy:
 
 | Exception | Extends | Purpose |
 |-----------|---------|---------|
 | `TechnicianUnavailableException` | `Exception` (Checked) | Thrown when a scheduling conflict is detected |
-| `InsufficientFundsException` | `Exception` (Checked) | Thrown when a payment cannot be processed |
 | `ConcurrencyException` | `RuntimeException` (Unchecked) | Thrown when an optimistic locking version mismatch is detected |
 
 **Why it matters:**
