@@ -1080,7 +1080,7 @@ The APU Automotive Service Centre System (APU-ASC) successfully delivers a compl
 
 This separation of concerns ensures that the business rules (e.g., collision detection, payment processing) are reusable and testable independently of the GUI.
 
-**From a feature perspective**, the system goes significantly beyond the assignment scope with collision-aware scheduling, optimistic locking for data integrity, SHA-256 password hashing, custom exception handling, a full audit logging subsystem, real-time notifications, visual analytics dashboards using `Graphics2D`, auto-generated receipt files, dynamic table search/filtering, CSV report export, and a Gemini AI integration providing symptom analysis, diagnostic checklists, feedback polishing, technician matching, and sentiment analysis.
+**From a feature perspective**, the system goes significantly beyond the assignment scope with collision-aware scheduling, optimistic locking for data integrity, SHA-256 password hashing, custom exception handling, a full audit logging subsystem, real-time notifications, visual analytics dashboards using `Graphics2D`, auto-generated receipt files, dynamic table search/filtering, CSV and HTML file export, and a Gemini AI integration providing symptom analysis, diagnostic checklists, feedback polishing, technician matching, and sentiment analysis.
 
 The system is robust, well-documented, and architecturally sound — representing a holistic demonstration of Object-Oriented programming principles applied to a real-world business problem.
 
