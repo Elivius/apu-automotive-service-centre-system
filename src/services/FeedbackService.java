@@ -30,7 +30,12 @@ public class FeedbackService {
             appointment.setComments(comments);
             int expectedVersion = appointment.getVersion();
             appointment.setVersion(expectedVersion + 1);
-            FileHandler.getInstance().updateLineOptimistic(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString(), expectedVersion, 10);
+            try {
+                FileHandler.getInstance().updateLineOptimistic(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString(), expectedVersion, 10);
+            } catch (exceptions.ConcurrencyException e) {
+                appointment.setVersion(expectedVersion);
+                throw e;
+            }
             
             // Push a notification for the assigned technician and counter staff
             NotificationService.push(appointment.getTechnicianId(), "Customer added comments to appointment " + appointment.getAppointmentId());
@@ -51,7 +56,12 @@ public class FeedbackService {
             appointment.setFeedback(feedback);
             int expectedVersion = appointment.getVersion();
             appointment.setVersion(expectedVersion + 1);
-            FileHandler.getInstance().updateLineOptimistic(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString(), expectedVersion, 10);
+            try {
+                FileHandler.getInstance().updateLineOptimistic(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString(), expectedVersion, 10);
+            } catch (exceptions.ConcurrencyException e) {
+                appointment.setVersion(expectedVersion);
+                throw e;
+            }
             
             // Push a notification for the customer
             NotificationService.push(appointment.getCustomerId(), "Technician submitted feedback for appointment " + appointment.getAppointmentId());
@@ -71,7 +81,12 @@ public class FeedbackService {
             appointment.setServiceReview(review);
             int expectedVersion = appointment.getVersion();
             appointment.setVersion(expectedVersion + 1);
-            FileHandler.getInstance().updateLineOptimistic(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString(), expectedVersion, 10);
+            try {
+                FileHandler.getInstance().updateLineOptimistic(FileHandler.APPOINTMENTS_FILE, appointment.getAppointmentId(), appointment.toFileString(), expectedVersion, 10);
+            } catch (exceptions.ConcurrencyException e) {
+                appointment.setVersion(expectedVersion);
+                throw e;
+            }
             AuditLogger.log(appointment.getCustomerId(), "SUBMIT_REVIEW", appointment.getAppointmentId());
         }
     }
