@@ -1058,6 +1058,13 @@ Customers cannot upload photos of their vehicle issues, and technicians cannot a
 #### 3.1.5 AI Feature Dependency on External API
 The Gemini AI features require an active internet connection and a valid API key. If the API is unavailable, rate-limited, or deprecated, these features gracefully degrade but become non-functional. The core system operations (booking, assignment, payment) remain fully operational without AI.
 
+#### 3.1.6 Functional Limitations
+Beyond technical constraints, the system currently lacks certain business functionalities that would be expected in a real-world production environment:
+- **No Vehicle Management** — The system tracks customers but does not track specific vehicle details (e.g., Car Plate Number, Make, Model, Year, Mileage). Customers cannot add multiple cars to their profile, and appointments are tied to the customer rather than a specific vehicle.
+- **Mock Payment Gateway** — The "Online Payment" option is a mock implementation. It instantly marks the appointment as "Confirmed" without integrating with an actual external payment processor (e.g., Stripe, PayPal, FPX).
+- **No External Alerts** — Notifications are strictly in-app. The system does not send external SMS or Email reminders to customers about upcoming appointments.
+- **No Inventory Management** — Technicians can leave feedback and service types can be changed, but there is no tracking of spare parts inventory or automatic deduction of parts used during a service.
+
 ---
 
 ### 3.2 Conclusion
